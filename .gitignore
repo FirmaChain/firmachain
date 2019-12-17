@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+*.swp
+*.swo
+.vscode
+.idea
+
+# Build
+vendor
+.vendor-new
+build
+node_modules/
+yarn-error.log
+
+# IDE
+.idea/
+*.iml
