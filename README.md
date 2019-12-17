@@ -27,7 +27,7 @@ PoC of e-contract is In the wallet. Uploading original files on blockchain and v
 	- FirmaChain is currently operating on Ethereum as an ERC-20 Token **FCT**. All contracts and tokens will be migrated to our main network once it is live.
 
 ## EcoSystem
-- [FirmaChain-BlockExplorer](52.78.147.71:8080)
+- [FirmaChain-BlockExplorer](http://52.78.147.71:8080)
 - [FirmaChain-Wallet](https://firmachain.org/#/)
 	- Only Mac and Linux supports.
 	- Web version is under development.
