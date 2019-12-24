@@ -9,8 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/victorrica/FirmaChain/x/firmachain/client/cli"
-	"github.com/victorrica/FirmaChain/x/firmachain/client/rest"
+	"github.com/firmachain/FirmaChain/x/firmachain/client/cli"
+	"github.com/firmachain/FirmaChain/x/firmachain/client/rest"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"

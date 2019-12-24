@@ -1,14 +1,16 @@
 package firmachain
 
 import (
-	"github.com/victorrica/FirmaChain/x/firmachain/internal/keeper"
-	"github.com/victorrica/FirmaChain/x/firmachain/internal/types"
+	"github.com/firmachain/FirmaChain/x/firmachain/internal/keeper"
+	"github.com/firmachain/FirmaChain/x/firmachain/internal/types"
 )
 
 const (
 	ModuleName = types.ModuleName
 	RouterKey  = types.RouterKey
 	StoreKey   = types.StoreKey
+
+	Denom = types.denom
 )
 
 var (

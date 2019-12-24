@@ -1,4 +1,4 @@
-module github.com/victorrica/FirmaChain
+module github.com/firmachain/FirmaChain
 
 go 1.13
 

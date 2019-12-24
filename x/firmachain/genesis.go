@@ -2,17 +2,24 @@ package firmachain
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/staking"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 type GenesisState struct {
-	ContractRecords []Contract `json:"contract_records"`
+	StakingData     staking.GenesisState `json:"staking"`
+	ContractRecords []Contract           `json:"contract_records"`
 }
 
-func NewGenesisState(contractRecords []Contract) GenesisState {
-	return GenesisState{ContractRecords: nil}
+func NewGenesisState(contractRecords []Contract, stakingData staking.GenesisState) GenesisState {
+
+	return GenesisState{
+		ContractRecords: nil,
+		StakingData:     stakingData,
+	}
 }
 
 func ValidateGenesis(data GenesisState) error {
@@ -32,7 +39,14 @@ func ValidateGenesis(data GenesisState) error {
 }
 
 func DefaultGenesisState() GenesisState {
+	// Set custom params
+	stakingGenState := staking.DefaultGenesisState()
+	stakingGenState.Params.UnbondingTime = time.Second * 60 * 60 * 24 * 7 * 3 // three weeks
+	stakingGenState.Params.MaxValidators = 11
+	stakingGenState.Params.BondDenom = StoreKey
+
 	return GenesisState{
+		StakingData:     stakingGenState,
 		ContractRecords: []Contract{},
 	}
 }

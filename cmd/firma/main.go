@@ -18,7 +18,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
-	app "github.com/victorrica/FirmaChain"
+	app "github.com/firmachain/FirmaChain"
 )
 
 func main() {
@@ -28,8 +28,8 @@ func main() {
 
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount("firma", "firmapub")
-	config.SetBech32PrefixForValidator("firmaval", "firmavalpub")
-	config.SetBech32PrefixForConsensusNode("firmacons", "firmaconspub")
+	config.SetBech32PrefixForValidator("firmavaloper", "firmavaloperpub")
+	config.SetBech32PrefixForConsensusNode("firmavalcons", "firmavalconspub")
 	config.Seal()
 
 	ctx := server.NewDefaultContext()

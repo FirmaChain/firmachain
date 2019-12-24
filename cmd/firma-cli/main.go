@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/viper"
 	amino "github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
-	app "github.com/victorrica/FirmaChain"
+	app "github.com/firmachain/FirmaChain"
 )
 
 func main() {
@@ -27,8 +27,8 @@ func main() {
 
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount("firma", "firmapub")
-	config.SetBech32PrefixForValidator("firmaval", "firmavalpub")
-	config.SetBech32PrefixForConsensusNode("firmacons", "firmaconspub")
+	config.SetBech32PrefixForValidator("firmavaloper", "firmavaloperpub")
+	config.SetBech32PrefixForConsensusNode("firmavalcons", "firmavalconspub")
 	config.Seal()
 
 	rootCmd := &cobra.Command{

@@ -25,7 +25,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 
-	"github.com/victorrica/FirmaChain/x/firmachain"
+	"github.com/firmachain/FirmaChain/x/firmachain"
 )
 
 const appName = "FirmaChain"

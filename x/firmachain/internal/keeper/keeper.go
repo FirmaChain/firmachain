@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/victorrica/FirmaChain/x/firmachain/internal/types"
+	"github.com/firmachain/FirmaChain/x/firmachain/internal/types"
 )
 
 type Keeper struct {
