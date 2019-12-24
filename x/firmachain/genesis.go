@@ -43,7 +43,7 @@ func DefaultGenesisState() GenesisState {
 	stakingGenState := staking.DefaultGenesisState()
 	stakingGenState.Params.UnbondingTime = time.Second * 60 * 60 * 24 * 7 * 3 // three weeks
 	stakingGenState.Params.MaxValidators = 11
-	stakingGenState.Params.BondDenom = StoreKey
+	stakingGenState.Params.BondDenom = Denom
 
 	return GenesisState{
 		StakingData:     stakingGenState,
