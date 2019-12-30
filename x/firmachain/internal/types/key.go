@@ -1,7 +1,7 @@
 package types
 
 const (
-	denom      = "firma"
+	Denom      = "firma"
 	ModuleName = "contract"
 
 	StoreKey = ModuleName

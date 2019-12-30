@@ -10,7 +10,7 @@ const (
 	RouterKey  = types.RouterKey
 	StoreKey   = types.StoreKey
 
-	Denom = types.denom
+	Denom = types.Denom
 )
 
 var (
