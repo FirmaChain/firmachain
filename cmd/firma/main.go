@@ -19,6 +19,8 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
+
+	"github.com/FirmaChain/firmachain/x/firmachain/internal/utils"
 )
 
 func main() {
@@ -27,9 +29,9 @@ func main() {
 	cdc := app.MakeCodec()
 
 	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount("firma", "firmapub")
-	config.SetBech32PrefixForValidator("firmavaloper", "firmavaloperpub")
-	config.SetBech32PrefixForConsensusNode("firmavalcons", "firmavalconspub")
+	config.SetBech32PrefixForAccount(utils.Bech32PrefixAccAddr, utils.Bech32PrefixAccPub)
+	config.SetBech32PrefixForValidator(utils.Bech32PrefixValAddr, utils.Bech32PrefixValPub)
+	config.SetBech32PrefixForConsensusNode(utils.Bech32PrefixConsAddr, utils.Bech32PrefixConsPub)
 	config.Seal()
 
 	ctx := server.NewDefaultContext()

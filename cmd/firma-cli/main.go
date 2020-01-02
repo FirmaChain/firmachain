@@ -13,11 +13,12 @@ import (
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
+	app "github.com/firmachain/FirmaChain"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	amino "github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
-	app "github.com/firmachain/FirmaChain"
+	"github.com/FirmaChain/firmachain/x/firmachain/internal/utils"
 )
 
 func main() {
@@ -26,9 +27,9 @@ func main() {
 	cdc := app.MakeCodec()
 
 	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount("firma", "firmapub")
-	config.SetBech32PrefixForValidator("firmavaloper", "firmavaloperpub")
-	config.SetBech32PrefixForConsensusNode("firmavalcons", "firmavalconspub")
+	config.SetBech32PrefixForAccount(utils.Bech32PrefixAccAddr, utils.Bech32PrefixAccPub)
+	config.SetBech32PrefixForValidator(utils.Bech32PrefixValAddr, utils.Bech32PrefixValPub)
+	config.SetBech32PrefixForConsensusNode(utils.Bech32PrefixConsAddr, utils.Bech32PrefixConsPub)
 	config.Seal()
 
 	rootCmd := &cobra.Command{
