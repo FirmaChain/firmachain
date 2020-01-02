@@ -14,11 +14,11 @@ import (
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	app "github.com/firmachain/FirmaChain"
+	"github.com/firmachain/FirmaChain/x/firmachain/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	amino "github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
-	"github.com/FirmaChain/firmachain/x/firmachain/internal/utils"
 )
 
 func main() {

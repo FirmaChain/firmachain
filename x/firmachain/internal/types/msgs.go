@@ -2,7 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/FirmaChain/x/firmachain/internal/utils"
+	"github.com/firmachain/FirmaChain/x/firmachain/utils"
 )
 
 const RouterKey = ModuleName
