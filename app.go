@@ -20,6 +20,7 @@ import (
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/genaccounts"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
+	"github.com/cosmos/cosmos-sdk/x/mint"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/cosmos/cosmos-sdk/x/staking"
@@ -44,12 +45,14 @@ var (
 		distr.AppModuleBasic{},
 		params.AppModuleBasic{},
 		slashing.AppModuleBasic{},
+		mint.AppModuleBasic{},
 		supply.AppModuleBasic{},
 		firmachain.AppModule{},
 	)
 	maccPerms = map[string][]string{
 		auth.FeeCollectorName:     nil,
 		distr.ModuleName:          nil,
+		mint.ModuleName:           {supply.Minter},
 		staking.BondedPoolName:    {supply.Burner, supply.Staking},
 		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
 	}
@@ -74,6 +77,7 @@ type FirmaChainApp struct {
 	bankKeeper     bank.Keeper
 	stakingKeeper  staking.Keeper
 	slashingKeeper slashing.Keeper
+	mintKeeper     mint.Keeper
 	distrKeeper    distr.Keeper
 	supplyKeeper   supply.Keeper
 	paramsKeeper   params.Keeper
@@ -93,7 +97,7 @@ func NewFirmaChainApp(
 	bApp.SetAppVersion(version.Version)
 
 	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
-		supply.StoreKey, distr.StoreKey, slashing.StoreKey, params.StoreKey, firmachain.StoreKey)
+		supply.StoreKey, distr.StoreKey, slashing.StoreKey, mint.StoreKey, params.StoreKey, firmachain.StoreKey)
 
 	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -110,6 +114,7 @@ func NewFirmaChainApp(
 	stakingSubspace := app.paramsKeeper.Subspace(staking.DefaultParamspace)
 	distrSubspace := app.paramsKeeper.Subspace(distr.DefaultParamspace)
 	slashingSubspace := app.paramsKeeper.Subspace(slashing.DefaultParamspace)
+	mintSubspace := app.paramsKeeper.Subspace(mint.DefaultParamspace)
 
 	app.accountKeeper = auth.NewAccountKeeper(
 		app.cdc,
@@ -160,6 +165,14 @@ func NewFirmaChainApp(
 		slashingSubspace,
 		slashing.DefaultCodespace,
 	)
+	app.mintKeeper = mint.NewKeeper(
+		app.cdc,
+		keys[mint.StoreKey],
+		mintSubspace,
+		&stakingKeeper,
+		app.supplyKeeper,
+		auth.FeeCollectorName,
+	)
 
 	app.stakingKeeper = *stakingKeeper.SetHooks(
 		staking.NewMultiStakingHooks(
@@ -182,10 +195,11 @@ func NewFirmaChainApp(
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		distr.NewAppModule(app.distrKeeper, app.supplyKeeper),
 		slashing.NewAppModule(app.slashingKeeper, app.stakingKeeper),
+		mint.NewAppModule(app.mintKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.distrKeeper, app.accountKeeper, app.supplyKeeper),
 	)
 
-	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
+	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName, mint.ModuleName)
 	app.mm.SetOrderEndBlockers(staking.ModuleName)
 
 	app.mm.SetOrderInitGenesis(
@@ -195,6 +209,7 @@ func NewFirmaChainApp(
 		auth.ModuleName,
 		bank.ModuleName,
 		slashing.ModuleName,
+		mint.ModuleName,
 		firmachain.ModuleName,
 		supply.ModuleName,
 		genutil.ModuleName,
