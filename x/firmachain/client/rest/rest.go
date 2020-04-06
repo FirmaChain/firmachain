@@ -15,4 +15,5 @@ const (
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
 	r.HandleFunc(fmt.Sprintf("/%s/contract/{%s}", storeName, contractServiceRestName), resolveContractHandler(cliCtx, storeName)).Methods("GET")
 	r.HandleFunc(fmt.Sprintf("/%s/contract", storeName), addContractHandler(cliCtx)).Methods("POST")
+	r.HandleFunc("/txs/estimateGas", estimateGasHandler(cliCtx)).Methods("POST")
 }

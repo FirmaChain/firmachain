@@ -23,7 +23,6 @@ func addContractHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		var req addContractReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
 
