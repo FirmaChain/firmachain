@@ -11,5 +11,5 @@ func init() {
 }
 
 func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgAddContract{}, "firmachain/addContract", nil)
+	cdc.RegisterConcrete(MsgAddContract{}, "firmachain/AddContract", nil)
 }
