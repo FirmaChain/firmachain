@@ -19,7 +19,7 @@ import (
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
 	app "github.com/firmachain/FirmaChain"
-	"github.com/firmachain/FirmaChain/x/firmachain/utils"
+	"github.com/firmachain/FirmaChain/x/contract/utils"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"

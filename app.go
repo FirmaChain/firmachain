@@ -15,7 +15,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/genaccounts"
@@ -26,7 +25,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 
-	"github.com/firmachain/FirmaChain/x/firmachain"
+	"github.com/firmachain/FirmaChain/x/auth"
+	"github.com/firmachain/FirmaChain/x/contract"
 )
 
 const appName = "FirmaChain"
@@ -47,7 +47,7 @@ var (
 		slashing.AppModuleBasic{},
 		mint.AppModuleBasic{},
 		supply.AppModuleBasic{},
-		firmachain.AppModule{},
+		contract.AppModule{},
 	)
 	maccPerms = map[string][]string{
 		auth.FeeCollectorName:     nil,
@@ -81,7 +81,7 @@ type FirmaChainApp struct {
 	distrKeeper    distr.Keeper
 	supplyKeeper   supply.Keeper
 	paramsKeeper   params.Keeper
-	fcKeeper       firmachain.Keeper
+	fcKeeper       contract.Keeper
 
 	mm *module.Manager
 }
@@ -97,7 +97,7 @@ func NewFirmaChainApp(
 	bApp.SetAppVersion(version.Version)
 
 	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
-		supply.StoreKey, distr.StoreKey, slashing.StoreKey, mint.StoreKey, params.StoreKey, firmachain.StoreKey)
+		supply.StoreKey, distr.StoreKey, slashing.StoreKey, mint.StoreKey, params.StoreKey, contract.StoreKey)
 
 	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -180,9 +180,9 @@ func NewFirmaChainApp(
 			app.slashingKeeper.Hooks()),
 	)
 
-	app.fcKeeper = firmachain.NewKeeper(
+	app.fcKeeper = contract.NewKeeper(
 		app.bankKeeper,
-		keys[firmachain.StoreKey],
+		keys[contract.StoreKey],
 		app.cdc,
 	)
 
@@ -191,7 +191,7 @@ func NewFirmaChainApp(
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.accountKeeper),
 		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
-		firmachain.NewAppModule(app.fcKeeper, app.bankKeeper),
+		contract.NewAppModule(app.fcKeeper, app.bankKeeper),
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		distr.NewAppModule(app.distrKeeper, app.supplyKeeper),
 		slashing.NewAppModule(app.slashingKeeper, app.stakingKeeper),
@@ -210,7 +210,7 @@ func NewFirmaChainApp(
 		bank.ModuleName,
 		slashing.ModuleName,
 		mint.ModuleName,
-		firmachain.ModuleName,
+		contract.ModuleName,
 		supply.ModuleName,
 		genutil.ModuleName,
 	)
