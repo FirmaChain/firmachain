@@ -32,9 +32,10 @@ func (msg MsgAddContract) ValidateBasic() sdk.Error {
 	if len(msg.Path) == 0 || len(msg.Hash) == 0 {
 		return sdk.ErrUnknownRequest("Path or Hash cannot be empty")
 	}
-	if err := utils.VerifyFile(msg.Path, msg.Hash); err != nil {
+	if err := utils.VerifyUrl(msg.Path); err != nil {
 		return sdk.ErrUnknownRequest("Contract has been manipulated or invalid.")
 	}
+
 	return nil
 }
 

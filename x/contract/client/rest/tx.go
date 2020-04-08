@@ -39,7 +39,7 @@ func addContractHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		msg := types.NewMsgAddContract(req.Path, req.Hash, addr)
 		err = msg.ValidateBasic()
-		if err := msg.ValidateBasic(); err != nil {
+		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
