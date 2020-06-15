@@ -23,13 +23,13 @@ PoC of e-contract is In the wallet. Uploading original files on blockchain and v
 ## Network 
 
 - Testnet **Imperium** launched and is online.
-- Mainnet will launch at 2020 Q1
+- Mainnet will launch at 2020 Q3
 	- FirmaChain is currently operating on Ethereum as an ERC-20 Token **FCT**. All contracts and tokens will be migrated to our main network once it is live.
 
 ## EcoSystem
-- [FirmaChain-BlockExplorer](http://52.78.147.71:8080)
+- [FirmaChain-BlockExplorer](https://github.com/FirmaChain/FirmaChain-Explorer)
 - [FirmaChain-Wallet](https://firmachain.org/#/)
-	- Only Mac and Linux supports.
+	- Only Windows, Mac and Linux supports.
 	- Web version is under development.
 
 ## Community
