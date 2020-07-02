@@ -9,28 +9,27 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/firmachain/FirmaChain/x/contract/internal/types"
+	"github.com/firmachain/FirmaChain/x/contract/types"
 )
 
-func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
-	FirmaChainTxCmd := &cobra.Command{
+func GetTxCmd(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "FirmaChain transaction subcommands",
+		Short:                      "Contract transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 
-	FirmaChainTxCmd.AddCommand(client.PostCommands(
-		GetCmdAddContract(cdc),
-	)...)
+	cmd.AddCommand(client.PostCommands(GetCmdAddContract(cdc))...)
 
-	return FirmaChainTxCmd
+	return cmd
 }
+
 func GetCmdAddContract(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "add-contract [path] [hash]",
-		Short: "add-contract",
+		Use:   "contract [path] [hash]",
+		Short: "Add contract",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)

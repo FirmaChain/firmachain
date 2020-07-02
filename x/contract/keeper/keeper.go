@@ -3,23 +3,18 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/firmachain/FirmaChain/x/contract/internal/types"
+	"github.com/firmachain/FirmaChain/x/contract/types"
 )
 
 type Keeper struct {
-	CoinKeeper bank.Keeper
-
+	cdc      *codec.Codec
 	storeKey sdk.StoreKey
-
-	cdc *codec.Codec
 }
 
-func NewKeeper(coinKeeper bank.Keeper, storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
+func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
 	return Keeper{
-		CoinKeeper: coinKeeper,
-		storeKey:   storeKey,
-		cdc:        cdc,
+		cdc:      cdc,
+		storeKey: storeKey,
 	}
 }
 

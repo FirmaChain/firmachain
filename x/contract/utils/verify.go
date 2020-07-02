@@ -16,18 +16,6 @@ import (
 
 var VerifiedUrl = []string{"ipfs.infura.io", "ipfs.contract.org"}
 
-// TODO:
-// KVStore에서 data 불러와 verify
-func VerifyFileFromKVStore() {
-
-}
-
-// Todo
-// Tx로 query날려 data 불러와 verify
-func VerifyFileFromTx() {
-
-}
-
 func VerifyFile(path string, hash string) error {
 
 	if err := VerifyUrl(path); err != nil {

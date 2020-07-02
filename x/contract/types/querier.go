@@ -2,6 +2,10 @@ package types
 
 import "strings"
 
+const (
+	QueryContract = "contract"
+)
+
 type QueryResContract []string
 
 func (n QueryResContract) String() string {

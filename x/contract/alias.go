@@ -1,14 +1,16 @@
 package contract
 
 import (
-	"github.com/firmachain/FirmaChain/x/contract/internal/keeper"
-	"github.com/firmachain/FirmaChain/x/contract/internal/types"
+	"github.com/firmachain/FirmaChain/x/contract/keeper"
+	"github.com/firmachain/FirmaChain/x/contract/types"
 )
 
 const (
-	ModuleName = types.ModuleName
-	RouterKey  = types.RouterKey
-	StoreKey   = types.StoreKey
+	ModuleName    = types.ModuleName
+	RouterKey     = types.RouterKey
+	StoreKey      = types.StoreKey
+	QuerierRoute  = types.QuerierRoute
+	QueryContract = types.QueryContract
 )
 
 var (

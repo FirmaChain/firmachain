@@ -2,13 +2,11 @@ package contract
 
 import (
 	"encoding/json"
-
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/firmachain/FirmaChain/x/contract/client/cli"
 	"github.com/firmachain/FirmaChain/x/contract/client/rest"
 
@@ -51,7 +49,7 @@ func (AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
 
 // Register rest routes
 func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
-	rest.RegisterRoutes(ctx, rtr, StoreKey)
+	rest.RegisterRoutes(ctx, rtr)
 }
 
 // Get the root query command of this module
@@ -61,21 +59,19 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 
 // Get the root tx command of this module
 func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetTxCmd(StoreKey, cdc)
+	return cli.GetTxCmd(cdc)
 }
 
 type AppModule struct {
 	AppModuleBasic
-	keeper     Keeper
-	coinKeeper bank.Keeper
+	keeper Keeper
 }
 
 // NewAppModule creates a new AppModule Object
-func NewAppModule(k Keeper, bankKeeper bank.Keeper) AppModule {
+func NewAppModule(k Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{},
 		keeper:         k,
-		coinKeeper:     bankKeeper,
 	}
 }
 

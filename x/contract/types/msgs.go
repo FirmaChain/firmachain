@@ -5,8 +5,6 @@ import (
 	"github.com/firmachain/FirmaChain/x/contract/utils"
 )
 
-const RouterKey = ModuleName
-
 type MsgAddContract struct {
 	Path  string         `json:"path"`
 	Hash  string         `json:"hash"`

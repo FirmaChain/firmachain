@@ -81,7 +81,7 @@ type FirmaChainApp struct {
 	distrKeeper    distr.Keeper
 	supplyKeeper   supply.Keeper
 	paramsKeeper   params.Keeper
-	fcKeeper       contract.Keeper
+	contractKeeper contract.Keeper
 
 	mm *module.Manager
 }
@@ -180,10 +180,9 @@ func NewFirmaChainApp(
 			app.slashingKeeper.Hooks()),
 	)
 
-	app.fcKeeper = contract.NewKeeper(
-		app.bankKeeper,
-		keys[contract.StoreKey],
+	app.contractKeeper = contract.NewKeeper(
 		app.cdc,
+		keys[contract.StoreKey],
 	)
 
 	app.mm = module.NewManager(
@@ -191,7 +190,7 @@ func NewFirmaChainApp(
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.accountKeeper),
 		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
-		contract.NewAppModule(app.fcKeeper, app.bankKeeper),
+		contract.NewAppModule(app.contractKeeper),
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		distr.NewAppModule(app.distrKeeper, app.supplyKeeper),
 		slashing.NewAppModule(app.slashingKeeper, app.stakingKeeper),

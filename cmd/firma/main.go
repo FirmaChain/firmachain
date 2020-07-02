@@ -19,7 +19,7 @@ import (
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
 	app "github.com/firmachain/FirmaChain"
-	"github.com/firmachain/FirmaChain/x/contract/utils"
+	"github.com/firmachain/FirmaChain/types/address"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -32,9 +32,9 @@ func main() {
 	cdc := app.MakeCodec()
 
 	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount(utils.Bech32PrefixAccAddr, utils.Bech32PrefixAccPub)
-	config.SetBech32PrefixForValidator(utils.Bech32PrefixValAddr, utils.Bech32PrefixValPub)
-	config.SetBech32PrefixForConsensusNode(utils.Bech32PrefixConsAddr, utils.Bech32PrefixConsPub)
+	config.SetBech32PrefixForAccount(address.Bech32PrefixAccAddr, address.Bech32PrefixAccPub)
+	config.SetBech32PrefixForValidator(address.Bech32PrefixValAddr, address.Bech32PrefixValPub)
+	config.SetBech32PrefixForConsensusNode(address.Bech32PrefixConsAddr, address.Bech32PrefixConsPub)
 	config.Seal()
 
 	ctx := server.NewDefaultContext()

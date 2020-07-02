@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/firmachain/FirmaChain/x/contract/internal/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+
+	"github.com/firmachain/FirmaChain/x/contract/types"
 )
 
 type addContractReq struct {
@@ -18,7 +18,7 @@ type addContractReq struct {
 	Owner   string       `json:"owner"`
 }
 
-func addContractHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func AddContractRequest(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req addContractReq
 

@@ -11,10 +11,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
-	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	app "github.com/firmachain/FirmaChain"
-	"github.com/firmachain/FirmaChain/x/contract/utils"
+	"github.com/firmachain/FirmaChain/types/address"
+	authrest "github.com/firmachain/FirmaChain/x/auth/client/rest"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	amino "github.com/tendermint/go-amino"
@@ -27,9 +27,9 @@ func main() {
 	cdc := app.MakeCodec()
 
 	config := sdk.GetConfig()
-	config.SetBech32PrefixForAccount(utils.Bech32PrefixAccAddr, utils.Bech32PrefixAccPub)
-	config.SetBech32PrefixForValidator(utils.Bech32PrefixValAddr, utils.Bech32PrefixValPub)
-	config.SetBech32PrefixForConsensusNode(utils.Bech32PrefixConsAddr, utils.Bech32PrefixConsPub)
+	config.SetBech32PrefixForAccount(address.Bech32PrefixAccAddr, address.Bech32PrefixAccPub)
+	config.SetBech32PrefixForValidator(address.Bech32PrefixValAddr, address.Bech32PrefixValPub)
+	config.SetBech32PrefixForConsensusNode(address.Bech32PrefixConsAddr, address.Bech32PrefixConsPub)
 	config.Seal()
 
 	rootCmd := &cobra.Command{
