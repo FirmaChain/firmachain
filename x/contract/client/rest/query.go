@@ -2,6 +2,7 @@ package rest
 
 import (
 	"fmt"
+	"github.com/firmachain/FirmaChain/x/contract/types"
 	"net/http"
 
 	"github.com/gorilla/mux"

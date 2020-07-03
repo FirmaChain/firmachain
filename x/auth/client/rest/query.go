@@ -1,6 +1,8 @@
 package rest
 
 import (
+	//"fmt"
+	//sdk "github.com/cosmos/cosmos-sdk/types"
 	"net/http"
 	"strconv"
 
@@ -9,12 +11,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 
-	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/firmachain/FirmaChain/x/auth/types"
 )
 
 func QueryEstimateGasHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req EstimateGasReq
+		var req types.EstimateGasReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			return
@@ -36,7 +38,6 @@ func QueryEstimateGasHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 
 		var tx = req.StdTx
 
-		tx.Signatures = []auth.StdSignature{{}}
 		txBytes, err := utils.GetTxEncoder(cliCtx.Codec)(tx)
 
 		if err != nil {
@@ -51,6 +52,9 @@ func QueryEstimateGasHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		rest.PostProcessResponse(w, cliCtx, EstimateGasResp{Gas: estimated, Adjusted: adjusted})
+		rest.PostProcessResponse(w, cliCtx, types.NewEstimateGasResp(estimated, adjusted))
+
+		//msg := types.NewEstimateGasResp(estimated, adjusted)
+		//utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
 	}
 }

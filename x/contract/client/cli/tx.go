@@ -15,7 +15,7 @@ import (
 func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Contract transaction subcommands",
+		Short:                      "contract transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -28,8 +28,8 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 func GetCmdAddContract(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "contract [path] [hash]",
-		Short: "Add contract",
+		Use:   "add [path] [hash]",
+		Short: "Add contract to blockchain",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
