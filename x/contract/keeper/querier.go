@@ -4,18 +4,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/FirmaChain/x/contract/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 func NewQuerier(keeper Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err sdk.Error) {
-		switch path[0] {
-		case types.QueryContract:
-			return QueryContract(ctx, path[1:], req, keeper)
-		default:
-			return nil, sdk.ErrUnknownRequest("unknown contract query endpoint")
-		}
+		return QueryContract(ctx, path, req, keeper)
 	}
 }
 
