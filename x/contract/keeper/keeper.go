@@ -25,7 +25,9 @@ func (k Keeper) IsContractPresent(ctx sdk.Context, hash string) bool {
 
 func (k Keeper) IsDuplicateOwner(contract types.Contract, owner sdk.AccAddress) bool {
 	for _, address := range contract.Owners {
-		return owner.Equals(address)
+		if ower.Equals(address) {
+			return true;
+		}
 	}
 
 	return false
