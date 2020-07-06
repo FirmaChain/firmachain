@@ -9,12 +9,12 @@ import (
 
 func NewQuerier(keeper Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err sdk.Error) {
-		return QueryContract(ctx, path, req, keeper)
+		return QueryContract(ctx, path[0], req, keeper)
 	}
 }
 
-func QueryContract(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	contract := keeper.GetContract(ctx, path[0])
+func QueryContract(ctx sdk.Context, hash string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+	contract := keeper.GetContract(ctx, hash)
 
 	res, err := codec.MarshalJSONIndent(keeper.cdc, contract)
 	if err != nil {

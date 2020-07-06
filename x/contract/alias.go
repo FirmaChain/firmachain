@@ -21,6 +21,12 @@ var (
 
 	NewContract       = types.NewContract
 	NewMsgAddContract = types.NewMsgAddContract
+
+	DefaultCodespace = types.DefaultCodespace
+
+	ErrContractDoesNotExist = types.ErrContractDoesNotExist
+	ErrContractInvalid      = types.ErrContractInvalid
+	ErrContractDuplicated   = types.ErrContractDuplicated
 )
 
 type (

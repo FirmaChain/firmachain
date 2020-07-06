@@ -21,11 +21,11 @@ func NewGenesisState(contractRecords []Contract, stakingData staking.GenesisStat
 
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.ContractRecords {
-		if record.Owner == nil {
-			return fmt.Errorf("invalid ContractRecords: Value: %s. Error: Missing Owner", record.Owner)
+		if len(record.Owners) == 0 {
+			return fmt.Errorf("invalid ContractRecords: Value: %v. Error: Missing Owner", record.Owners)
 		}
-		if record.Path == "" {
-			return fmt.Errorf("invalid ContractRecords: Value: %s. Error: Missing Path", record.Path)
+		if len(record.Paths) == 0 {
+			return fmt.Errorf("invalid ContractRecords: Value: %v. Error: Missing Path", record.Paths)
 		}
 		if record.Hash == "" {
 			return fmt.Errorf("invalid ContractRecords: Value: %s. Error: Missing Hash", record.Hash)
@@ -44,7 +44,7 @@ func DefaultGenesisState() GenesisState {
 
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for _, record := range data.ContractRecords {
-		keeper.SetContract(ctx, record.Path, record.Hash, record.Owner)
+		keeper.InitContract(ctx, record.Hash, record.Paths, record.Owners)
 	}
 	return []abci.ValidatorUpdate{}
 }

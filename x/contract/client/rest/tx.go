@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
-type addContractReq struct {
+type AddContractReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
 	Path    string       `json:"path"`
 	Hash    string       `json:"hash"`
@@ -20,7 +20,7 @@ type addContractReq struct {
 
 func AddContractHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req addContractReq
+		var req AddContractReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			return

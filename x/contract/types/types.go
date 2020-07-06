@@ -8,9 +8,9 @@ import (
 )
 
 type Contract struct {
-	Path  string         `json:"path"`
-	Hash  string         `json:"hash"`
-	Owner sdk.AccAddress `json:"owner"`
+	Hash   string           `json:"hash"`
+	Paths  []string         `json:"paths"`
+	Owners []sdk.AccAddress `json:"owners"`
 }
 
 func NewContract() Contract {
@@ -18,7 +18,12 @@ func NewContract() Contract {
 }
 
 func (c Contract) String() string {
-	return strings.TrimSpace(fmt.Sprintf(`Owner: %s
-Path: %s
-Hash: %s`, c.Owner, c.Path, c.Hash))
+	var owners []string
+	for _, address := range c.Owners {
+		owners = append(owners, address.String())
+	}
+
+	return strings.TrimSpace(fmt.Sprintf(`Hash %s
+Paths %s
+Owner %s`, strings.Join(owners[:], ","), strings.Join(c.Paths[:], ","), c.Hash))
 }

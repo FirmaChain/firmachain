@@ -9,6 +9,7 @@ const (
 
 	CodeContractDoesNotExist sdk.CodeType = 101
 	CodeContractInvalid      sdk.CodeType = 102
+	CodeContractDuplicated   sdk.CodeType = 103
 )
 
 func ErrContractDoesNotExist(codespace sdk.CodespaceType) sdk.Error {
@@ -17,4 +18,8 @@ func ErrContractDoesNotExist(codespace sdk.CodespaceType) sdk.Error {
 
 func ErrContractInvalid(codespace sdk.CodespaceType) sdk.Error {
 	return sdk.NewError(codespace, CodeContractInvalid, "Contract hash invalid or manipulated.")
+}
+
+func ErrContractDuplicated(codespace sdk.CodespaceType) sdk.Error {
+	return sdk.NewError(codespace, CodeContractDuplicated, "Duplicate contract")
 }
