@@ -24,9 +24,11 @@ func ValidateGenesis(data GenesisState) error {
 		if len(record.Owners) == 0 {
 			return fmt.Errorf("invalid ContractRecords: Value: %v. Error: Missing Owner", record.Owners)
 		}
-		if len(record.Paths) == 0 {
-			return fmt.Errorf("invalid ContractRecords: Value: %v. Error: Missing Path", record.Paths)
+
+		if record.Path == "" {
+			return fmt.Errorf("invalid ContractRecords: Value: %s. Error: Missing Path", record.Path)
 		}
+
 		if record.Hash == "" {
 			return fmt.Errorf("invalid ContractRecords: Value: %s. Error: Missing Hash", record.Hash)
 		}
@@ -44,7 +46,7 @@ func DefaultGenesisState() GenesisState {
 
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
 	for _, record := range data.ContractRecords {
-		keeper.InitContract(ctx, record.Hash, record.Paths, record.Owners)
+		keeper.InitContract(ctx, record.Hash, record.Path, record.Owners)
 	}
 	return []abci.ValidatorUpdate{}
 }
@@ -53,11 +55,9 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	var records []Contract
 	iterator := k.GetContractsIterator(ctx)
 	for ; iterator.Valid(); iterator.Next() {
-
 		hash := string(iterator.Key())
 		whois := k.GetContract(ctx, hash)
 		records = append(records, whois)
-
 	}
 
 	return GenesisState{ContractRecords: records}

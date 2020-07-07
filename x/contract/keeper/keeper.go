@@ -25,8 +25,8 @@ func (k Keeper) IsContractPresent(ctx sdk.Context, hash string) bool {
 
 func (k Keeper) IsDuplicateOwner(contract types.Contract, owner sdk.AccAddress) bool {
 	for _, address := range contract.Owners {
-		if ower.Equals(address) {
-			return true;
+		if owner.Equals(address) {
+			return true
 		}
 	}
 
@@ -47,10 +47,10 @@ func (k Keeper) GetContract(ctx sdk.Context, hash string) types.Contract {
 	return contract
 }
 
-func (k Keeper) InitContract(ctx sdk.Context, hash string, paths []string, owners []sdk.AccAddress) {
+func (k Keeper) InitContract(ctx sdk.Context, hash string, path string, owners []sdk.AccAddress) {
 	contract := k.GetContract(ctx, hash)
 	contract.Hash = hash
-	contract.Paths = paths
+	contract.Path = path
 	contract.Owners = owners
 
 	k.AddContract(ctx, hash, contract)
@@ -63,8 +63,14 @@ func (k Keeper) SetContract(ctx sdk.Context, hash string, path string, owner sdk
 		return types.ErrContractDuplicated(types.DefaultCodespace)
 	}
 
-	contract.Hash = hash
-	contract.Paths = append(contract.Paths, path)
+	if len(contract.Hash) == 0 {
+		contract.Hash = hash
+	}
+
+	if len(contract.Path) == 0 {
+		contract.Path = path
+	}
+
 	contract.Owners = append(contract.Owners, owner)
 
 	k.AddContract(ctx, hash, contract)

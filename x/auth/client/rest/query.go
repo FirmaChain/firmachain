@@ -1,8 +1,6 @@
 package rest
 
 import (
-	//"fmt"
-	//sdk "github.com/cosmos/cosmos-sdk/types"
 	"net/http"
 	"strconv"
 
@@ -53,8 +51,5 @@ func QueryEstimateGasHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		rest.PostProcessResponse(w, cliCtx, types.NewEstimateGasResp(estimated, adjusted))
-
-		//msg := types.NewEstimateGasResp(estimated, adjusted)
-		//utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
 	}
 }

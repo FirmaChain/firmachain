@@ -9,7 +9,7 @@ import (
 
 type Contract struct {
 	Hash   string           `json:"hash"`
-	Paths  []string         `json:"paths"`
+	Path   string           `json:"path"`
 	Owners []sdk.AccAddress `json:"owners"`
 }
 
@@ -25,5 +25,5 @@ func (c Contract) String() string {
 
 	return strings.TrimSpace(fmt.Sprintf(`Hash %s
 Paths %s
-Owner %s`, strings.Join(owners[:], ","), strings.Join(c.Paths[:], ","), c.Hash))
+Owner %s`, strings.Join(owners[:], ","), c.Path, c.Hash))
 }
