@@ -43,13 +43,13 @@ func QueryEstimateGasHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		estimated, adjusted, err := utils.CalculateGas(cliCtx.QueryWithData, cliCtx.Codec, txBytes, adjustment)
+		simRes, adjusted, err := utils.CalculateGas(cliCtx.QueryWithData, cliCtx.Codec, txBytes, adjustment)
 
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		rest.PostProcessResponse(w, cliCtx, types.NewEstimateGasResp(estimated, adjusted))
+		rest.PostProcessResponse(w, cliCtx, types.NewEstimateGasResp(simRes.GasUsed, adjusted))
 	}
 }

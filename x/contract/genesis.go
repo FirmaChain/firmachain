@@ -2,9 +2,7 @@ package contract
 
 import (
 	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
@@ -12,7 +10,7 @@ type GenesisState struct {
 	ContractRecords []Contract `json:"contract_records"`
 }
 
-func NewGenesisState(contractRecords []Contract, stakingData staking.GenesisState) GenesisState {
+func NewGenesisState() GenesisState {
 
 	return GenesisState{
 		ContractRecords: nil,

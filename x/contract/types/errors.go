@@ -1,25 +1,11 @@
 package types
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const (
-	DefaultCodespace sdk.CodespaceType = ModuleName
-
-	CodeContractDoesNotExist sdk.CodeType = 101
-	CodeContractInvalid      sdk.CodeType = 102
-	CodeContractDuplicated   sdk.CodeType = 103
+var (
+	ErrContractDoesNotExist = sdkerrors.Register(ModuleName, 101, "Contract does not exist")
+	ErrContractInvalid      = sdkerrors.Register(ModuleName, 102, "Contract hash invalid or manipulated.")
+	ErrContractDuplicated   = sdkerrors.Register(ModuleName, 103, "Duplicate contract")
 )
-
-func ErrContractDoesNotExist(codespace sdk.CodespaceType) sdk.Error {
-	return sdk.NewError(codespace, CodeContractDoesNotExist, "Contract does not exist")
-}
-
-func ErrContractInvalid(codespace sdk.CodespaceType) sdk.Error {
-	return sdk.NewError(codespace, CodeContractInvalid, "Contract hash invalid or manipulated.")
-}
-
-func ErrContractDuplicated(codespace sdk.CodespaceType) sdk.Error {
-	return sdk.NewError(codespace, CodeContractDuplicated, "Duplicate contract")
-}

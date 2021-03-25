@@ -2,6 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/FirmaChain/x/contract/utils"
 )
 
@@ -23,15 +24,15 @@ func (msg MsgAddContract) Route() string { return RouterKey }
 
 func (msg MsgAddContract) Type() string { return "add_contract" }
 
-func (msg MsgAddContract) ValidateBasic() sdk.Error {
+func (msg MsgAddContract) ValidateBasic() error {
 	if msg.Owner.Empty() {
-		return sdk.ErrInvalidAddress(msg.Owner.String())
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Owner.String())
 	}
 	if len(msg.Path) == 0 || len(msg.Hash) == 0 {
-		return sdk.ErrUnknownRequest("Path or Hash cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Path or Hash cannot be empty")
 	}
 	if err := utils.VerifyUrl(msg.Path); err != nil {
-		return sdk.ErrUnknownRequest("Contract has been manipulated or invalid.")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Contract has been manipulated or invalid.")
 	}
 
 	return nil

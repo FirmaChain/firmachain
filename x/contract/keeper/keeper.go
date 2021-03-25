@@ -56,11 +56,11 @@ func (k Keeper) InitContract(ctx sdk.Context, hash string, path string, owners [
 	k.AddContract(ctx, hash, contract)
 }
 
-func (k Keeper) SetContract(ctx sdk.Context, hash string, path string, owner sdk.AccAddress) sdk.Error {
+func (k Keeper) SetContract(ctx sdk.Context, hash string, path string, owner sdk.AccAddress) error {
 	contract := k.GetContract(ctx, hash)
 
 	if k.IsDuplicateOwner(contract, owner) {
-		return types.ErrContractDuplicated(types.DefaultCodespace)
+		return types.ErrContractDuplicated
 	}
 
 	if len(contract.Hash) == 0 {
