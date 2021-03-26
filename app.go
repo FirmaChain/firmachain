@@ -129,8 +129,9 @@ type FirmaChainApp struct {
 }
 
 func NewFirmaChainApp(
-	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
-	invCheckPeriod uint, baseAppOptions ...func(*bam.BaseApp),
+	logger log.Logger, db dbm.DB, traceStore io.Writer,
+	loadLatest bool, invCheckPeriod uint, skipUpgradeHeights map[int64]bool,
+	baseAppOptions ...func(*bam.BaseApp),
 ) *FirmaChainApp {
 
 	cdc := MakeCodec()

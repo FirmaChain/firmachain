@@ -4,20 +4,18 @@ import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/firmachain/FirmaChain/x/contract/types"
 )
 
-type GenesisState struct {
-	ContractRecords []Contract `json:"contract_records"`
-}
+func NewGenesisState() types.GenesisState {
 
-func NewGenesisState() GenesisState {
-
-	return GenesisState{
+	return types.GenesisState{
 		ContractRecords: nil,
 	}
 }
 
-func ValidateGenesis(data GenesisState) error {
+func ValidateGenesis(data types.GenesisState) error {
 	for _, record := range data.ContractRecords {
 		if len(record.Owners) == 0 {
 			return fmt.Errorf("invalid ContractRecords: Value: %v. Error: Missing Owner", record.Owners)
@@ -35,21 +33,21 @@ func ValidateGenesis(data GenesisState) error {
 	return nil
 }
 
-func DefaultGenesisState() GenesisState {
+func DefaultGenesisState() types.GenesisState {
 
-	return GenesisState{
+	return types.GenesisState{
 		ContractRecords: []Contract{},
 	}
 }
 
-func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
+func InitGenesis(ctx sdk.Context, keeper Keeper, data types.GenesisState) []abci.ValidatorUpdate {
 	for _, record := range data.ContractRecords {
 		keeper.InitContract(ctx, record.Hash, record.Path, record.Owners)
 	}
 	return []abci.ValidatorUpdate{}
 }
 
-func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
+func ExportGenesis(ctx sdk.Context, k Keeper) types.GenesisState {
 	var records []Contract
 	iterator := k.GetContractsIterator(ctx)
 	for ; iterator.Valid(); iterator.Next() {
@@ -58,5 +56,5 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 		records = append(records, whois)
 	}
 
-	return GenesisState{ContractRecords: records}
+	return types.GenesisState{ContractRecords: records}
 }

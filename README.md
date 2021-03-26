@@ -1,5 +1,7 @@
 # FirmaChain
 
+### A BLOCKCHAIN BASED E-CONTRACT PLATFORM
+
 FirmaChain adds a signing and verifying e-contract function to the blockchain. 
 
 Unlocking new limits of electronic contracts with blockchain technology, FirmaChain seeks to resolve all the social and legal issues (contracts, notarial, etc.) with written contracts through the use of electronic contracts based on FirmaChain’s data blockchain.
@@ -22,15 +24,14 @@ PoC of e-contract is In the wallet. Uploading original files on blockchain and v
 
 ## Network 
 
-- Testnet **Imperium** launched and is online.
-- Mainnet will launch at 2020 Q3
-	- FirmaChain is currently operating on Ethereum as an ERC-20 Token **FCT**. All contracts and tokens will be migrated to our main network once it is live.
+- Testnet **Imperium-0001** launched and is online.
+- Mainnet **Augustus-1** launched at 29.09.2020
+	- FirmaChain is currently operating on Ethereum as an ERC-20 Token **FCT**. All contracts and tokens will be migrated to our main network once it is complete network stabilization.
 
 ## EcoSystem
 - [FirmaChain-BlockExplorer](https://github.com/FirmaChain/FirmaChain-Explorer)
 - [FirmaChain-Wallet](https://firmachain.org/#/)
-	- Only Windows, Mac and Linux supports.
-	- Web version is under development.
+	- Only Windows, macOS supports.
 
 ## Community
 - [Website](https://firmachain.org/#/)
