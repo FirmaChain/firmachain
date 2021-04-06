@@ -1,6 +1,7 @@
 package main
 
 import (
+	app2 "github.com/firmachain/FirmaChain/app"
 	"os"
 	"path"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
-	app "github.com/firmachain/FirmaChain"
 	"github.com/firmachain/FirmaChain/types/address"
 	authrest "github.com/firmachain/FirmaChain/x/auth/client/rest"
 	"github.com/spf13/cobra"
@@ -25,7 +25,7 @@ import (
 func main() {
 	cobra.EnableCommandSorting = false
 
-	cdc := app.MakeCodec()
+	cdc := app2.MakeCodec()
 
 	config := sdk.GetConfig()
 	config.SetBech32PrefixForAccount(address.Bech32PrefixAccAddr, address.Bech32PrefixAccPub)
@@ -45,7 +45,7 @@ func main() {
 
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
-		client.ConfigCmd(app.DefaultCLIHome),
+		client.ConfigCmd(app2.DefaultCLIHome),
 		queryCmd(cdc),
 		txCmd(cdc),
 		flags.LineBreak,
@@ -57,7 +57,7 @@ func main() {
 		flags.NewCompletionCmd(rootCmd, true),
 	)
 
-	executor := cli.PrepareMainCmd(rootCmd, "FC", app.DefaultCLIHome)
+	executor := cli.PrepareMainCmd(rootCmd, "FC", app2.DefaultCLIHome)
 	err := executor.Execute()
 	if err != nil {
 		panic(err)
@@ -67,7 +67,7 @@ func main() {
 func registerRoutes(rs *lcd.RestServer) {
 	client.RegisterRoutes(rs.CliCtx, rs.Mux)
 	authrest.RegisterTxRoutes(rs.CliCtx, rs.Mux)
-	app.ModuleBasics.RegisterRESTRoutes(rs.CliCtx, rs.Mux)
+	app2.ModuleBasics.RegisterRESTRoutes(rs.CliCtx, rs.Mux)
 }
 
 func queryCmd(cdc *amino.Codec) *cobra.Command {
@@ -87,7 +87,7 @@ func queryCmd(cdc *amino.Codec) *cobra.Command {
 		flags.LineBreak,
 	)
 
-	app.ModuleBasics.AddQueryCommands(queryCmd, cdc)
+	app2.ModuleBasics.AddQueryCommands(queryCmd, cdc)
 
 	return queryCmd
 }
@@ -109,7 +109,7 @@ func txCmd(cdc *amino.Codec) *cobra.Command {
 		flags.LineBreak,
 	)
 
-	app.ModuleBasics.AddTxCommands(txCmd, cdc)
+	app2.ModuleBasics.AddTxCommands(txCmd, cdc)
 
 	return txCmd
 }

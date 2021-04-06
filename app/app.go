@@ -1,8 +1,9 @@
-package simapp
+package app
 
 import (
 	"encoding/json"
 	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/firmachain/FirmaChain/x/nft"
 	tmtypes "github.com/tendermint/tendermint/types"
 	"io"
 	"os"
@@ -57,7 +58,8 @@ var (
 		slashing.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
-		contract.AppModule{},
+		contract.AppModuleBasic{},
+		nft.AppModuleBasic{},
 	)
 
 	maccPerms = map[string][]string{
@@ -112,6 +114,7 @@ type FirmaChainApp struct {
 	ParamsKeeper   params.Keeper
 	EvidenceKeeper evidence.Keeper
 	ContractKeeper contract.Keeper
+	NFTKeeper      nft.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -136,7 +139,7 @@ func NewFirmaChainApp(
 		bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
 		supply.StoreKey, mint.StoreKey, distr.StoreKey, slashing.StoreKey,
 		params.StoreKey, upgrade.StoreKey, evidence.StoreKey,
-		contract.StoreKey,
+		contract.StoreKey, nft.StoreKey,
 	)
 
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
@@ -161,6 +164,7 @@ func NewFirmaChainApp(
 	app.subspaces[crisis.ModuleName] = app.ParamsKeeper.Subspace(crisis.DefaultParamspace)
 	app.subspaces[evidence.ModuleName] = app.ParamsKeeper.Subspace(evidence.DefaultParamspace)
 	app.subspaces[contract.ModuleName] = app.ParamsKeeper.Subspace(contract.DefaultParamspace)
+	app.subspaces[nft.ModuleName] = app.ParamsKeeper.Subspace(nft.DefaultParamspace)
 
 	// add keepers
 	app.AccountKeeper = auth.NewAccountKeeper(
@@ -212,6 +216,12 @@ func NewFirmaChainApp(
 		keys[contract.StoreKey],
 	)
 
+	// nft keeper
+	app.NFTKeeper = nft.NewKeeper(
+		app.cdc,
+		keys[nft.StoreKey],
+	)
+
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
 	app.mm = module.NewManager(
@@ -227,6 +237,7 @@ func NewFirmaChainApp(
 		upgrade.NewAppModule(app.UpgradeKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		contract.NewAppModule(app.ContractKeeper, app.AccountKeeper),
+		nft.NewAppModule(app.NFTKeeper, app.AccountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -241,7 +252,7 @@ func NewFirmaChainApp(
 		auth.ModuleName, distr.ModuleName, staking.ModuleName, bank.ModuleName,
 		slashing.ModuleName, mint.ModuleName, supply.ModuleName,
 		crisis.ModuleName, genutil.ModuleName, evidence.ModuleName,
-		contract.ModuleName,
+		contract.ModuleName, nft.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -261,6 +272,7 @@ func NewFirmaChainApp(
 		slashing.NewAppModule(app.SlashingKeeper, app.AccountKeeper, app.StakingKeeper),
 		params.NewAppModule(), // NOTE: only used for simulation to generate randomized param change proposals
 		contract.NewAppModule(app.ContractKeeper, app.AccountKeeper),
+		nft.NewAppModule(app.NFTKeeper, app.AccountKeeper),
 	)
 
 	// initialize BaseApp
