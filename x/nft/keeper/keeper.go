@@ -56,7 +56,7 @@ func (k Keeper) InitNFToken(ctx sdk.Context, hash string, tokenURI string, owner
 
 func (k Keeper) AddNFToken(ctx sdk.Context, hash string, tokenURI string, owner sdk.AccAddress) error {
 	if k.IsTokenExisted(ctx, hash) {
-		return types.ErrNFTokenDuplicated
+		return types.ErrExistedHash
 	}
 
 	nft := k.GetNFToken(ctx, hash)
@@ -76,16 +76,21 @@ func (k Keeper) AddNFToken(ctx sdk.Context, hash string, tokenURI string, owner 
 	return nil
 }
 
-func (k Keeper) TransferNFToken(ctx sdk.Context, hash string, recipient sdk.AccAddress) error {
+func (k Keeper) TransferNFToken(ctx sdk.Context, hash string, owner sdk.AccAddress, recipient sdk.AccAddress) error {
 	if !k.IsTokenExisted(ctx, hash) {
-		return types.ErrTokenDoesNotExist
+		return types.ErrTokenNotFound
 	}
 
-	if recipient == nil {
+	if owner.Empty() || recipient.Empty() {
 		return sdkerrors.ErrInvalidAddress
 	}
 
 	nft := k.GetNFToken(ctx, hash)
+
+	if !owner.Equals(nft.Owner) {
+		return types.ErrNotOwnerToken
+	}
+
 	nft.Owner = recipient
 
 	k.SetNFToken(ctx, hash, nft)

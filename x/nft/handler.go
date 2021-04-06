@@ -37,7 +37,7 @@ func handleMsgAddNFToken(ctx sdk.Context, keeper Keeper, msg MsgAddNFToken) (*sd
 }
 
 func handleMsgTransferNFToken(ctx sdk.Context, keeper Keeper, msg MsgTransferNFToken) (*sdk.Result, error) {
-	err := keeper.TransferNFToken(ctx, msg.Hash, msg.Recipient)
+	err := keeper.TransferNFToken(ctx, msg.Hash, msg.Owner, msg.Recipient)
 
 	if err != nil {
 		return nil, err

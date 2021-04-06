@@ -27,9 +27,10 @@ var (
 
 	DefaultCodespace = types.DefaultCodespace
 
-	ErrTokenDoesNotExist = types.ErrTokenDoesNotExist
-	ErrNFTokenInvalid    = types.ErrNFTokenInvalid
-	ErrNFTokenDuplicated = types.ErrNFTokenDuplicated
+	ErrTokenNotFound = types.ErrTokenNotFound
+	ErrInvalidHash   = types.ErrInvalidHash
+	ErrExistedHash   = types.ErrExistedHash
+	ErrNotOwnerToken = types.ErrNotOwnerToken
 )
 
 type (

@@ -5,7 +5,8 @@ import (
 )
 
 var (
-	ErrTokenDoesNotExist = sdkerrors.Register(ModuleName, 201, "Token does not exist.")
-	ErrNFTokenInvalid    = sdkerrors.Register(ModuleName, 202, "The hash is invalid or manipulated.")
-	ErrNFTokenDuplicated = sdkerrors.Register(ModuleName, 203, "Existed hash.")
+	ErrTokenNotFound = sdkerrors.Register(ModuleName, 201, "token not found")
+	ErrInvalidHash   = sdkerrors.Register(ModuleName, 202, "invalid hash")
+	ErrExistedHash   = sdkerrors.Register(ModuleName, 203, "existed hash")
+	ErrNotOwnerToken = sdkerrors.Register(ModuleName, 204, "not owner of token")
 )
