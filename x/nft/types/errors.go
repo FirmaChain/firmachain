@@ -9,4 +9,5 @@ var (
 	ErrInvalidHash   = sdkerrors.Register(ModuleName, 202, "invalid hash")
 	ErrExistedHash   = sdkerrors.Register(ModuleName, 203, "existed hash")
 	ErrNotOwnerToken = sdkerrors.Register(ModuleName, 204, "not owner of token")
+	ErrNoOutputs     = sdkerrors.Register(ModuleName, 206, "no outputs to transfer transaction")
 )

@@ -23,23 +23,24 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	cmd.AddCommand(flags.PostCommands(GetCmdAddNFToken(cdc))...)
-	cmd.AddCommand(flags.PostCommands(GetCmdTransferNFToken(cdc))...)
+	cmd.AddCommand(flags.PostCommands(GetCmdMint(cdc))...)
+	cmd.AddCommand(flags.PostCommands(GetCmdBurn(cdc))...)
+	cmd.AddCommand(flags.PostCommands(GetCmdTransfer(cdc))...)
 
 	return cmd
 }
 
-func GetCmdAddNFToken(cdc *codec.Codec) *cobra.Command {
+func GetCmdMint(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "add [hash] [tokenURI]",
-		Short: "Add new NFT to blockchain",
+		Use:   "mint [hash] [tokenURI]",
+		Short: "Mint NFT to blockchain",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			msg := types.NewMsgAddNFToken(args[0], args[1], cliCtx.GetFromAddress())
+			msg := types.NewMsgMint(args[0], args[1], cliCtx.GetFromAddress())
 			err := msg.ValidateBasic()
 
 			if err != nil {
@@ -53,7 +54,31 @@ func GetCmdAddNFToken(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-func GetCmdTransferNFToken(cdc *codec.Codec) *cobra.Command {
+func GetCmdBurn(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "burn [hash]",
+		Short: "Burn NFT from blockchain",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			msg := types.NewMsgBurn(args[0], cliCtx.GetFromAddress())
+			err := msg.ValidateBasic()
+
+			if err != nil {
+				return err
+			}
+
+			broadcast := utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+
+			return broadcast
+		},
+	}
+}
+
+func GetCmdTransfer(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "transfer [hash] [recipient]",
 		Short: "Transfer NFT to recipient",
@@ -68,7 +93,7 @@ func GetCmdTransferNFToken(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgTransferNFToken(args[0], cliCtx.GetFromAddress(), addr)
+			msg := types.NewMsgTransfer(args[0], cliCtx.GetFromAddress(), addr)
 			err = msg.ValidateBasic()
 
 			if err != nil {

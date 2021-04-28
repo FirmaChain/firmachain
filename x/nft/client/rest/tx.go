@@ -11,16 +11,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
-type AddNFTokenReq struct {
+type MintReq struct {
 	BaseReq  rest.BaseReq `json:"base_req"`
 	Hash     string       `json:"hash"`
 	TokenURI string       `json:"tokenURI"`
 	Owner    string       `json:"owner"`
 }
 
-func AddNFTokenHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func MintHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req AddNFTokenReq
+		var req MintReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			return
@@ -37,7 +37,7 @@ func AddNFTokenHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgAddNFToken(req.Hash, req.TokenURI, addr)
+		msg := types.NewMsgMint(req.Hash, req.TokenURI, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -48,16 +48,52 @@ func AddNFTokenHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-type TransferNFTokenReq struct {
+type BurnRef struct {
+	BaseReq rest.BaseReq `json:"base_req"`
+	Hash    string       `json:"hash"`
+	Owner   string       `json:"owner"`
+}
+
+func BurnHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req MintReq
+
+		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		addr, err := sdk.AccAddressFromBech32(req.Owner)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		msg := types.NewMsgBurn(req.Hash, addr)
+		err = msg.ValidateBasic()
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+	}
+}
+
+type TransferReq struct {
 	BaseReq   rest.BaseReq `json:"base_req"`
 	Hash      string       `json:"hash"`
 	Owner     string       `json:"owner"`
 	Recipient string       `json:"recipient"`
 }
 
-func TransferNFTokenHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func TransferHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req TransferNFTokenReq
+		var req TransferReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			return
@@ -80,7 +116,7 @@ func TransferNFTokenHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgTransferNFToken(req.Hash, ownerAddress, recipientAddress)
+		msg := types.NewMsgTransfer(req.Hash, ownerAddress, recipientAddress)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

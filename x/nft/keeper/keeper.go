@@ -54,7 +54,7 @@ func (k Keeper) InitNFToken(ctx sdk.Context, hash string, tokenURI string, owner
 	store.Set([]byte(hash), k.cdc.MustMarshalBinaryBare(nft))
 }
 
-func (k Keeper) AddNFToken(ctx sdk.Context, hash string, tokenURI string, owner sdk.AccAddress) error {
+func (k Keeper) Mint(ctx sdk.Context, hash string, tokenURI string, owner sdk.AccAddress) error {
 	if k.IsTokenExisted(ctx, hash) {
 		return types.ErrExistedHash
 	}
@@ -73,10 +73,46 @@ func (k Keeper) AddNFToken(ctx sdk.Context, hash string, tokenURI string, owner 
 
 	k.SetNFToken(ctx, hash, nft)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeMint,
+			sdk.NewAttribute(types.AttributeKeyHash, hash),
+			sdk.NewAttribute(types.AttributeKeySender, owner.String()),
+		),
+	)
+
 	return nil
 }
 
-func (k Keeper) TransferNFToken(ctx sdk.Context, hash string, owner sdk.AccAddress, recipient sdk.AccAddress) error {
+func (k Keeper) Burn(ctx sdk.Context, hash string, owner sdk.AccAddress) error {
+	if !k.IsTokenExisted(ctx, hash) {
+		return types.ErrTokenNotFound
+	}
+
+	if owner.Empty() {
+		return sdkerrors.ErrInvalidAddress
+	}
+
+	nft := k.GetNFToken(ctx, hash)
+
+	if !owner.Equals(nft.Owner) {
+		return types.ErrNotOwnerToken
+	}
+
+	k.DeleteNFToken(ctx, hash)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeBurn,
+			sdk.NewAttribute(types.AttributeKeyHash, hash),
+			sdk.NewAttribute(types.AttributeKeySender, owner.String()),
+		),
+	)
+
+	return nil
+}
+
+func (k Keeper) Transfer(ctx sdk.Context, hash string, owner sdk.AccAddress, recipient sdk.AccAddress) error {
 	if !k.IsTokenExisted(ctx, hash) {
 		return types.ErrTokenNotFound
 	}
@@ -95,12 +131,44 @@ func (k Keeper) TransferNFToken(ctx sdk.Context, hash string, owner sdk.AccAddre
 
 	k.SetNFToken(ctx, hash, nft)
 
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeTransfer,
+			sdk.NewAttribute(types.AttributeKeyHash, hash),
+			sdk.NewAttribute(types.AttributeKeySender, owner.String()),
+			sdk.NewAttribute(types.AttributeKeyRecipient, recipient.String()),
+		),
+	)
+
+	return nil
+}
+
+func (k Keeper) MultiTransfer(ctx sdk.Context, owner sdk.AccAddress, outputs []types.Output) error {
+	// Safety check ensuring that when sending coins the k must maintain the
+	// Check supply invariant and validity of NFToken.
+
+	for _, out := range outputs {
+		if err := out.ValidateBasic(); err != nil {
+			return err
+		}
+
+		err := k.Transfer(ctx, out.Hash, owner, out.Recipient)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 func (k Keeper) SetNFToken(ctx sdk.Context, hash string, nft types.NFToken) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(hash), k.cdc.MustMarshalBinaryBare(nft))
+}
+
+func (k Keeper) DeleteNFToken(ctx sdk.Context, hash string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete([]byte(hash))
 }
 
 func (k Keeper) GetNFTokensIterator(ctx sdk.Context) sdk.Iterator {

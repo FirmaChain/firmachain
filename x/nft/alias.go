@@ -6,13 +6,17 @@ import (
 )
 
 const (
+	QueryNFToken      = types.QueryNFToken
 	ModuleName        = types.ModuleName
+	QuerierRoute      = types.QuerierRoute
 	RouterKey         = types.RouterKey
 	StoreKey          = types.StoreKey
-	QuerierRoute      = types.QuerierRoute
 	DefaultParamspace = types.DefaultParamspace
 
-	QueryNFToken = types.QueryNFToken
+	EventTypeTransfer     = types.EventTypeTransfer
+	AttributeKeyHash      = types.AttributeKeyHash
+	AttributeKeyRecipient = types.AttributeKeyRecipient
+	AttributeKeySender    = types.AttributeKeySender
 )
 
 var (
@@ -21,9 +25,11 @@ var (
 	ModuleCdc     = types.ModuleCdc
 	RegisterCodec = types.RegisterCodec
 
-	NewNFToken            = types.NewNFToken()
-	NewMsgAddNFToken      = types.NewMsgAddNFToken
-	NewMsgTransferNFToken = types.NewMsgTransferNFToken
+	NewNFToken          = types.NewNFToken()
+	NewMsgMint          = types.NewMsgMint
+	NewMsgBurn          = types.NewMsgBurn
+	NewMsgTransfer      = types.NewMsgTransfer
+	NewMsgMultiTransfer = types.NewMsgMultiTransfer
 
 	DefaultCodespace = types.DefaultCodespace
 
@@ -36,8 +42,11 @@ var (
 type (
 	Keeper = keeper.Keeper
 
-	NFToken            = types.NFToken
-	MsgAddNFToken      = types.MsgAddNFToken
-	MsgTransferNFToken = types.MsgTransferNFToken
-	QueryResNFToken    = types.QueryResNFToken
+	NFToken          = types.NFToken
+	MsgMint          = types.MsgMint
+	MsgBurn          = types.MsgBurn
+	MsgTransfer      = types.MsgTransfer
+	MsgMultiTransfer = types.MsgMultiTransfer
+	QueryResNFToken  = types.QueryResNFToken
+	Output           = types.Output
 )
