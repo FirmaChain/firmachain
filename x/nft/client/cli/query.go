@@ -27,7 +27,7 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var response types.NFToken
+			var response types.NFT
 			cdc.MustUnmarshalJSON(res, &response)
 
 			return cliCtx.PrintOutput(response)

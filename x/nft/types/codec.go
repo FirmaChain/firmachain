@@ -11,8 +11,8 @@ func init() {
 }
 
 func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgMint{}, "nft/MsgMint", nil)
-	cdc.RegisterConcrete(MsgTransfer{}, "nft/MsgTransfer", nil)
-	cdc.RegisterConcrete(MsgMultiTransfer{}, "nft/MsgMultiTransfer", nil)
-	cdc.RegisterConcrete(MsgBurn{}, "nft/MsgBurn", nil)
+	cdc.RegisterConcrete(MsgMintNFT{}, "nft/MsgMintNFT", nil)
+	cdc.RegisterConcrete(MsgTransferNFT{}, "nft/MsgTransferNFT", nil)
+	cdc.RegisterConcrete(MsgMultiTransferNFT{}, "nft/MsgMultiTransferNFT", nil)
+	cdc.RegisterConcrete(MsgBurnNFT{}, "nft/MsgBurnNFT", nil)
 }

@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	QueryNFToken      = types.QueryNFToken
+	QueryNFT          = types.QueryNFT
 	ModuleName        = types.ModuleName
 	QuerierRoute      = types.QuerierRoute
 	RouterKey         = types.RouterKey
@@ -25,11 +25,11 @@ var (
 	ModuleCdc     = types.ModuleCdc
 	RegisterCodec = types.RegisterCodec
 
-	NewNFToken          = types.NewNFToken()
-	NewMsgMint          = types.NewMsgMint
-	NewMsgBurn          = types.NewMsgBurn
-	NewMsgTransfer      = types.NewMsgTransfer
-	NewMsgMultiTransfer = types.NewMsgMultiTransfer
+	NewNFT                 = types.NewNFT()
+	NewMsgMintNFT          = types.NewMsgMintNFT
+	NewMsgBurnNFT          = types.NewMsgBurnNFT
+	NewMsgTransferNFT      = types.NewMsgTransferNFT
+	NewMsgMultiTransferNFT = types.NewMsgMultiTransferNFT
 
 	DefaultCodespace = types.DefaultCodespace
 
@@ -42,11 +42,11 @@ var (
 type (
 	Keeper = keeper.Keeper
 
-	NFToken          = types.NFToken
-	MsgMint          = types.MsgMint
-	MsgBurn          = types.MsgBurn
-	MsgTransfer      = types.MsgTransfer
-	MsgMultiTransfer = types.MsgMultiTransfer
-	QueryResNFToken  = types.QueryResNFToken
-	Output           = types.Output
+	NFT                 = types.NFT
+	MsgMintNFT          = types.MsgMintNFT
+	MsgBurnNFT          = types.MsgBurnNFT
+	MsgTransferNFT      = types.MsgTransferNFT
+	MsgMultiTransferNFT = types.MsgMultiTransferNFT
+	QueryResNFT         = types.QueryResNFT
+	Output              = types.Output
 )

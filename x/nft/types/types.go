@@ -7,17 +7,17 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-type NFToken struct {
+type NFT struct {
 	Hash     string         `json:"hash"`
 	TokenURI string         `json:"tokenURI"`
 	Owner    sdk.AccAddress `json:"owner"`
 }
 
-func NewNFToken() NFToken {
-	return NFToken{}
+func NewNFT() NFT {
+	return NFT{}
 }
 
-func (nft NFToken) String() string {
+func (nft NFT) String() string {
 
 	return strings.TrimSpace(fmt.Sprintf(`Hash %s
 TokenURI %s

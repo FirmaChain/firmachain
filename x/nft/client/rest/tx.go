@@ -37,7 +37,7 @@ func MintHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgMint(req.Hash, req.TokenURI, addr)
+		msg := types.NewMsgMintNFT(req.Hash, req.TokenURI, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -73,7 +73,7 @@ func BurnHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgBurn(req.Hash, addr)
+		msg := types.NewMsgBurnNFT(req.Hash, addr)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -116,7 +116,7 @@ func TransferHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgTransfer(req.Hash, ownerAddress, recipientAddress)
+		msg := types.NewMsgTransferNFT(req.Hash, ownerAddress, recipientAddress)
 		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

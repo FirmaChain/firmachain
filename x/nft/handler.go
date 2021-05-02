@@ -10,21 +10,21 @@ import (
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		switch msg := msg.(type) {
-		case MsgMint:
-			return handleMsgMint(ctx, keeper, msg)
-		case MsgBurn:
-			return handleMsgBurn(ctx, keeper, msg)
-		case MsgTransfer:
-			return handleMsgTransfer(ctx, keeper, msg)
-		case MsgMultiTransfer:
-			return handleMsgMultiTransfer(ctx, keeper, msg)
+		case MsgMintNFT:
+			return handleMsgMintNFT(ctx, keeper, msg)
+		case MsgBurnNFT:
+			return handleMsgBurnNFT(ctx, keeper, msg)
+		case MsgTransferNFT:
+			return handleMsgTransferNFT(ctx, keeper, msg)
+		case MsgMultiTransferNFT:
+			return handleMsgMultiTransferNFT(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("Unrecognized contract Msg type: %v", msg.Type())
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}
 }
-func handleMsgMint(ctx sdk.Context, keeper Keeper, msg MsgMint) (*sdk.Result, error) {
+func handleMsgMintNFT(ctx sdk.Context, keeper Keeper, msg MsgMintNFT) (*sdk.Result, error) {
 	err := keeper.Mint(ctx, msg.Hash, msg.TokenURI, msg.Owner)
 
 	if err != nil {
@@ -38,7 +38,7 @@ func handleMsgMint(ctx sdk.Context, keeper Keeper, msg MsgMint) (*sdk.Result, er
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }
 
-func handleMsgBurn(ctx sdk.Context, keeper Keeper, msg MsgBurn) (*sdk.Result, error) {
+func handleMsgBurnNFT(ctx sdk.Context, keeper Keeper, msg MsgBurnNFT) (*sdk.Result, error) {
 	err := keeper.Burn(ctx, msg.Hash, msg.Owner)
 
 	if err != nil {
@@ -52,7 +52,7 @@ func handleMsgBurn(ctx sdk.Context, keeper Keeper, msg MsgBurn) (*sdk.Result, er
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }
 
-func handleMsgTransfer(ctx sdk.Context, keeper Keeper, msg MsgTransfer) (*sdk.Result, error) {
+func handleMsgTransferNFT(ctx sdk.Context, keeper Keeper, msg MsgTransferNFT) (*sdk.Result, error) {
 	err := keeper.Transfer(ctx, msg.Hash, msg.Owner, msg.Recipient)
 
 	if err != nil {
@@ -66,7 +66,7 @@ func handleMsgTransfer(ctx sdk.Context, keeper Keeper, msg MsgTransfer) (*sdk.Re
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }
 
-func handleMsgMultiTransfer(ctx sdk.Context, keeper Keeper, msg MsgMultiTransfer) (*sdk.Result, error) {
+func handleMsgMultiTransferNFT(ctx sdk.Context, keeper Keeper, msg MsgMultiTransferNFT) (*sdk.Result, error) {
 	err := keeper.MultiTransfer(ctx, msg.Owner, msg.Outputs)
 
 	if err != nil {

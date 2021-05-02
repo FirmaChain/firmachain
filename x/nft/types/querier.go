@@ -3,11 +3,11 @@ package types
 import "strings"
 
 const (
-	QueryNFToken = "nft"
+	QueryNFT = "nft"
 )
 
-type QueryResNFToken []string
+type QueryResNFT []string
 
-func (n QueryResNFToken) String() string {
+func (n QueryResNFT) String() string {
 	return strings.Join(n[:], "\n")
 }
