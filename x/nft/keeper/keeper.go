@@ -80,7 +80,7 @@ func (k Keeper) Mint(ctx sdk.Context, hash string, tokenURI string, owner sdk.Ac
 		sdk.NewEvent(
 			types.EventTypeMint,
 			sdk.NewAttribute(types.AttributeKeyHash, hash),
-			sdk.NewAttribute(types.AttributeKeySender, owner.String()),
+			sdk.NewAttribute(types.AttributeKeyOwner, owner.String()),
 		),
 	)
 

@@ -2,10 +2,11 @@ package types
 
 // nft module event types
 const (
-	EventTypeMint     = "mint"
-	EventTypeTransfer = "transfer"
-	EventTypeBurn     = "burn"
+	EventTypeMint     = "nft_mint"
+	EventTypeTransfer = "nft_transfer"
+	EventTypeBurn     = "nft_burn"
 
+	AttributeKeyOwner     = "owner"
 	AttributeKeySender    = "sender"
 	AttributeKeyRecipient = "recipient"
 	AttributeKeyHash      = "hash"

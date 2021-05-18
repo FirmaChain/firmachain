@@ -17,6 +17,7 @@ const (
 	AttributeKeyHash      = types.AttributeKeyHash
 	AttributeKeyRecipient = types.AttributeKeyRecipient
 	AttributeKeySender    = types.AttributeKeySender
+	AttributeKeyOwner     = types.AttributeKeyOwner
 )
 
 var (
