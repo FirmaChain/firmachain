@@ -126,8 +126,10 @@ func (k Keeper) Transfer(ctx sdk.Context, hash string, owner sdk.AccAddress, rec
 
 	acc := k.ak.GetAccount(ctx, recipient)
 	if acc == nil {
-		k.ak.NewAccountWithAddress(ctx, recipient)
+		acc = k.ak.NewAccountWithAddress(ctx, recipient)
 	}
+
+	k.ak.SetAccount(ctx, acc)
 
 	nft := k.GetNFT(ctx, hash)
 

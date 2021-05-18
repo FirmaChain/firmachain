@@ -60,11 +60,6 @@ func (k Keeper) InitContract(ctx sdk.Context, hash string, path string, owners [
 }
 
 func (k Keeper) SetContract(ctx sdk.Context, hash string, path string, owner sdk.AccAddress) error {
-	acc := k.ak.GetAccount(ctx, owner)
-	if acc == nil {
-		k.ak.NewAccountWithAddress(ctx, owner)
-	}
-
 	contract := k.GetContract(ctx, hash)
 
 	if k.IsDuplicateOwner(contract, owner) {
