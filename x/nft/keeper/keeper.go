@@ -28,27 +28,27 @@ func (k Keeper) IsTokenExisted(ctx sdk.Context, hash string) bool {
 	return store.Has([]byte(hash))
 }
 
-func (k Keeper) IsDuplicateOwner(nft types.NFToken, owner sdk.AccAddress) bool {
+func (k Keeper) IsDuplicateOwner(nft types.NFT, owner sdk.AccAddress) bool {
 	return owner.Equals(nft.Owner)
 }
 
-func (k Keeper) GetNFToken(ctx sdk.Context, hash string) types.NFToken {
+func (k Keeper) GetNFT(ctx sdk.Context, hash string) types.NFT {
 	store := ctx.KVStore(k.storeKey)
 
 	if !k.IsTokenExisted(ctx, hash) {
-		return types.NewNFToken()
+		return types.NewNFT()
 	}
 
 	bz := store.Get([]byte(hash))
 
-	var nft types.NFToken
+	var nft types.NFT
 	k.cdc.MustUnmarshalBinaryBare(bz, &nft)
 
 	return nft
 }
 
-func (k Keeper) InitNFToken(ctx sdk.Context, hash string, tokenURI string, owner sdk.AccAddress) {
-	nft := k.GetNFToken(ctx, hash)
+func (k Keeper) InitNFT(ctx sdk.Context, hash string, tokenURI string, owner sdk.AccAddress) {
+	nft := k.GetNFT(ctx, hash)
 	nft.Hash = hash
 	nft.TokenURI = tokenURI
 	nft.Owner = owner
@@ -62,7 +62,7 @@ func (k Keeper) Mint(ctx sdk.Context, hash string, tokenURI string, owner sdk.Ac
 		return types.ErrExistedHash
 	}
 
-	nft := k.GetNFToken(ctx, hash)
+	nft := k.GetNFT(ctx, hash)
 
 	if len(nft.Hash) == 0 {
 		nft.Hash = hash
@@ -74,7 +74,7 @@ func (k Keeper) Mint(ctx sdk.Context, hash string, tokenURI string, owner sdk.Ac
 
 	nft.Owner = owner
 
-	k.SetNFToken(ctx, hash, nft)
+	k.SetNFT(ctx, hash, nft)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -96,13 +96,13 @@ func (k Keeper) Burn(ctx sdk.Context, hash string, owner sdk.AccAddress) error {
 		return sdkerrors.ErrInvalidAddress
 	}
 
-	nft := k.GetNFToken(ctx, hash)
+	nft := k.GetNFT(ctx, hash)
 
 	if !owner.Equals(nft.Owner) {
 		return types.ErrNotOwnerToken
 	}
 
-	k.DeleteNFToken(ctx, hash)
+	k.DeleteNFT(ctx, hash)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -129,7 +129,7 @@ func (k Keeper) Transfer(ctx sdk.Context, hash string, owner sdk.AccAddress, rec
 		k.ak.NewAccountWithAddress(ctx, recipient)
 	}
 
-	nft := k.GetNFToken(ctx, hash)
+	nft := k.GetNFT(ctx, hash)
 
 	if !owner.Equals(nft.Owner) {
 		return types.ErrNotOwnerToken
@@ -137,7 +137,7 @@ func (k Keeper) Transfer(ctx sdk.Context, hash string, owner sdk.AccAddress, rec
 
 	nft.Owner = recipient
 
-	k.SetNFToken(ctx, hash, nft)
+	k.SetNFT(ctx, hash, nft)
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -153,7 +153,7 @@ func (k Keeper) Transfer(ctx sdk.Context, hash string, owner sdk.AccAddress, rec
 
 func (k Keeper) MultiTransfer(ctx sdk.Context, owner sdk.AccAddress, outputs []types.Output) error {
 	// Safety check ensuring that when sending coins the k must maintain the
-	// Check supply invariant and validity of NFToken.
+	// Check supply invariant and validity of NFT.
 
 	for _, out := range outputs {
 		if err := out.ValidateBasic(); err != nil {
@@ -169,17 +169,17 @@ func (k Keeper) MultiTransfer(ctx sdk.Context, owner sdk.AccAddress, outputs []t
 	return nil
 }
 
-func (k Keeper) SetNFToken(ctx sdk.Context, hash string, nft types.NFToken) {
+func (k Keeper) SetNFT(ctx sdk.Context, hash string, nft types.NFT) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(hash), k.cdc.MustMarshalBinaryBare(nft))
 }
 
-func (k Keeper) DeleteNFToken(ctx sdk.Context, hash string) {
+func (k Keeper) DeleteNFT(ctx sdk.Context, hash string) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete([]byte(hash))
 }
 
-func (k Keeper) GetNFTokensIterator(ctx sdk.Context) sdk.Iterator {
+func (k Keeper) GetNFTsIterator(ctx sdk.Context) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)
 	return sdk.KVStorePrefixIterator(store, nil)
 }

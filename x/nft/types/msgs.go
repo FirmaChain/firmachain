@@ -5,25 +5,25 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-type MsgMint struct {
+type MsgMintNFT struct {
 	Hash     string         `json:"hash"`
 	TokenURI string         `json:"tokenURI"`
 	Owner    sdk.AccAddress `json:"owner"`
 }
 
-func NewMsgMint(hash string, tokenURI string, owner sdk.AccAddress) MsgMint {
-	return MsgMint{
+func NewMsgMintNFT(hash string, tokenURI string, owner sdk.AccAddress) MsgMintNFT {
+	return MsgMintNFT{
 		Hash:     hash,
 		TokenURI: tokenURI,
 		Owner:    owner,
 	}
 }
 
-func (msg MsgMint) Route() string { return RouterKey }
+func (msg MsgMintNFT) Route() string { return RouterKey }
 
-func (msg MsgMint) Type() string { return "mint_nft" }
+func (msg MsgMintNFT) Type() string { return "mint_nft" }
 
-func (msg MsgMint) ValidateBasic() error {
+func (msg MsgMintNFT) ValidateBasic() error {
 	if msg.Owner.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Owner.String())
 	}
@@ -34,31 +34,31 @@ func (msg MsgMint) ValidateBasic() error {
 	return nil
 }
 
-func (msg MsgMint) GetSignBytes() []byte {
+func (msg MsgMintNFT) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
-func (msg MsgMint) GetSigners() []sdk.AccAddress {
+func (msg MsgMintNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
 
-type MsgBurn struct {
+type MsgBurnNFT struct {
 	Hash  string         `json:"hash"`
 	Owner sdk.AccAddress `json:"owner"`
 }
 
-func NewMsgBurn(hash string, owner sdk.AccAddress) MsgBurn {
-	return MsgBurn{
+func NewMsgBurnNFT(hash string, owner sdk.AccAddress) MsgBurnNFT {
+	return MsgBurnNFT{
 		Hash:  hash,
 		Owner: owner,
 	}
 }
 
-func (msg MsgBurn) Route() string { return RouterKey }
+func (msg MsgBurnNFT) Route() string { return RouterKey }
 
-func (msg MsgBurn) Type() string { return "burn_nft" }
+func (msg MsgBurnNFT) Type() string { return "burn_nft" }
 
-func (msg MsgBurn) ValidateBasic() error {
+func (msg MsgBurnNFT) ValidateBasic() error {
 	if msg.Owner.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Owner.String())
 	}
@@ -69,33 +69,33 @@ func (msg MsgBurn) ValidateBasic() error {
 	return nil
 }
 
-func (msg MsgBurn) GetSignBytes() []byte {
+func (msg MsgBurnNFT) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
-func (msg MsgBurn) GetSigners() []sdk.AccAddress {
+func (msg MsgBurnNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
 
-type MsgTransfer struct {
+type MsgTransferNFT struct {
 	Hash      string         `json:"hash"`
 	Owner     sdk.AccAddress `json:"owner"`
 	Recipient sdk.AccAddress `json:"recipient"`
 }
 
-func NewMsgTransfer(hash string, owner sdk.AccAddress, recipient sdk.AccAddress) MsgTransfer {
-	return MsgTransfer{
+func NewMsgTransferNFT(hash string, owner sdk.AccAddress, recipient sdk.AccAddress) MsgTransferNFT {
+	return MsgTransferNFT{
 		Hash:      hash,
 		Owner:     owner,
 		Recipient: recipient,
 	}
 }
 
-func (msg MsgTransfer) Route() string { return RouterKey }
+func (msg MsgTransferNFT) Route() string { return RouterKey }
 
-func (msg MsgTransfer) Type() string { return "transfer_nft" }
+func (msg MsgTransferNFT) Type() string { return "transfer_nft" }
 
-func (msg MsgTransfer) ValidateBasic() error {
+func (msg MsgTransferNFT) ValidateBasic() error {
 	if msg.Owner.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Owner.String())
 	}
@@ -111,31 +111,31 @@ func (msg MsgTransfer) ValidateBasic() error {
 	return nil
 }
 
-func (msg MsgTransfer) GetSignBytes() []byte {
+func (msg MsgTransferNFT) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
-func (msg MsgTransfer) GetSigners() []sdk.AccAddress {
+func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
 
-type MsgMultiTransfer struct {
+type MsgMultiTransferNFT struct {
 	Owner   sdk.AccAddress `json:"owner"`
 	Outputs []Output       `json:"outputs"`
 }
 
-func NewMsgMultiTransfer(owner sdk.AccAddress, outputs []Output) MsgMultiTransfer {
-	return MsgMultiTransfer{
+func NewMsgMultiTransferNFT(owner sdk.AccAddress, outputs []Output) MsgMultiTransferNFT {
+	return MsgMultiTransferNFT{
 		Owner:   owner,
 		Outputs: outputs,
 	}
 }
 
-func (msg MsgMultiTransfer) Route() string { return RouterKey }
+func (msg MsgMultiTransferNFT) Route() string { return RouterKey }
 
-func (msg MsgMultiTransfer) Type() string { return "multi_transfer_nft" }
+func (msg MsgMultiTransferNFT) Type() string { return "multi_transfer_nft" }
 
-func (msg MsgMultiTransfer) ValidateBasic() error {
+func (msg MsgMultiTransferNFT) ValidateBasic() error {
 	if msg.Owner.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Owner.String())
 	}
@@ -153,11 +153,11 @@ func (msg MsgMultiTransfer) ValidateBasic() error {
 	return nil
 }
 
-func (msg MsgMultiTransfer) GetSignBytes() []byte {
+func (msg MsgMultiTransferNFT) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
 }
 
-func (msg MsgMultiTransfer) GetSigners() []sdk.AccAddress {
+func (msg MsgMultiTransferNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
 

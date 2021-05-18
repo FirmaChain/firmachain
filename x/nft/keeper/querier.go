@@ -14,7 +14,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 }
 
 func QueryContract(ctx sdk.Context, hash string, req abci.RequestQuery, keeper Keeper) ([]byte, error) {
-	contract := keeper.GetNFToken(ctx, hash)
+	contract := keeper.GetNFT(ctx, hash)
 
 	res, err := codec.MarshalJSONIndent(keeper.cdc, contract)
 	if err != nil {

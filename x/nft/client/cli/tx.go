@@ -40,7 +40,7 @@ func GetCmdMint(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			msg := types.NewMsgMint(args[0], args[1], cliCtx.GetFromAddress())
+			msg := types.NewMsgMintNFT(args[0], args[1], cliCtx.GetFromAddress())
 			err := msg.ValidateBasic()
 
 			if err != nil {
@@ -64,7 +64,7 @@ func GetCmdBurn(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			msg := types.NewMsgBurn(args[0], cliCtx.GetFromAddress())
+			msg := types.NewMsgBurnNFT(args[0], cliCtx.GetFromAddress())
 			err := msg.ValidateBasic()
 
 			if err != nil {
@@ -93,7 +93,7 @@ func GetCmdTransfer(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgTransfer(args[0], cliCtx.GetFromAddress(), addr)
+			msg := types.NewMsgTransferNFT(args[0], cliCtx.GetFromAddress(), addr)
 			err = msg.ValidateBasic()
 
 			if err != nil {
