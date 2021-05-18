@@ -3,18 +3,21 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/firmachain/FirmaChain/x/contract/types"
 )
 
 type Keeper struct {
 	cdc      *codec.Codec
 	storeKey sdk.StoreKey
+	ak       auth.AccountKeeper
 }
 
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
+func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, accountKeeper auth.AccountKeeper) Keeper {
 	return Keeper{
 		cdc:      cdc,
 		storeKey: storeKey,
+		ak:       accountKeeper,
 	}
 }
 
@@ -57,6 +60,11 @@ func (k Keeper) InitContract(ctx sdk.Context, hash string, path string, owners [
 }
 
 func (k Keeper) SetContract(ctx sdk.Context, hash string, path string, owner sdk.AccAddress) error {
+	acc := k.ak.GetAccount(ctx, owner)
+	if acc == nil {
+		k.ak.NewAccountWithAddress(ctx, owner)
+	}
+
 	contract := k.GetContract(ctx, hash)
 
 	if k.IsDuplicateOwner(contract, owner) {

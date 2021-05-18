@@ -214,12 +214,14 @@ func NewFirmaChainApp(
 	app.ContractKeeper = contract.NewKeeper(
 		app.cdc,
 		keys[contract.StoreKey],
+		app.AccountKeeper,
 	)
 
 	// nft keeper
 	app.NFTKeeper = nft.NewKeeper(
 		app.cdc,
 		keys[nft.StoreKey],
+		app.AccountKeeper,
 	)
 
 	// NOTE: Any module instantiated in the module manager that is later modified

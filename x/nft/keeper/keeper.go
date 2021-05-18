@@ -4,18 +4,21 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/firmachain/FirmaChain/x/nft/types"
 )
 
 type Keeper struct {
 	cdc      *codec.Codec
 	storeKey sdk.StoreKey
+	ak       auth.AccountKeeper
 }
 
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
+func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey, accountKeeper auth.AccountKeeper) Keeper {
 	return Keeper{
 		cdc:      cdc,
 		storeKey: storeKey,
+		ak:       accountKeeper,
 	}
 }
 
@@ -119,6 +122,11 @@ func (k Keeper) Transfer(ctx sdk.Context, hash string, owner sdk.AccAddress, rec
 
 	if owner.Empty() || recipient.Empty() {
 		return sdkerrors.ErrInvalidAddress
+	}
+
+	acc := k.ak.GetAccount(ctx, recipient)
+	if acc == nil {
+		k.ak.NewAccountWithAddress(ctx, recipient)
 	}
 
 	nft := k.GetNFToken(ctx, hash)
