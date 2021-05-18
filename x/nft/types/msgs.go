@@ -42,6 +42,48 @@ func (msg MsgMintNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
 
+type MsgDelegateMintNFT struct {
+	Hash     string         `json:"hash"`
+	TokenURI string         `json:"tokenURI"`
+	Minter   sdk.AccAddress `json:"minter"`
+	Owner    sdk.AccAddress `json:"owner"`
+}
+
+func NewMsgDelegateMintNFT(hash string, tokenURI string, minter sdk.AccAddress, owner sdk.AccAddress) MsgDelegateMintNFT {
+	return MsgDelegateMintNFT{
+		Hash:     hash,
+		TokenURI: tokenURI,
+		Minter:   minter,
+		Owner:    owner,
+	}
+}
+
+func (msg MsgDelegateMintNFT) Route() string { return RouterKey }
+
+func (msg MsgDelegateMintNFT) Type() string { return "delegate_mint_nft" }
+
+func (msg MsgDelegateMintNFT) ValidateBasic() error {
+	if msg.Minter.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Minter.String())
+	}
+	if msg.Owner.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, msg.Owner.String())
+	}
+	if len(msg.Hash) == 0 || len(msg.TokenURI) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Hash or TokenURI cannot be empty")
+	}
+
+	return nil
+}
+
+func (msg MsgDelegateMintNFT) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(msg))
+}
+
+func (msg MsgDelegateMintNFT) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Minter}
+}
+
 type MsgBurnNFT struct {
 	Hash  string         `json:"hash"`
 	Owner sdk.AccAddress `json:"owner"`

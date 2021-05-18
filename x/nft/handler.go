@@ -12,6 +12,8 @@ func NewHandler(keeper Keeper) sdk.Handler {
 		switch msg := msg.(type) {
 		case MsgMintNFT:
 			return handleMsgMintNFT(ctx, keeper, msg)
+		case MsgDelegateMintNFT:
+			return handleMsgDelegateMintNFT(ctx, keeper, msg)
 		case MsgBurnNFT:
 			return handleMsgBurnNFT(ctx, keeper, msg)
 		case MsgTransferNFT:
@@ -25,6 +27,20 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 func handleMsgMintNFT(ctx sdk.Context, keeper Keeper, msg MsgMintNFT) (*sdk.Result, error) {
+	err := keeper.Mint(ctx, msg.Hash, msg.TokenURI, msg.Owner)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		sdk.EventTypeMessage,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory)))
+
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
+}
+
+func handleMsgDelegateMintNFT(ctx sdk.Context, keeper Keeper, msg MsgDelegateMintNFT) (*sdk.Result, error) {
 	err := keeper.Mint(ctx, msg.Hash, msg.TokenURI, msg.Owner)
 
 	if err != nil {

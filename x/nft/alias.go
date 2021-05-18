@@ -27,6 +27,7 @@ var (
 
 	NewNFT                 = types.NewNFT()
 	NewMsgMintNFT          = types.NewMsgMintNFT
+	NewMsgDelegateMintNFT  = types.NewMsgDelegateMintNFT
 	NewMsgBurnNFT          = types.NewMsgBurnNFT
 	NewMsgTransferNFT      = types.NewMsgTransferNFT
 	NewMsgMultiTransferNFT = types.NewMsgMultiTransferNFT
@@ -44,6 +45,7 @@ type (
 
 	NFT                 = types.NFT
 	MsgMintNFT          = types.MsgMintNFT
+	MsgDelegateMintNFT  = types.MsgDelegateMintNFT
 	MsgBurnNFT          = types.MsgBurnNFT
 	MsgTransferNFT      = types.MsgTransferNFT
 	MsgMultiTransferNFT = types.MsgMultiTransferNFT
