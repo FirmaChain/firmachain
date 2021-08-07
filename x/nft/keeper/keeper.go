@@ -47,11 +47,15 @@ func (k Keeper) GetNFT(ctx sdk.Context, hash string) types.NFT {
 	return nft
 }
 
-func (k Keeper) InitNFT(ctx sdk.Context, hash string, tokenURI string, owner sdk.AccAddress) {
+func (k Keeper) InitNFT(ctx sdk.Context, hash string, tokenURI string, owner sdk.AccAddress, description string, image string) {
 	nft := k.GetNFT(ctx, hash)
 	nft.Hash = hash
 	nft.TokenURI = tokenURI
 	nft.Owner = owner
+	nft.Creator = owner
+
+	nft.Description = description
+	nft.Image = image
 
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(hash), k.cdc.MustMarshalBinaryBare(nft))
@@ -73,6 +77,7 @@ func (k Keeper) Mint(ctx sdk.Context, hash string, tokenURI string, owner sdk.Ac
 	}
 
 	nft.Owner = owner
+	nft.Creator = owner
 
 	k.SetNFT(ctx, hash, nft)
 
@@ -137,6 +142,7 @@ func (k Keeper) Transfer(ctx sdk.Context, hash string, owner sdk.AccAddress, rec
 		return types.ErrNotOwnerToken
 	}
 
+	// only change ownership of NFT. (other meta data has already set)
 	nft.Owner = recipient
 
 	k.SetNFT(ctx, hash, nft)
