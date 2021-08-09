@@ -9,13 +9,18 @@ type MsgMintNFT struct {
 	Hash     string         `json:"hash"`
 	TokenURI string         `json:"tokenURI"`
 	Owner    sdk.AccAddress `json:"owner"`
+
+	Description string `json:"description"`
+	Image       string `json:"image"`
 }
 
-func NewMsgMintNFT(hash string, tokenURI string, owner sdk.AccAddress) MsgMintNFT {
+func NewMsgMintNFT(hash string, tokenURI string, owner sdk.AccAddress, description string, image string) MsgMintNFT {
 	return MsgMintNFT{
-		Hash:     hash,
-		TokenURI: tokenURI,
-		Owner:    owner,
+		Hash:        hash,
+		TokenURI:    tokenURI,
+		Owner:       owner,
+		Description: description,
+		Image:       image,
 	}
 }
 
@@ -47,14 +52,19 @@ type MsgDelegateMintNFT struct {
 	TokenURI string         `json:"tokenURI"`
 	Minter   sdk.AccAddress `json:"minter"`
 	Owner    sdk.AccAddress `json:"owner"`
+
+	Description string `json:"description"`
+	Image       string `json:"image"`
 }
 
-func NewMsgDelegateMintNFT(hash string, tokenURI string, minter sdk.AccAddress, owner sdk.AccAddress) MsgDelegateMintNFT {
+func NewMsgDelegateMintNFT(hash string, tokenURI string, minter sdk.AccAddress, owner sdk.AccAddress, description string, image string) MsgDelegateMintNFT {
 	return MsgDelegateMintNFT{
-		Hash:     hash,
-		TokenURI: tokenURI,
-		Minter:   minter,
-		Owner:    owner,
+		Hash:        hash,
+		TokenURI:    tokenURI,
+		Minter:      minter,
+		Owner:       owner,
+		Description: description,
+		Image:       image,
 	}
 }
 

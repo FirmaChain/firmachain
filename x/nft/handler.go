@@ -2,6 +2,7 @@ package nft
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/FirmaChain/x/nft/types"
@@ -27,7 +28,7 @@ func NewHandler(keeper Keeper) sdk.Handler {
 	}
 }
 func handleMsgMintNFT(ctx sdk.Context, keeper Keeper, msg MsgMintNFT) (*sdk.Result, error) {
-	err := keeper.Mint(ctx, msg.Hash, msg.TokenURI, msg.Owner)
+	err := keeper.Mint(ctx, msg.Hash, msg.TokenURI, msg.Owner, msg.Description, msg.Image)
 
 	if err != nil {
 		return nil, err
@@ -41,7 +42,7 @@ func handleMsgMintNFT(ctx sdk.Context, keeper Keeper, msg MsgMintNFT) (*sdk.Resu
 }
 
 func handleMsgDelegateMintNFT(ctx sdk.Context, keeper Keeper, msg MsgDelegateMintNFT) (*sdk.Result, error) {
-	err := keeper.Mint(ctx, msg.Hash, msg.TokenURI, msg.Owner)
+	err := keeper.Mint(ctx, msg.Hash, msg.TokenURI, msg.Owner, msg.Description, msg.Image)
 
 	if err != nil {
 		return nil, err

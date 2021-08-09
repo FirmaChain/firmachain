@@ -61,7 +61,7 @@ func (k Keeper) InitNFT(ctx sdk.Context, hash string, tokenURI string, owner sdk
 	store.Set([]byte(hash), k.cdc.MustMarshalBinaryBare(nft))
 }
 
-func (k Keeper) Mint(ctx sdk.Context, hash string, tokenURI string, owner sdk.AccAddress) error {
+func (k Keeper) Mint(ctx sdk.Context, hash string, tokenURI string, owner sdk.AccAddress, description string, image string) error {
 	if k.IsTokenExisted(ctx, hash) {
 		return types.ErrExistedHash
 	}
@@ -78,6 +78,8 @@ func (k Keeper) Mint(ctx sdk.Context, hash string, tokenURI string, owner sdk.Ac
 
 	nft.Owner = owner
 	nft.Creator = owner
+	nft.Description = description
+	nft.Image = image
 
 	k.SetNFT(ctx, hash, nft)
 

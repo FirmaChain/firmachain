@@ -2,6 +2,7 @@ package cli
 
 import (
 	"bufio"
+
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -40,7 +41,7 @@ func GetCmdMint(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			msg := types.NewMsgMintNFT(args[0], args[1], cliCtx.GetFromAddress())
+			msg := types.NewMsgMintNFT(args[0], args[1], cliCtx.GetFromAddress(), args[2], args[3])
 			err := msg.ValidateBasic()
 
 			if err != nil {
