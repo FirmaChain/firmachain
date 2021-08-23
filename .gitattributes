@@ -1,3 +1,0 @@
-release/ filter=lfs diff=lfs merge=lfs -text
-release/linux filter=lfs diff=lfs merge=lfs -text
-release/mac filter=lfs diff=lfs merge=lfs -text
