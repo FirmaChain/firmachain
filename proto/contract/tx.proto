@@ -1,0 +1,34 @@
+syntax = "proto3";
+package firmachain.firmachain.contract;
+
+import "contract/contract_file.proto";
+import "contract/contract_log.proto";
+
+option go_package = "github.com/firmachain/firmachain/x/contract/types";
+
+// Msg defines the Msg service.
+service Msg {
+  rpc CreateContractFile(MsgCreateContractFile) returns (MsgCreateContractFileResponse);
+  rpc AddContractLog(MsgAddContractLog) returns (MsgAddContractLogResponse);  
+}
+
+message MsgCreateContractFile {
+  string creator = 1;
+  string fileHash = 2;
+  uint64 timeStamp = 3;
+  repeated string ownerList = 4;
+  string metaDataJsonString = 5;
+}
+message MsgCreateContractFileResponse { }
+
+message MsgAddContractLog {
+  string creator = 1;
+  string contractHash = 2;
+  uint64 timeStamp = 3;
+  string eventName = 4;
+  string jsonString = 5;
+}
+
+message MsgAddContractLogResponse {
+  uint64 id = 1;
+}

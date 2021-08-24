@@ -1,0 +1,41 @@
+syntax = "proto3";
+package firmachain.firmachain.nft;
+
+import "nft/nft_item.proto";
+
+option go_package = "github.com/firmachain/firmachain/x/nft/types";
+
+// Msg defines the Msg service.
+service Msg {
+  rpc Transfer(MsgTransfer) returns (MsgTransferResponse);
+  rpc Burn(MsgBurn) returns (MsgBurnResponse);
+  rpc Mint(MsgMint) returns (MsgMintResponse);  
+}
+
+message MsgTransfer {
+  string owner = 1;
+  uint64 nftId = 2;
+  string toAddress = 3;
+}
+
+message MsgTransferResponse {
+}
+
+message MsgBurn {
+  string owner = 1;
+  uint64 nftId = 2;
+}
+
+message MsgBurnResponse {
+  bool result = 1;
+}
+
+message MsgMint {
+  string owner = 1;
+  string toAddress = 2;
+  string tokenURI = 3;
+}
+
+message MsgMintResponse {
+  uint64 nftId = 1;
+}

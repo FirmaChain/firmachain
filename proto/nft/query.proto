@@ -1,0 +1,68 @@
+syntax = "proto3";
+package firmachain.firmachain.nft;
+
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "nft/nft_item.proto";
+
+option go_package = "github.com/firmachain/firmachain/x/nft/types";
+
+// Query defines the gRPC querier service.
+service Query {
+
+	// Queries a list of tokenOfOwnerByIndex items.
+	rpc TokenOfOwnerByIndex(QueryTokenOfOwnerByIndexRequest) returns (QueryTokenOfOwnerByIndexResponse) {
+		option (google.api.http).get = "/firmachain/firmachain/nft/tokenOfOwnerByIndex";
+	}
+
+	// Queries a list of balanceOf items.
+	rpc BalanceOf(QueryBalanceOfRequest) returns (QueryBalanceOfResponse) {
+		option (google.api.http).get = "/firmachain/firmachain/nft/balanceOf";
+	}
+
+
+	// Queries a nftItem by id.
+	rpc NftItem(QueryGetNftItemRequest) returns (QueryGetNftItemResponse) {
+		option (google.api.http).get = "/firmachain/firmachain/nft/nftItem/{id}";
+	}
+
+	// Queries a list of nftItem items.
+	rpc NftItemAll(QueryAllNftItemRequest) returns (QueryAllNftItemResponse) {
+		option (google.api.http).get = "/firmachain/firmachain/nft/nftItem";
+	}
+
+}
+
+message QueryTokenOfOwnerByIndexRequest {
+  string ownerAddress = 1;
+  uint64 index = 2;
+}
+
+message QueryTokenOfOwnerByIndexResponse {
+  uint64 tokenId = 1;
+}
+
+message QueryBalanceOfRequest {
+  string ownerAddress = 1;
+}
+
+message QueryBalanceOfResponse {
+  uint64 total = 1;
+}
+
+message QueryGetNftItemRequest {
+	uint64 id = 1;
+}
+
+message QueryGetNftItemResponse {
+	NftItem NftItem = 1;
+}
+
+message QueryAllNftItemRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllNftItemResponse {
+	repeated NftItem NftItem = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

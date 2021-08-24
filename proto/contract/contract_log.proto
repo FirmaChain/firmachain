@@ -1,0 +1,15 @@
+syntax = "proto3";
+package firmachain.firmachain.contract;
+
+option go_package = "github.com/firmachain/firmachain/x/contract/types";
+
+import "gogoproto/gogo.proto";
+
+message ContractLog {
+  string creator = 1;
+  uint64 id = 2;
+  string contractHash = 3; 
+  uint64 timeStamp = 4; 
+  string eventName = 5; 
+  string jsonString = 6; 
+}
