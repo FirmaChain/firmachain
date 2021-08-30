@@ -6,13 +6,15 @@ FirmaChain adds a signing and verifying e-contract function to the blockchain.
 
 Unlocking new limits of electronic contracts with blockchain technology, FirmaChain seeks to resolve all the social and legal issues (contracts, notarial, etc.) with written contracts through the use of electronic contracts based on FirmaChain’s data blockchain.
 
-FirmaChain now builds on [Tendermint](https://github.com/tendermint/tendermint) consensus and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk) toolkits.
+FirmaChain now builds on [Tendermint](https://github.com/tendermint/tendermint) consensus and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk) toolkits and [Starport](https://github.com/tendermint/starport)
 
-Requires [Go 1.13+](https://golang.org/dl/)
+Requires [Go](https://golang.org/doc/install) version 1.16 or higher
 
 ## Validator & Node
 We make governance with chosen validators.
-We are currently looking for validators to contribute to our network. If you are interested, please contact us through info@firmachain.org
+We are currently looking for validators to contribute to our network. 
+
+If you are interested, please contact us through info@firmachain.org
 
 ## DApp
 
@@ -24,7 +26,8 @@ PoC of e-contract is In the wallet. Uploading original files on blockchain and v
 
 ## Network 
 
-- Testnet **Imperium-0001** launched and is online.
+- Testnet **Imperium-2** is ready for online. (private testnet for only chain developer)
+- Testnet **Colosseum-1** is ready for online. (public testnet for validator)
 - Mainnet **Augustus-1** launched at 29.09.2020
 	- FirmaChain is currently operating on Ethereum as an ERC-20 Token **FCT**. All contracts and tokens will be migrated to our main network once it is complete network stabilization.
 
