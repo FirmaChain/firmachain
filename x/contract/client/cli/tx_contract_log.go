@@ -13,9 +13,9 @@ import (
 
 func CmdAddContractLog() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-contract-log [contractHash] [timeStamp] [eventName] [jsonString]",
+		Use:   "add-contract-log [contractHash] [timeStamp] [eventName] [ownerAddress] [jsonString]",
 		Short: "Add a new contractLog",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsContractHash, err := cast.ToStringE(args[0])
 			if err != nil {
@@ -25,11 +25,18 @@ func CmdAddContractLog() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			argsEventName, err := cast.ToStringE(args[2])
 			if err != nil {
 				return err
 			}
-			argsJsonString, err := cast.ToStringE(args[3])
+
+			argsOwnerAddress, err := cast.ToStringE(args[3])
+			if err != nil {
+				return err
+			}
+
+			argsJsonString, err := cast.ToStringE(args[4])
 			if err != nil {
 				return err
 			}
@@ -39,7 +46,7 @@ func CmdAddContractLog() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgAddContractLog(clientCtx.GetFromAddress().String(), argsContractHash, argsTimeStamp, argsEventName, argsJsonString)
+			msg := types.NewMsgAddContractLog(clientCtx.GetFromAddress().String(), argsContractHash, argsTimeStamp, argsEventName, argsOwnerAddress, argsJsonString)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

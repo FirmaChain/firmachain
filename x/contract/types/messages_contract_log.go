@@ -7,12 +7,13 @@ import (
 
 var _ sdk.Msg = &MsgAddContractLog{}
 
-func NewMsgAddContractLog(creator string, contractHash string, timeStamp uint64, eventName string, jsonString string) *MsgAddContractLog {
+func NewMsgAddContractLog(creator string, contractHash string, timeStamp uint64, eventName string, ownerAddress string, jsonString string) *MsgAddContractLog {
 	return &MsgAddContractLog{
 		Creator:      creator,
 		ContractHash: contractHash,
 		TimeStamp:    timeStamp,
 		EventName:    eventName,
+		OwnerAddress: ownerAddress,
 		JsonString:   jsonString,
 	}
 }

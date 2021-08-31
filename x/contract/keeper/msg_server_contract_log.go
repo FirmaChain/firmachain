@@ -15,6 +15,7 @@ func (k msgServer) AddContractLog(goCtx context.Context, msg *types.MsgAddContra
 		ContractHash: msg.ContractHash,
 		TimeStamp:    msg.TimeStamp,
 		EventName:    msg.EventName,
+		OwnerAddress: msg.OwnerAddress,
 		JsonString:   msg.JsonString,
 	}
 
