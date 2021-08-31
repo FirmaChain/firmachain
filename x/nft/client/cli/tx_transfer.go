@@ -21,6 +21,10 @@ func CmdTransfer() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsNftId, err := strconv.ParseUint(args[0], 10, 64)
 
+			if err != nil {
+				return err
+			}
+
 			argsToAddress := string(args[1])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
