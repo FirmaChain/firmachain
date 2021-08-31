@@ -26,7 +26,8 @@ message MsgAddContractLog {
   string contractHash = 2;
   uint64 timeStamp = 3;
   string eventName = 4;
-  string jsonString = 5;
+  string ownerAddress = 5;
+  string jsonString = 6;
 }
 
 message MsgAddContractLogResponse {

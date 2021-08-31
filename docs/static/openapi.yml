@@ -10766,6 +10766,8 @@ paths:
                       format: uint64
                     eventName:
                       type: string
+                    ownerAddress:
+                      type: string
                     jsonString:
                       type: string
               pagination:
@@ -10888,6 +10890,8 @@ paths:
                     type: string
                     format: uint64
                   eventName:
+                    type: string
+                  ownerAddress:
                     type: string
                   jsonString:
                     type: string
@@ -26530,6 +26534,8 @@ definitions:
         format: uint64
       eventName:
         type: string
+      ownerAddress:
+        type: string
       jsonString:
         type: string
   firmachain.firmachain.contract.MsgAddContractLogResponse:
@@ -26606,6 +26612,8 @@ definitions:
               format: uint64
             eventName:
               type: string
+            ownerAddress:
+              type: string
             jsonString:
               type: string
       pagination:
@@ -26669,6 +26677,8 @@ definitions:
             type: string
             format: uint64
           eventName:
+            type: string
+          ownerAddress:
             type: string
           jsonString:
             type: string

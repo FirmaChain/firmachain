@@ -11,5 +11,6 @@ message ContractLog {
   string contractHash = 3; 
   uint64 timeStamp = 4; 
   string eventName = 5; 
-  string jsonString = 6; 
+  string ownerAddress = 6; 
+  string jsonString = 7;
 }
