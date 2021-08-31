@@ -32,8 +32,7 @@ message MsgBurnResponse {
 
 message MsgMint {
   string owner = 1;
-  string toAddress = 2;
-  string tokenURI = 3;
+  string tokenURI = 2;
 }
 
 message MsgMintResponse {
