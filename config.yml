@@ -14,3 +14,5 @@ client:
 faucet:
   name: bob
   coins: ["5ufirma", "100000stake"]
+build:
+  binary: "firma"

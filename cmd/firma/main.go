@@ -17,6 +17,11 @@ func main() {
 		app.ModuleBasics,
 		app.New,
 	)
+
+	// below 2 codes use for command line description by starport and makefile.
+	rootCmd.Use = "firma"
+	rootCmd.Short = "\n FirmaChain BlockChain [https://firmachain.org]"
+
 	if err := svrcmd.Execute(rootCmd, app.DefaultNodeHome); err != nil {
 		os.Exit(1)
 	}
