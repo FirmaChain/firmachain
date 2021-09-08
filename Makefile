@@ -2,8 +2,7 @@ PACKAGES=$(shell go list ./... | grep -v '/simulation')
 
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
-BUILD_TAGS := mainnet
-LEDGER_ENABLED := true
+BUILD_TAGS := 
 
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=FirmaChain \
 	-X github.com/cosmos/cosmos-sdk/version.AppName=firma \
@@ -12,8 +11,6 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=FirmaChain \
 	-X github.com/cosmos/cosmos-sdk/version.BuildTags=$(BUILD_TAGS)
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
-
-include Makefile.ledger
 
 all: install
 
