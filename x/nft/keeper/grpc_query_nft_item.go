@@ -25,7 +25,7 @@ func (k Keeper) NftItemAll(c context.Context, req *types.QueryAllNftItemRequest)
 
 	pageRes, err := query.Paginate(nftItemStore, req.Pagination, func(key []byte, value []byte) error {
 		var nftItem types.NftItem
-		if err := k.cdc.UnmarshalBinaryBare(value, &nftItem); err != nil {
+		if err := k.cdc.Unmarshal(value, &nftItem); err != nil {
 			return err
 		}
 
@@ -53,7 +53,7 @@ func (k Keeper) NftItem(c context.Context, req *types.QueryGetNftItemRequest) (*
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetNftItemIDBytes(req.Id)), &nftItem)
+	k.cdc.MustUnmarshal(store.Get(GetNftItemIDBytes(req.Id)), &nftItem)
 
 	return &types.QueryGetNftItemResponse{NftItem: &nftItem}, nil
 }

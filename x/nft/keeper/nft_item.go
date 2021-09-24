@@ -65,7 +65,7 @@ func (k Keeper) AppendNftItem(
 	nftItem.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&nftItem)
+	appendedValue := k.cdc.MustMarshal(&nftItem)
 	store.Set(GetNftItemIDBytes(nftItem.Id), appendedValue)
 
 	// Update nftItem count
@@ -77,7 +77,7 @@ func (k Keeper) AppendNftItem(
 // SetNftItem set a specific nftItem in the store
 func (k Keeper) SetNftItem(ctx sdk.Context, nftItem types.NftItem) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
-	b := k.cdc.MustMarshalBinaryBare(&nftItem)
+	b := k.cdc.MustMarshal(&nftItem)
 	store.Set(GetNftItemIDBytes(nftItem.Id), b)
 }
 
@@ -85,7 +85,7 @@ func (k Keeper) SetNftItem(ctx sdk.Context, nftItem types.NftItem) {
 func (k Keeper) GetNftItem(ctx sdk.Context, id uint64) types.NftItem {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
 	var nftItem types.NftItem
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetNftItemIDBytes(id)), &nftItem)
+	k.cdc.MustUnmarshal(store.Get(GetNftItemIDBytes(id)), &nftItem)
 	return nftItem
 }
 
@@ -115,7 +115,7 @@ func (k Keeper) GetAllNftItem(ctx sdk.Context) (list []types.NftItem) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.NftItem
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 
