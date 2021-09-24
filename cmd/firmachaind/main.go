@@ -19,7 +19,7 @@ func main() {
 	)
 
 	// below 2 codes use for command line description by starport and makefile.
-	rootCmd.Use = "firma"
+	rootCmd.Use = "firmachaind"
 	rootCmd.Short = "\n FirmaChain BlockChain [https://firmachain.org]"
 
 	if err := svrcmd.Execute(rootCmd, app.DefaultNodeHome); err != nil {

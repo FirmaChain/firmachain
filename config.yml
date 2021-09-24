@@ -1,8 +1,14 @@
 accounts:
   - name: alice
-    coins: ["2000000000ufirma", "200000000stake"]
-  - name: bob
-    coins: ["1000000000ufirma", "100000000stake"]
+    coins: ["2000000000ufct", "200000000stake"]
+    mnemonic: ozone unfold device pave lemon potato omit insect column wise cover hint narrow large provide kidney episode clay notable milk mention dizzy muffin crazy
+  - name: bob1
+    coins: ["1000000000ufct", "100000000stake"]
+    mnemonic: burst torch enemy quick crime slogan trust wood hamster way armor visual common language close park leg ill ball board couch nose theory must
+  - name: bob2
+    coins: ["1000000000ufct", "100000000stake"]
+  - name: bob3
+    coins: ["1000000000ufct", "100000000stake"]
 validator:
   name: alice
   staked: "100000000stake"
@@ -12,7 +18,11 @@ client:
   openapi:
     path: "docs/static/openapi.yml"
 faucet:
-  name: bob
-  coins: ["5ufirma", "100000stake"]
+  name: bob1
+  coins: ["5ufct", "100000stake"]
 build:
-  binary: "firma"
+  binary: "firmachaind"
+
+init:
+  app:
+    minimum-gas-prices: "0.01ufct"
