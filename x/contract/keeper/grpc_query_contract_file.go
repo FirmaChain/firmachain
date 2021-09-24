@@ -24,7 +24,7 @@ func (k Keeper) ContractFileAll(c context.Context, req *types.QueryAllContractFi
 
 	pageRes, err := query.Paginate(contractFileStore, req.Pagination, func(key []byte, value []byte) error {
 		var contractFile types.ContractFile
-		if err := k.cdc.UnmarshalBinaryBare(value, &contractFile); err != nil {
+		if err := k.cdc.Unmarshal(value, &contractFile); err != nil {
 			return err
 		}
 

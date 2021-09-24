@@ -25,7 +25,7 @@ func (k Keeper) ContractLogAll(c context.Context, req *types.QueryAllContractLog
 
 	pageRes, err := query.Paginate(contractLogStore, req.Pagination, func(key []byte, value []byte) error {
 		var contractLog types.ContractLog
-		if err := k.cdc.UnmarshalBinaryBare(value, &contractLog); err != nil {
+		if err := k.cdc.Unmarshal(value, &contractLog); err != nil {
 			return err
 		}
 
@@ -53,7 +53,7 @@ func (k Keeper) ContractLog(c context.Context, req *types.QueryGetContractLogReq
 	}
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractLogKey))
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetContractLogIDBytes(req.Id)), &contractLog)
+	k.cdc.MustUnmarshal(store.Get(GetContractLogIDBytes(req.Id)), &contractLog)
 
 	return &types.QueryGetContractLogResponse{ContractLog: &contractLog}, nil
 }

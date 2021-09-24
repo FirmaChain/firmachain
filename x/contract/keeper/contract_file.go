@@ -9,7 +9,8 @@ import (
 // SetContractFile set a specific contractFile in the store from its index
 func (k Keeper) SetContractFile(ctx sdk.Context, contractFile types.ContractFile) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractFileKey))
-	b := k.cdc.MustMarshalBinaryBare(&contractFile)
+	//b := k.cdc.MustMarshalBinaryBare(&contractFile)
+	b := k.cdc.MustMarshal(&contractFile)
 	store.Set(types.KeyPrefix(contractFile.FileHash), b)
 }
 
@@ -22,7 +23,7 @@ func (k Keeper) GetContractFile(ctx sdk.Context, index string) (val types.Contra
 		return val, false
 	}
 
-	k.cdc.MustUnmarshalBinaryBare(b, &val)
+	k.cdc.MustUnmarshal(b, &val)
 	return val, true
 }
 
@@ -41,7 +42,7 @@ func (k Keeper) GetAllContractFile(ctx sdk.Context) (list []types.ContractFile) 
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ContractFile
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 

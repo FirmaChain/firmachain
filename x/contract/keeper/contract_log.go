@@ -50,7 +50,7 @@ func (k Keeper) AppendContractLog(
 	contractLog.Id = count
 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractLogKey))
-	appendedValue := k.cdc.MustMarshalBinaryBare(&contractLog)
+	appendedValue := k.cdc.MustMarshal(&contractLog)
 	store.Set(GetContractLogIDBytes(contractLog.Id), appendedValue)
 
 	// Update contractLog count
@@ -62,7 +62,7 @@ func (k Keeper) AppendContractLog(
 // SetContractLog set a specific contractLog in the store
 func (k Keeper) SetContractLog(ctx sdk.Context, contractLog types.ContractLog) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractLogKey))
-	b := k.cdc.MustMarshalBinaryBare(&contractLog)
+	b := k.cdc.MustMarshal(&contractLog)
 	store.Set(GetContractLogIDBytes(contractLog.Id), b)
 }
 
@@ -70,7 +70,7 @@ func (k Keeper) SetContractLog(ctx sdk.Context, contractLog types.ContractLog) {
 func (k Keeper) GetContractLog(ctx sdk.Context, id uint64) types.ContractLog {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractLogKey))
 	var contractLog types.ContractLog
-	k.cdc.MustUnmarshalBinaryBare(store.Get(GetContractLogIDBytes(id)), &contractLog)
+	k.cdc.MustUnmarshal(store.Get(GetContractLogIDBytes(id)), &contractLog)
 	return contractLog
 }
 
@@ -100,7 +100,7 @@ func (k Keeper) GetAllContractLog(ctx sdk.Context) (list []types.ContractLog) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ContractLog
-		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &val)
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
 		list = append(list, val)
 	}
 
