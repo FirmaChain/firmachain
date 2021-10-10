@@ -1,28 +1,52 @@
 accounts:
   - name: alice
-    coins: ["2000000000ufct", "200000000stake"]
-    mnemonic: ozone unfold device pave lemon potato omit insect column wise cover hint narrow large provide kidney episode clay notable milk mention dizzy muffin crazy
-  - name: bob1
-    coins: ["1000000000ufct", "100000000stake"]
-    mnemonic: burst torch enemy quick crime slogan trust wood hamster way armor visual common language close park leg ill ball board couch nose theory must
+    coins: ["2000000000000ufct"]
+    mnemonic: pizza venue kangaroo desert faculty circle benefit next snap buzz gas elite speed depart clown vicious country life game choice venture wealth shrimp fault
+    cointype: 7777777
+  - name: bob
+    coins: ["1000000000000ufct"]
+    mnemonic: hope tip sick hour stamp submit coach crisp fragile plunge bargain print detect bitter lecture mouse addict until great barrel truck toilet chapter double
+    cointype: 7777777
+  - name: validator
+    coins: ["1000000000000ufct"]
+    mnemonic: patrol three crash inmate myself soon hold merge tortoise leopard celery pill affair fall second print case ignore truly interest hammer mail short kit
+    cointype: 7777777
   - name: bob2
-    coins: ["1000000000ufct", "100000000stake"]
-  - name: bob3
-    coins: ["1000000000ufct", "100000000stake"]
+    coins: ["1000000000000ufct"]
+    mnemonic: rescue guard extra cradle want hen manage vault remain noise hazard decade cat brush chat ginger clarify collect name craft dune trap south dice
+    cointype: 7777777
 validator:
-  name: alice
-  staked: "100000000stake"
+  name: validator
+  staked: "100000000ufct"
 client:
   vuex:
     path: "vue/src/store"
   openapi:
     path: "docs/static/openapi.yml"
 faucet:
-  name: bob1
-  coins: ["5ufct", "100000stake"]
+  name: alice
+  coins: ["5000000ufct"]
 build:
   binary: "firmachaind"
 
 init:
   app:
     minimum-gas-prices: "0.01ufct"
+
+genesis:
+  chain_id: "imperium-2"
+  app_state:
+    staking:
+      params:
+        unbonding_time: "60s"
+        bond_denom: "ufct"
+    gov:
+      deposit_params:
+        min_deposit:
+          - denom: "ufct"
+            amount: "10000000"
+        max_deposit_period: "60s"
+      voting_params:
+        voting_period: "60s"
+
+
