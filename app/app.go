@@ -232,7 +232,7 @@ type App struct {
 
 func (app *App) registerUpgradeHandlers() {
 
-	const newVersionName = "v0.2.7"
+	const newVersionName = "v0.2.8"
 
 	app.UpgradeKeeper.SetUpgradeHandler(newVersionName, func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
 		// 1st-time running in-store migrations, using 1 as fromVersion to
