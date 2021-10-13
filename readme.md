@@ -64,7 +64,7 @@ starport chain serve
 We make governance with chosen validators.
 We are currently looking for validators to contribute to our network. 
 
-If you are interested, please contact us through info@firmachain.org
+If you are interested, please contact us through contact@firmachain.org
 
 
 ## Network 
@@ -77,6 +77,7 @@ If you are interested, please contact us through info@firmachain.org
 ## EcoSystem
 - [FirmaChain-BlockExplorer](https://github.com/FirmaChain/firmachain-explorer)
 - [FirmaChain-Station (on development)](https://github.com/FirmaChain/firma-station) 
+- [FirmaChain-Faucet (devnet, testnet only)](https://github.com/FirmaChain/firmachain-faucet) 
 
 ## Community
 - [Website](https://firmachain.org/#/)
