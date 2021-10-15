@@ -1,5 +1,11 @@
 # FirmaChain
 
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/firmachain/firmachain)](https://github.com/firmachain/firmachain/releases)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/firmachain/firmachain/blob/master/LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/firmachain/firmachain/.svg)](https://pkg.go.dev/github.com/firmachain/firmachain/)
+[![report](https://goreportcard.com/badge/github.com/firmachain/firmachain)](https://goreportcard.com/report/github.com/firmachain/firmachain)
+![Lines of code](https://img.shields.io/tokei/lines/github/firmachain/firmachain)
+
 ### A BLOCKCHAIN BASED E-CONTRACT PLATFORM
 
 FirmaChain adds a signing and verifying e-contract function to the blockchain. 
