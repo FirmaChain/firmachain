@@ -17,5 +17,5 @@ yarn-error.log
 *.iml
 
 vue/
-testutil/
+#testutil/
 release/
