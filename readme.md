@@ -6,6 +6,12 @@
 [![report](https://goreportcard.com/badge/github.com/firmachain/firmachain)](https://goreportcard.com/report/github.com/firmachain/firmachain)
 ![Lines of code](https://img.shields.io/tokei/lines/github/firmachain/firmachain)
 
+![ci](https://github.com/firmachain/firmachain/actions/workflows/test.yml/badge.svg)
+<a href="https://codecov.io/gh/firmachain/firmachain">
+    <img src="https://codecov.io/gh/firmachain/firmachain/branch/master/graph/badge.svg">
+</a>
+
+
 ### A BLOCKCHAIN BASED E-CONTRACT PLATFORM
 
 FirmaChain adds a signing and verifying e-contract function to the blockchain. 
