@@ -36,10 +36,9 @@ init:
 genesis:
   chain_id: "imperium-2"
   app_state:
-    staking:
-      params:
-        unbonding_time: "60s"
-        bond_denom: "ufct"
+    crisis:
+      constant_fee:
+        denom: "ufct"
     gov:
       deposit_params:
         min_deposit:
@@ -48,5 +47,14 @@ genesis:
         max_deposit_period: "60s"
       voting_params:
         voting_period: "60s"
+    mint:
+      params:
+        mint_denom: "ufct"
+
+    staking:
+      params:
+        unbonding_time: "60s"
+        bond_denom: "ufct"
+    
 
 
