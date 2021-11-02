@@ -1,0 +1,59 @@
+syntax = "proto3";
+package firmachain.firmachain.token;
+
+import "token/token_data.proto";
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/firmachain/firmachain/x/token/types";
+
+// Msg defines the Msg service.
+service Msg {
+  rpc CreateToken(MsgCreateToken) returns (MsgCreateTokenResponse);
+  rpc Mint(MsgMint) returns (MsgMintResponse);
+  rpc Burn(MsgBurn) returns (MsgBurnResponse);
+  rpc UpdateTokenURI(MsgUpdateTokenURI) returns (MsgUpdateTokenURIResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgCreateToken {
+  string owner = 1;
+  string name = 2;
+  string symbol = 3;
+  string tokenURI = 4;
+  uint64 totalSupply = 5;
+  bool mintable = 6;
+  bool burnable = 7;
+}
+
+message MsgCreateTokenResponse {
+}
+
+message MsgMint {
+  string owner = 1;
+  string tokenID = 2;
+  uint64 amount = 3;
+  string toAddress = 4;
+}
+
+message MsgMintResponse {
+}
+
+message MsgBurn {
+  string owner = 1;
+  string tokenID = 2;
+  uint64 amount = 3;
+}
+
+message MsgBurnResponse {
+}
+
+message MsgUpdateTokenURI {
+  string owner = 1;
+  string tokenID = 2;
+  string tokenURI = 3;
+}
+
+message MsgUpdateTokenURIResponse {
+}
+
+// this line is used by starport scaffolding # proto/tx/message
