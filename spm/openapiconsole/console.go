@@ -14,12 +14,16 @@ func Handler(title, specURL string) http.HandlerFunc {
 	t, _ := template.ParseFS(index, "index.tpl")
 
 	return func(w http.ResponseWriter, req *http.Request) {
-		t.Execute(w, struct {
+		err := t.Execute(w, struct {
 			Title string
 			URL   string
 		}{
 			title,
 			specURL,
 		})
+
+		if err != nil {
+			panic(err)
+		}
 	}
 }
