@@ -82,14 +82,13 @@ import (
 	ibcporttypes "github.com/cosmos/ibc-go/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/modules/core/keeper"
+	"github.com/firmachain/firmachain/spm/cosmoscmd"
+	"github.com/firmachain/firmachain/spm/openapiconsole"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
-
-	"github.com/tendermint/spm/cosmoscmd"
-	"github.com/tendermint/spm/openapiconsole"
 
 	"github.com/firmachain/firmachain/docs"
 
@@ -99,6 +98,10 @@ import (
 	nftmodule "github.com/firmachain/firmachain/x/nft"
 	nftmodulekeeper "github.com/firmachain/firmachain/x/nft/keeper"
 	nftmoduletypes "github.com/firmachain/firmachain/x/nft/types"
+
+	tokenmodule "github.com/firmachain/firmachain/x/token"
+	tokenmodulekeeper "github.com/firmachain/firmachain/x/token/keeper"
+	tokenmoduletypes "github.com/firmachain/firmachain/x/token/types"
 )
 
 const (
@@ -150,6 +153,7 @@ var (
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 		nftmodule.AppModuleBasic{},
 		contractmodule.AppModuleBasic{},
+		tokenmodule.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -161,6 +165,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		tokenmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -223,6 +228,7 @@ type App struct {
 
 	NftKeeper      nftmodulekeeper.Keeper
 	ContractKeeper contractmodulekeeper.Keeper
+	TokenKeeper    tokenmodulekeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -307,6 +313,7 @@ func New(
 		// this line is used by starport scaffolding # stargate/app/storeKey
 		nftmoduletypes.StoreKey,
 		contractmoduletypes.StoreKey,
+		tokenmoduletypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -421,6 +428,15 @@ func New(
 	)
 	nftModule := nftmodule.NewAppModule(appCodec, app.NftKeeper)
 
+	app.TokenKeeper = *tokenmodulekeeper.NewKeeper(
+		appCodec,
+		keys[tokenmoduletypes.StoreKey],
+		keys[tokenmoduletypes.MemStoreKey],
+		app.BankKeeper,
+		app.AccountKeeper,
+	)
+	tokenModule := tokenmodule.NewAppModule(appCodec, app.TokenKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -463,6 +479,7 @@ func New(
 		// this line is used by starport scaffolding # stargate/app/appModule
 		nftModule,
 		contractModule,
+		tokenModule,
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -501,6 +518,7 @@ func New(
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 		nftmoduletypes.ModuleName,
 		contractmoduletypes.ModuleName,
+		tokenmoduletypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -692,6 +710,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 	paramsKeeper.Subspace(nftmoduletypes.ModuleName)
 	paramsKeeper.Subspace(contractmoduletypes.ModuleName)
+	paramsKeeper.Subspace(tokenmoduletypes.ModuleName)
 
 	return paramsKeeper
 }
