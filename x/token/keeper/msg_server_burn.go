@@ -13,7 +13,7 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value exists
-	valFound, isFound := k.GetTokenData(
+	tokenData, isFound := k.GetTokenData(
 		ctx,
 		msg.TokenID,
 	)
@@ -22,24 +22,34 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
-	// Checks if the the msg owner is the same as the current owner
-	if msg.Owner != valFound.Owner {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
+	err := k.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
 
-	// bank module
-
-	newCoin := sdk.NewInt64Coin(msg.TokenID, int64(msg.Amount))
-
-	// send minted coins to receiver
-	receiver, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
 		return nil, err
 	}
 
+	// Checks if the the msg owner is the same as the current owner
+	if msg.Owner != tokenData.Owner {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	}
+
+	// send minted coins to ownerAccAddress
+	ownerAccAddress, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	balance := k.bankKeeper.GetBalance(ctx, ownerAccAddress, msg.TokenID).Amount
+
+	if balance.Uint64() < msg.Amount {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "account balance is not enough to burn")
+	}
+
+	newCoin := sdk.NewInt64Coin(msg.TokenID, int64(msg.Amount))
+
 	err = k.bankKeeper.SendCoinsFromAccountToModule(
 		ctx,
-		receiver,
+		ownerAccAddress,
 		types.ModuleName,
 		sdk.NewCoins(newCoin),
 	)
@@ -54,17 +64,17 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, err
 	}
 
-	valFound.BurnSequence++
-	valFound.TotalSupply -= msg.Amount
+	tokenData.BurnSequence++
+	tokenData.TotalSupply -= msg.Amount
 
-	k.SetTokenData(ctx, valFound)
+	k.SetTokenData(ctx, tokenData)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		sdk.EventTypeMessage,
 		sdk.NewAttribute("Owner", msg.Owner),
 		sdk.NewAttribute("TokenID", msg.TokenID),
 		sdk.NewAttribute("BurnAmount", strconv.FormatUint(msg.Amount, 10)),
-		sdk.NewAttribute("TotalSupply", strconv.FormatUint(valFound.TotalSupply, 10)),
+		sdk.NewAttribute("TotalSupply", strconv.FormatUint(tokenData.TotalSupply, 10)),
 	))
 
 	return &types.MsgBurnResponse{}, nil
