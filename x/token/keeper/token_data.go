@@ -1,10 +1,45 @@
 package keeper
 
 import (
+	"regexp"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/firmachain/x/token/types"
 )
+
+const (
+	maxSymbolLength = 20
+	maxNameLength   = 40
+	maxTokenValue   = 10000000000
+	ufctTokenName   = "ufct"
+)
+
+func (k Keeper) CheckCommonError(tokenID string, symbol string, name string, totalSupply uint64) error {
+	if len(symbol) > maxSymbolLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "input Symbol name lengh cannot exceed 20.")
+	}
+
+	if len(name) > maxNameLength {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "input Token name lengh cannot exceed 40.")
+	}
+
+	if tokenID == ufctTokenName {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ufct is not supported.")
+	}
+
+	re := regexp.MustCompile("^[a-zA-Z0-9_-]*$")
+	if !re.MatchString(tokenID) {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "only alphabet, underscore, numbers are allowed for tokenID.")
+	}
+
+	if totalSupply > maxTokenValue {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "TotalSupply cannot exceed 10000000000")
+	}
+
+	return nil
+}
 
 // SetTokenData set a specific tokenData in the store from its index
 func (k Keeper) SetTokenData(ctx sdk.Context, tokenData types.TokenData) {

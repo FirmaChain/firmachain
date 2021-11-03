@@ -12,8 +12,14 @@ import (
 func (k msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken) (*types.MsgCreateTokenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// GAMETOKEN -> ugametoken
+	// ex) GAMETOKEN -> ugametoken
 	tokenID := "u" + strings.ToLower(msg.Symbol)
+
+	err := k.CheckCommonError(tokenID, msg.Symbol, msg.Name, msg.TotalSupply)
+
+	if err != nil {
+		return nil, err
+	}
 
 	_, isFound := k.GetTokenData(ctx, tokenID)
 
@@ -39,16 +45,12 @@ func (k msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken)
 		BurnSequence: burnSequence,
 	}
 
-	k.SetTokenData(
-		ctx,
-		tokenData,
-	)
-
+	k.SetTokenData(ctx, tokenData)
 	k.AddTokenDataToAccount(ctx, msg.Owner, tokenID)
 
 	// bank module
 	newCoin := sdk.NewInt64Coin(tokenID, int64(msg.TotalSupply))
-	err := k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
+	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
 
 	if err != nil {
 		return nil, err

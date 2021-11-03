@@ -13,7 +13,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value exists
-	valFound, isFound := k.GetTokenData(
+	tokenData, isFound := k.GetTokenData(
 		ctx,
 		msg.TokenID,
 	)
@@ -22,14 +22,26 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
+	err := k.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
+
+	if err != nil {
+		return nil, err
+	}
+
 	// Checks if the the msg owner is the same as the current owner
-	if msg.Owner != valFound.Owner {
+	if msg.Owner != tokenData.Owner {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	// bank module
+	newTotal := msg.Amount + tokenData.TotalSupply
+
+	if newTotal > maxTokenValue {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "TotalSupply cannot exceed 10000000000")
+	}
+
 	newCoin := sdk.NewInt64Coin(msg.TokenID, int64(msg.Amount))
-	err := k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
+	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
 
 	if err != nil {
 		return nil, err
@@ -41,29 +53,23 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, err
 	}
 
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(
-		ctx,
-		types.ModuleName,
-		receiver,
-		sdk.NewCoins(newCoin),
-	)
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, receiver, sdk.NewCoins(newCoin))
+
 	if err != nil {
 		return nil, err
 	}
 
-	// need to refactoring
+	tokenData.MintSequence++
+	tokenData.TotalSupply += msg.Amount
 
-	valFound.MintSequence++
-	valFound.TotalSupply += msg.Amount
-
-	k.SetTokenData(ctx, valFound)
+	k.SetTokenData(ctx, tokenData)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		sdk.EventTypeMessage,
 		sdk.NewAttribute("Owner", msg.Owner),
 		sdk.NewAttribute("TokenID", msg.TokenID),
 		sdk.NewAttribute("MintAmount", strconv.FormatUint(msg.Amount, 10)),
-		sdk.NewAttribute("TotalSupply", strconv.FormatUint(valFound.TotalSupply, 10)),
+		sdk.NewAttribute("TotalSupply", strconv.FormatUint(tokenData.TotalSupply, 10)),
 	))
 
 	return &types.MsgMintResponse{}, nil

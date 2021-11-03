@@ -12,7 +12,7 @@ func (k msgServer) UpdateTokenURI(goCtx context.Context, msg *types.MsgUpdateTok
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value exists
-	valFound, isFound := k.GetTokenData(
+	tokenData, isFound := k.GetTokenData(
 		ctx,
 		msg.TokenID,
 	)
@@ -21,20 +21,26 @@ func (k msgServer) UpdateTokenURI(goCtx context.Context, msg *types.MsgUpdateTok
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
+	err := k.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
+
+	if err != nil {
+		return nil, err
+	}
+
 	// Checks if the the msg owner is the same as the current owner
-	if msg.Owner != valFound.Owner {
+	if msg.Owner != tokenData.Owner {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	valFound.TokenURI = msg.TokenURI
+	tokenData.TokenURI = msg.TokenURI
 
-	k.SetTokenData(ctx, valFound)
+	k.SetTokenData(ctx, tokenData)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		sdk.EventTypeMessage,
 		sdk.NewAttribute("Owner", msg.Owner),
 		sdk.NewAttribute("TokenID", msg.TokenID),
-		sdk.NewAttribute("TokenURI", valFound.TokenURI),
+		sdk.NewAttribute("TokenURI", tokenData.TokenURI),
 	))
 
 	return &types.MsgUpdateTokenURIResponse{}, nil
