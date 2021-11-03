@@ -22,6 +22,10 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
+	if !tokenData.Mintable {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "mint is not allowed.")
+	}
+
 	err := k.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
 
 	if err != nil {

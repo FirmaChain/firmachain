@@ -22,6 +22,10 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
+	if !tokenData.Burnable {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "burn is not allowed.")
+	}
+
 	err := k.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
 
 	if err != nil {
