@@ -48,7 +48,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 	}
 
 	// send minted coins to receiver
-	receiver, err := sdk.AccAddressFromBech32(msg.Owner)
+	receiver, err := sdk.AccAddressFromBech32(msg.ToAddress)
 	if err != nil {
 		return nil, err
 	}
