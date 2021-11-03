@@ -21,8 +21,9 @@ message MsgCreateToken {
   string symbol = 3;
   string tokenURI = 4;
   uint64 totalSupply = 5;
-  bool mintable = 6;
-  bool burnable = 7;
+  uint64 decimal = 6;
+  bool mintable = 7;
+  bool burnable = 8;
 }
 
 message MsgCreateTokenResponse {

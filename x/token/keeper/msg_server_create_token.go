@@ -27,7 +27,6 @@ func (k msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
 	}
 
-	const decimal = 6
 	const mintSequence = 1
 	const burnSequence = 0
 
@@ -38,7 +37,7 @@ func (k msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken)
 		Symbol:       msg.Symbol,
 		TokenURI:     msg.TokenURI,
 		TotalSupply:  msg.TotalSupply,
-		Decimal:      decimal,
+		Decimal:      msg.Decimal,
 		Mintable:     msg.Mintable,
 		Burnable:     msg.Burnable,
 		MintSequence: mintSequence,
