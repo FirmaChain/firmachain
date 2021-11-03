@@ -102,6 +102,8 @@ import (
 	tokenmodule "github.com/firmachain/firmachain/x/token"
 	tokenmodulekeeper "github.com/firmachain/firmachain/x/token/keeper"
 	tokenmoduletypes "github.com/firmachain/firmachain/x/token/types"
+
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 )
 
 const (
@@ -225,7 +227,6 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
-
 	NftKeeper      nftmodulekeeper.Keeper
 	ContractKeeper contractmodulekeeper.Keeper
 	TokenKeeper    tokenmodulekeeper.Keeper
@@ -236,16 +237,15 @@ type App struct {
 
 func (app *App) registerUpgradeHandlers() {
 
-	const newVersionName = "v0.2.9"
+	const newVersionName = "v0.3.0"
 
 	app.UpgradeKeeper.SetUpgradeHandler(newVersionName, func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
 
-		// module version of v0.2.8 below
-
+		// cosmos 0.44.2 consensus version (old)
 		fromVM := map[string]uint64{
 			"auth":         2,
 			"authz":        1,
-			"bank":         3,
+			"bank":         2,
 			"capability":   1,
 			"crisis":       1,
 			"distribution": 2,
@@ -254,33 +254,35 @@ func (app *App) registerUpgradeHandlers() {
 			"mint":         1,
 			"params":       1,
 			"slashing":     2,
-			"staking":      3,
+			"staking":      2,
 			"upgrade":      1,
 			"vesting":      1,
 			"ibc":          1,
 			"genutil":      1,
 			"transfer":     1,
 			"feegrant":     1,
+			"contract":     1,
+			"nft":          1,
+			"token":        1,
 		}
 
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
 
 	// in case of new module added first
-	/*upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {
 		panic(err)
 	}
 
-
 	if upgradeInfo.Name == newVersionName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := storetypes.StoreUpgrades{
-			Added: []string{"authz", "feegrant"},
+			Added: []string{"token"},
 		}
 
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
-	}*/
+	}
 }
 
 // New returns a reference to an initialized Gaia.
