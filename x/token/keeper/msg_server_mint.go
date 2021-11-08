@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -41,7 +42,8 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 	newTotal := msg.Amount + tokenData.TotalSupply
 
 	if newTotal > maxTokenValue {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "TotalSupply cannot exceed 10000000000")
+		errStr := fmt.Sprintf("TotalSupply cannot exceed  %d", maxTokenValue)
+		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, errStr)
 	}
 
 	newCoin := sdk.NewInt64Coin(msg.TokenID, int64(msg.Amount))

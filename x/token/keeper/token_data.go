@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -12,7 +13,7 @@ import (
 const (
 	maxSymbolLength = 20
 	maxNameLength   = 40
-	maxTokenValue   = 10000000000
+	maxTokenValue   = 10000000000000000
 	ufctTokenName   = "ufct"
 )
 
@@ -35,7 +36,8 @@ func (k Keeper) CheckCommonError(tokenID string, symbol string, name string, tot
 	}
 
 	if totalSupply > maxTokenValue {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "TotalSupply cannot exceed 10000000000")
+		errStr := fmt.Sprintf("TotalSupply cannot exceed  %d", maxTokenValue)
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, errStr)
 	}
 
 	return nil

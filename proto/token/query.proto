@@ -21,7 +21,7 @@ service Query {
 		option (google.api.http).get = "/firmachain/firmachain/token/tokenData";
 	}
 
-// Queries a list of getTokenList items.
+	// Queries a list of getTokenList items.
 	rpc GetTokenList(QueryGetTokenListRequest) returns (QueryGetTokenListResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/token/getTokenList";
 	}
