@@ -2,7 +2,6 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 type BankKeeper interface {
@@ -15,11 +14,4 @@ type BankKeeper interface {
 
 	GetSupply(ctx sdk.Context, denom string) sdk.Coin
 	GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin
-}
-
-type AccountKeeper interface {
-	GetModuleAddress(name string) sdk.AccAddress
-
-	SetModuleAccount(sdk.Context, types.ModuleAccountI)
-	GetModuleAccount(ctx sdk.Context, moduleName string) types.ModuleAccountI
 }

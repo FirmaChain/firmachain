@@ -16,8 +16,7 @@ type (
 		storeKey sdk.StoreKey
 		memKey   sdk.StoreKey
 
-		bankKeeper    types.BankKeeper
-		accountKeeper types.AccountKeeper
+		bankKeeper types.BankKeeper
 	}
 )
 
@@ -27,15 +26,13 @@ func NewKeeper(
 	memKey sdk.StoreKey,
 
 	bankKeeper types.BankKeeper,
-	accountKeeper types.AccountKeeper,
 ) *Keeper {
 	return &Keeper{
 		cdc:      cdc,
 		storeKey: storeKey,
 		memKey:   memKey,
 
-		bankKeeper:    bankKeeper,
-		accountKeeper: accountKeeper,
+		bankKeeper: bankKeeper,
 	}
 }
 
