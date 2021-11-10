@@ -18,6 +18,7 @@ require (
 	github.com/tendermint/tm-db v0.6.4
 	google.golang.org/genproto v0.0.0-20211101144312-62acf1d99145
 	google.golang.org/grpc v1.41.0
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 replace (
