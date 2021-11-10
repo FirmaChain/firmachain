@@ -103,6 +103,10 @@ import (
 	tokenmodulekeeper "github.com/firmachain/firmachain/x/token/keeper"
 	tokenmoduletypes "github.com/firmachain/firmachain/x/token/types"
 
+	burnmodule "github.com/firmachain/firmachain/x/burn"
+	burnmodulekeeper "github.com/firmachain/firmachain/x/burn/keeper"
+	burnmoduletypes "github.com/firmachain/firmachain/x/burn/types"
+
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 )
 
@@ -156,6 +160,7 @@ var (
 		nftmodule.AppModuleBasic{},
 		contractmodule.AppModuleBasic{},
 		tokenmodule.AppModuleBasic{},
+		burnmodule.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -168,6 +173,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		tokenmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		burnmoduletypes.ModuleName:     {authtypes.Burner},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -230,6 +236,7 @@ type App struct {
 	NftKeeper      nftmodulekeeper.Keeper
 	ContractKeeper contractmodulekeeper.Keeper
 	TokenKeeper    tokenmodulekeeper.Keeper
+	BurnKeeper     burnmodulekeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -237,7 +244,7 @@ type App struct {
 
 func (app *App) registerUpgradeHandlers() {
 
-	const newVersionName = "v0.3.0"
+	const newVersionName = "v0.3.1"
 
 	app.UpgradeKeeper.SetUpgradeHandler(newVersionName, func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
 
@@ -264,6 +271,7 @@ func (app *App) registerUpgradeHandlers() {
 			"contract":     1,
 			"nft":          1,
 			"token":        1,
+			"burn":         1,
 		}
 
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
@@ -277,7 +285,7 @@ func (app *App) registerUpgradeHandlers() {
 
 	if upgradeInfo.Name == newVersionName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := storetypes.StoreUpgrades{
-			Added: []string{"token"},
+			Added: []string{"burn"},
 		}
 
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
@@ -316,6 +324,7 @@ func New(
 		nftmoduletypes.StoreKey,
 		contractmoduletypes.StoreKey,
 		tokenmoduletypes.StoreKey,
+		burnmoduletypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -348,8 +357,9 @@ func New(
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec, keys[authtypes.StoreKey], app.GetSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms,
 	)
+
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
-		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.ModuleAccountAddrs(),
+		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.ModuleAccountAddrsForBankModule(),
 	)
 	stakingKeeper := stakingkeeper.NewKeeper(
 		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName),
@@ -435,9 +445,17 @@ func New(
 		keys[tokenmoduletypes.StoreKey],
 		keys[tokenmoduletypes.MemStoreKey],
 		app.BankKeeper,
-		app.AccountKeeper,
 	)
 	tokenModule := tokenmodule.NewAppModule(appCodec, app.TokenKeeper)
+
+	app.BurnKeeper = *burnmodulekeeper.NewKeeper(
+		appCodec,
+		keys[burnmoduletypes.StoreKey],
+		keys[burnmoduletypes.MemStoreKey],
+		app.BankKeeper,
+		app.AccountKeeper,
+	)
+	burnModule := burnmodule.NewAppModule(appCodec, app.BurnKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -482,6 +500,7 @@ func New(
 		nftModule,
 		contractModule,
 		tokenModule,
+		burnModule,
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -493,7 +512,7 @@ func New(
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 	)
 
-	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
+	app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName, burnmoduletypes.ModuleName)
 
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
@@ -521,6 +540,7 @@ func New(
 		nftmoduletypes.ModuleName,
 		contractmoduletypes.ModuleName,
 		tokenmoduletypes.ModuleName,
+		burnmoduletypes.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -593,6 +613,16 @@ func (app *App) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.Res
 // LoadHeight loads a particular height
 func (app *App) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
+}
+
+func (app *App) ModuleAccountAddrsForBankModule() map[string]bool {
+	modAccAddrs := make(map[string]bool)
+	for acc := range maccPerms {
+		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
+	}
+
+	modAccAddrs[authtypes.NewModuleAddress(burnmoduletypes.ModuleName).String()] = false
+	return modAccAddrs
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
@@ -713,6 +743,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(nftmoduletypes.ModuleName)
 	paramsKeeper.Subspace(contractmoduletypes.ModuleName)
 	paramsKeeper.Subspace(tokenmoduletypes.ModuleName)
+	paramsKeeper.Subspace(burnmoduletypes.ModuleName)
 
 	return paramsKeeper
 }
