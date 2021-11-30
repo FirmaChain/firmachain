@@ -90,7 +90,7 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/firmachain/firmachain/docs"
+	"github.com/firmachain/firmachain/client/docs"
 
 	contractmodule "github.com/firmachain/firmachain/x/contract"
 	contractmodulekeeper "github.com/firmachain/firmachain/x/contract/keeper"
