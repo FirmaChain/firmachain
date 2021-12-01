@@ -3,13 +3,14 @@ package main
 import (
 	"os"
 
+	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/firmachain/firmachain/app"
 	"github.com/firmachain/firmachain/spm/cosmoscmd"
 )
 
 func main() {
-	rootCmd, _ := cosmoscmd.NewRootCmd(
+	rootCmd, encodingConfig := cosmoscmd.NewRootCmd(
 		app.Name,
 		app.AccountAddressPrefix,
 		app.DefaultNodeHome,
@@ -17,6 +18,8 @@ func main() {
 		app.ModuleBasics,
 		app.New,
 	)
+
+	rootCmd.AddCommand(server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Marshaler))
 
 	// below 2 codes use for command line description by starport and makefile.
 	rootCmd.Use = "firmachaind"
