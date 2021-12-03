@@ -106,8 +106,6 @@ import (
 	burnmodule "github.com/firmachain/firmachain/x/burn"
 	burnmodulekeeper "github.com/firmachain/firmachain/x/burn/keeper"
 	burnmoduletypes "github.com/firmachain/firmachain/x/burn/types"
-
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 )
 
 const (
@@ -244,11 +242,11 @@ type App struct {
 
 func (app *App) registerUpgradeHandlers() {
 
-	const newVersionName = "v0.3.1"
+	const newVersionName = "v0.3.2"
 
 	app.UpgradeKeeper.SetUpgradeHandler(newVersionName, func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
 
-		// cosmos 0.44.2 consensus version (old)
+		// cosmos 0.44.3 consensus version (old)
 		fromVM := map[string]uint64{
 			"auth":         2,
 			"authz":        1,
@@ -278,19 +276,21 @@ func (app *App) registerUpgradeHandlers() {
 	})
 
 	// in case of new module added first
-	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
-	if err != nil {
-		panic(err)
-	}
-
-	if upgradeInfo.Name == newVersionName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{
-			Added: []string{"burn"},
+	/*
+		upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+		if err != nil {
+			panic(err)
 		}
 
-		// configure store loader that checks if version == upgradeHeight and applies store upgrades
-		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
-	}
+		if upgradeInfo.Name == newVersionName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+			storeUpgrades := storetypes.StoreUpgrades{
+				Added: []string{"burn"},
+			}
+
+			// configure store loader that checks if version == upgradeHeight and applies store upgrades
+			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
+		}
+	*/
 }
 
 // New returns a reference to an initialized Gaia.
