@@ -2,7 +2,7 @@
 
 #### Have you completed the previous step?
 
-* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](broken-reference)
+* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](install-firmachain.md)
 
 ## How to set-up
 

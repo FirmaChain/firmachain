@@ -2,7 +2,7 @@
 
 #### Have you completed the previous step?
 
-* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](broken-reference)
+* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](../getting-started/install-firmachain.md)
 
 ## How to setup
 
@@ -26,7 +26,7 @@ vi ~/.firmachain/config/app.toml
 minimum-gas-prices = "0.01ufct"
 ```
 
-### Support RPC-API
+#### Support RPC-API
 
 REST API endpoint is not activated in the default settings. Therefore, if you want to support, please follow the directions below.
 
