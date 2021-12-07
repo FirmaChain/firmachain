@@ -22,7 +22,7 @@ client:
   vuex:
     path: "vue/src/store"
   openapi:
-    path: "docs/static/openapi.yml"
+    path: "client/docs/static/openapi.yml"
 faucet:
   name: alice
   coins: ["5000000ufct"]
