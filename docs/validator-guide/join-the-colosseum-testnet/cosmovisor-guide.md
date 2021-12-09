@@ -1,12 +1,12 @@
 # Cosmovisor Guide
 
-Cosmovisor is a small process manager for Cosmos SDK application binaries that monitors the governance module for incoming chain upgrade proposals. If it sees a proposal that gets approved, Cosmovisor can automatically download the new binary, stop the current binary, switch from the old binary to the new one, and finally restart the node with the new binary.
+**`cosmovisor`** is a small process manager for Cosmos SDK application binaries that monitors the governance module for incoming chain upgrade proposals. If it sees a proposal that gets approved, **`cosmovisor`** can automatically download the new binary, stop the current binary, switch from the old binary to the new one, and finally restart the node with the new binary.
 
 ## Setup
 
 ### **1.** Download Cosmovisor
 
-Using the command below, users can download the latest Ccosmovisor binary file. We recommend you to use the most recent version of Cosmovisor.
+Using the command below, users can download the latest **`cosmovisor`** binary file. We recommend you to use the most recent version of **`cosmovisor`**.
 
 ```
 go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@latest
@@ -18,7 +18,7 @@ You can also enter the Tag, as shown in the code below to download the original 
 go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v0.1.0
 ```
 
-Please copy the downloaded Cosmovisor binary using the command below.
+Please copy the downloaded **`cosmovisor`** binary using the command below.
 
 ```
 sudo cp cosmovisor /usr/local/bin/cosmovisor
@@ -28,7 +28,7 @@ _\* If you are using go v1.15 or earlier, you will need to use go get, and you m
 
 ### **2. Setting up environmental variables**
 
-Cosmovisor reads its configuration from environment variables:
+**`cosmovisor`** reads its configuration from environment variables:
 
 * DAEMON\_HOME
   * This is the folder directory of the running chain.
@@ -53,7 +53,7 @@ Cosmovisor reads its configuration from environment variables:
   * If you set the variable as false, it becomes easier to roll back and therefore, we recommend you use this feature.
 * DAEMON\_PREUPGRADE\_MAX\_RETRIES (defaults to 0)
   * This option sets the number of pre upgrade call attempts.
-  * If the pre upgrade call attempt reaches the set limit due to consistent failure, Cosmovisor will fail to upgrade.
+  * If the pre upgrade call attempt reaches the set limit due to consistent failure, **`cosmovisor`** will fail to upgrade.
 
 Following is a sample setting of the above variables.\
 Options can be modified in ways that suits your purpose after reading the description of each variable mentioned above.\
@@ -69,7 +69,7 @@ export UNSAFE_SKIP_BACKUP=false
 export DAEMON_PREUPGRADE_MAX_RETRIES=0
 ```
 
-The explanation above describes the option variables to run Cosmovisor and in order to safely manage and use Cosmovisor we recommend you add to the \~/.profile file.
+The explanation above describes the option variables to run **`cosmovisor`** and in order to safely manage and use **`cosmovisor`** we recommend you add to the \~/.profile file.
 
 ```
 sudo nano ~/.profile
@@ -77,12 +77,29 @@ sudo nano ~/.profile
 
 ### **3. Copying 'firmachaind' files in the proper folders**
 
-Cosmovisor must be able to read and run the firmachain binary. Please execute the command provided below.
+**`cosmovisor`** must be able to read and run the firmachain binary. Please execute the command provided below.
 
 ```
 mkdir -p ~/.firmachain/cosmovisor/genesis/bin/
 cp $(which firmachaind) ~/.firmachain/cosmovisor/genesis/bin/
 ```
+
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+_<mark style="color:red;">**※ In case of 1.0.0 version.**</mark>_
+
+* Please execute the command below.\
+  If you don't execute this command, you can't run **`cosmovisor`**.
+
+```
+echo "{}" >> /home/firma/.firmachain/cosmovisor/current/upgrade-info.json
+```
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
 
 Whether you’ve properly configured the settings mentioned above can be determined using the command provided below.
 
@@ -90,14 +107,14 @@ Whether you’ve properly configured the settings mentioned above can be determi
 cosmovisor version
 ```
 
-In order to run with Cosmovisor, you must quite the original firmachaind process.
+In order to run with **`cosmovisor`**, you must quite the original firmachaind process.
 
 ```
 ps -ef | grep firmachaind
 pkill <process id>
 ```
 
-Finally, start cosmovisor
+Finally, start **`cosmovisor`**
 
 ```
 cosmovisor start

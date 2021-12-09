@@ -1,6 +1,6 @@
 # Cosmovisor Example
 
-The purpose of this document is to inform the users on how to upgrade the chain to v0.3.2 using Cosmovisor. All processes mentioned in this document must be conducted on the binary v0.3.1 preconfigured chain server.
+The purpose of this document is to inform the users on how to upgrade the chain to v0.3.2 using **`cosmovisor`**. All processes mentioned in this document must be conducted on the binary v0.3.1 preconfigured chain server.
 
 ### Cosmovisor download & setup
 
@@ -39,7 +39,24 @@ If all environment variables have been registered successfully, you can input th
 echo $DAEMON_NAME
 ```
 
-In order to launch Cosmovisor, please enter the command provided below.
+
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+_<mark style="color:red;">**※ In case of 1.0.0 version.**</mark>_
+
+* Please execute the command below.\
+  If you don't execute this command, you can't run **`cosmovisor`**.
+
+```
+echo "{}" >> /home/firma/.firmachain/cosmovisor/current/upgrade-info.json
+```
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+
+In order to launch **`cosmovisor`**, please enter the command provided below.
 
 ```
 cosmovisor start
@@ -67,12 +84,12 @@ curl https://build.firmachain.org/@v0.3.2 | bash
 #### 3. Copy and Paste the Binary File to the Cosmovisor Upgrade Folder Directory
 
 ```
-cp .firmachaind $DAEMON_HOME/cosmovisor/upgrades/v0.3.2/bin
+cp firmachaind $DAEMON_HOME/cosmovisor/upgrades/v0.3.2/bin
 ```
 
 ## Post-Upgrade
 
-Cosmovisor should be up and running using the upgraded file in v0.3.2/bin folder. Please use the command provided below to check the upgraded binary version.
+**`cosmovisor`** should be up and running using the upgraded file in v0.3.2/bin folder. Please use the command provided below to check the upgraded binary version.
 
 ```
 cosmovisor version
