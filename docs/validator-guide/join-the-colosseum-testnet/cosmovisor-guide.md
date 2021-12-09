@@ -104,7 +104,25 @@ echo "{}" >> /home/firma/.firmachain/cosmovisor/current/upgrade-info.json
 Whether you’ve properly configured the settings mentioned above can be determined using the command provided below.
 
 ```
-cosmovisor version
+$ cosmovisor version
+Cosmovisor Version:
+12:52PM INF Configuration is valid:
+Configurable Values:
+  DAEMON_HOME: /home/firmauser/.firmachain
+  DAEMON_NAME: firmachaind
+  DAEMON_ALLOW_DOWNLOAD_BINARIES: false
+  DAEMON_RESTART_AFTER_UPGRADE: true
+  DAEMON_POLL_INTERVAL: 300ms
+  UNSAFE_SKIP_BACKUP: false
+  DAEMON_PREUPGRADE_MAX_RETRIES: 0
+Derived Values:
+        Root Dir: /home/firmauser/.firmachain/cosmovisor
+     Upgrade Dir: /home/firmauser/.firmachain/cosmovisor/upgrades
+     Genesis Bin: /home/firmauser/.firmachain/cosmovisor/genesis/bin/firmachaind
+  Monitored File: /home/firmauser/.firmachain/data/upgrade-info.json
+ module=cosmovisor
+12:52PM INF running app args=["version"] module=cosmovisor path=/home/firmauser/.firmachain/cosmovisor/upgrades/v0.3.2/bin/firmachaind
+0.3.2
 ```
 
 In order to run with **`cosmovisor`**, you must quite the original firmachaind process.
@@ -117,7 +135,35 @@ pkill <process id>
 Finally, start **`cosmovisor`**
 
 ```
-cosmovisor start
+$ cosmovisor start
+12:55PM INF Configuration is valid:
+Configurable Values:
+DAEMON_HOME: /home/firma/.firmachain
+DAEMON_NAME: firmachaind
+DAEMON_ALLOW_DOWNLOAD_BINARIES: false
+DAEMON_RESTART_AFTER_UPGRADE: true
+DAEMON_POLL_INTERVAL: 300ms
+UNSAFE_SKIP_BACKUP: false
+DAEMON_PREUPGRADE_MAX_RETRIES: 0
+Derived Values:
+Root Dir: /home/firma/.firmachain/cosmovisor
+Upgrade Dir: /home/firma/.firmachain/cosmovisor/upgrades
+Genesis Bin: /home/firma/.firmachain/cosmovisor/genesis/bin/firmachaind
+  Monitored File: /home/firmauser/.firmachain/data/upgrade-info.json
+module=cosmovisor
+12:55PM INF running app args=["start"]
+module=cosmovisor path=/home/firmauser/.firmachain/cosmovisor/upgrades/v0.3.2/bin/firmachaind
+12:55PM INF starting ABCI with Tendermint
+12:55PM INF Starting multiAppConn service impl=multiAppConn module=proxy
+12:55PM INF Starting localClient service connection=query impl=localClient module=abci-client
+12:55PM INF Starting localClient service connection=snapshot impl=localClient module=abci-client
+12:55PM INF Starting localClient service connection=mempool impl=localClient module=abci-client
+12:55PM INF Starting localClient service connection=consensus impl=localClient module=abci-client
+12:55PM INF Starting EventBus service impl=EventBus module=events
+12:55PM INF Starting PubSub service impl=PubSub module=pubsub
+12:55PM INF Starting IndexerService service impl=IndexerService module=txindex
+12:55PM INF ABCI Handshake App Info hash="⽻F�����3�+�\x054��6v�#��(���m\x00q\bj" height=193 module=consensus protocol-version=0 software-version=0.3.2
+12:55PM INF ABCI Replay Blocks appHeight=193 module=consensus stateHeight=193 storeHeight=193
 ```
 
 ### **4.** Registering Cosmovisor to the system (Optional)
