@@ -13,6 +13,8 @@
 * [Join the Colosseum (testnet)](validator-guide/join-the-colosseum-testnet/README.md)
   * [Colosseum Test App](validator-guide/join-the-colosseum-testnet/colosseum-test-app.md)
   * [Edit Validator Description](validator-guide/join-the-colosseum-testnet/edit-validator-description.md)
+  * [Cosmovisor Guide](validator-guide/join-the-colosseum-testnet/cosmovisor-guide.md)
+  * [Cosmovisor Example](validator-guide/join-the-colosseum-testnet/cosmovisor-example.md)
 * [Join the Imperium (devnet)](validator-guide/join-the-imperium-devnet.md)
 
 ## MODULE(COMMING SOON)
