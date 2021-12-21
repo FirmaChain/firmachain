@@ -17,6 +17,11 @@
   * [Cosmovisor Example](validator-guide/join-the-colosseum-testnet/cosmovisor-example.md)
 * [Join the Imperium (devnet)](validator-guide/join-the-imperium-devnet.md)
 
+## GENERAL GUIDES
+
+* [Ledger](general-guides/ledger/README.md)
+  * [Install](general-guides/ledger/install.md)
+  
 ## MODULE(COMMING SOON)
 
 * [Contract](module-comming-soon/contract.md)
