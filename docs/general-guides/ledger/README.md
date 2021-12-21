@@ -8,3 +8,7 @@ It also supports Ledger Nano S and Nano X.
 {% content-ref url="install.md" %}
 [install.md](install.md)
 {% endcontent-ref %}
+
+{% content-ref url="usage-on-firmastation.md" %}
+[usage-on-firmastation.md](usage-on-firmastation.md)
+{% endcontent-ref %}
