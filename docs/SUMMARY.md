@@ -21,7 +21,9 @@
 
 * [Ledger](general-guides/ledger/README.md)
   * [Install](general-guides/ledger/install.md)
-  
+  * [Usage on FirmaStation](general-guides/ledger/usage-on-firmastation.md)
+  * [Usage on FirmaChain-CLI](general-guides/ledger/usage-on-firmachain-cli.md)
+
 ## MODULE(COMMING SOON)
 
 * [Contract](module-comming-soon/contract.md)
