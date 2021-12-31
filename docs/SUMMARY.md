@@ -23,6 +23,8 @@
   * [Install](general-guides/ledger/install.md)
   * [Usage on FirmaStation](general-guides/ledger/usage-on-firmastation.md)
   * [Usage on FirmaChain-CLI](general-guides/ledger/usage-on-firmachain-cli.md)
+* [State Sync](general-guides/state-sync.md)
+* [Recover the chain node](general-guides/recover-the-chain-node.md)
 
 ## MODULE(COMMING SOON)
 
