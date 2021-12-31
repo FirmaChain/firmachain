@@ -10,6 +10,10 @@
 
 ## VALIDATOR GUIDE
 
+* [Join the Colosseum (Mainnet)](validator-guide/join-the-colosseum-mainnet/README.md)
+  * [For Genesis Validator](validator-guide/join-the-colosseum-mainnet/for-genesis-validator.md)
+  * [For Validator](validator-guide/join-the-colosseum-mainnet/for-validator.md)
+  * [Join the FirmaChain Node](validator-guide/join-the-colosseum-mainnet/join-the-firmachain-node.md)
 * [Join the Colosseum (testnet)](validator-guide/join-the-colosseum-testnet/README.md)
   * [Colosseum Test App](validator-guide/join-the-colosseum-testnet/colosseum-test-app.md)
   * [Edit Validator Description](validator-guide/join-the-colosseum-testnet/edit-validator-description.md)
