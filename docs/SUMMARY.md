@@ -20,6 +20,7 @@
   * [Cosmovisor Guide](validator-guide/join-the-colosseum-testnet/cosmovisor-guide.md)
   * [Cosmovisor Example](validator-guide/join-the-colosseum-testnet/cosmovisor-example.md)
 * [Join the Imperium (devnet)](validator-guide/join-the-imperium-devnet.md)
+* [FAQ](validator-guide/faq.md)
 
 ## GENERAL GUIDES
 
