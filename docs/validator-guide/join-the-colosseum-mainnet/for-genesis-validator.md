@@ -4,8 +4,8 @@
 
 This document is written for FirmaChain’s Genesis Validators, and if you are indeed a Genesis Validator participant, please be sure to double check your gentx submission deadline and the starting time of the **Colosseum** mainnet. In order to submit your gentx file to the FirmaChain team, please do so after updating your binary file to the most recent version. ‘Deadline’ and the ‘Mainnet Launch’ schedule is as follows.
 
-* _**Mainnet will launch on 01/11/2022 13:00 UTC.**_
-* _**The deadline to submit your gentx is 01/11/2022 13:00 UTC.**_
+* _**NOT YET**_
+* _**NOT YET**_
 
 _\* To submit your gentx file to the FirmaChain team, please follow the steps listed below._
 
