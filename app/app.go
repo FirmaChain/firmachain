@@ -242,7 +242,7 @@ type App struct {
 
 func (app *App) registerUpgradeHandlers() {
 
-	const newVersionName = "v0.3.2"
+	const newVersionName = "v0.3.3"
 
 	app.UpgradeKeeper.SetUpgradeHandler(newVersionName, func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
 
