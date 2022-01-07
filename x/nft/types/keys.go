@@ -22,7 +22,8 @@ func KeyPrefix(p string) []byte {
 }
 
 const (
-	NftItemKey           = "NftItem-value-"
-	NftItemCountKey      = "NftItem-count-"
-	NftItemAccountMapKey = "NftItem-AccountMap-value-"
+	NftItemDataKey     = "NftItemDataKey"
+	NftItemTotalKey    = "NftItemTotalKey"
+	OwnerOfNftKey      = "OwnerOfNftKey"
+	OwnerOfNftTotalKey = "OwnerOfNftTotalKey"
 )

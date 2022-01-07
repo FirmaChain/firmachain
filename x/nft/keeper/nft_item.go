@@ -9,10 +9,79 @@ import (
 	"github.com/firmachain/firmachain/x/nft/types"
 )
 
+func (k Keeper) AppendNftItem(
+	ctx sdk.Context,
+	nftItem types.NftItem,
+) uint64 {
+
+	// Create the nftItem
+	count := k.GetNftItemCount(ctx)
+
+	// Set the ID of the appended value
+	nftItem.Id = count
+
+	k.SetNftItem(ctx, nftItem)
+	k.SetNftItemCount(ctx, count+1)
+
+	return count
+}
+
+func (k Keeper) RemoveNftItemToAccount(ctx sdk.Context, address string, nftID uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OwnerOfNftKey))
+	accountStore := prefix.NewStore(store, []byte(address))
+
+	accountStore.Delete(GetBytesFromUInt64(nftID))
+
+	total := k.GetNftTotalToAccount(ctx, address)
+	k.SetNftTotalToAccount(ctx, address, total-1)
+}
+
+// RemoveNftItem removes a nftItem from the store
+func (k Keeper) RemoveNftItem(ctx sdk.Context, id uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemDataKey))
+	store.Delete(GetBytesFromUInt64(id))
+}
+
+func (k Keeper) SetNftItemCount(ctx sdk.Context, count uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemTotalKey))
+
+	byteKey := types.KeyPrefix(types.NftItemTotalKey)
+	bz := []byte(strconv.FormatUint(count, 10))
+
+	store.Set(byteKey, bz)
+}
+
+// SetNftItem set a specific nftItem in the store
+func (k Keeper) SetNftItem(ctx sdk.Context, nftItem types.NftItem) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemDataKey))
+	b := k.cdc.MustMarshal(&nftItem)
+	store.Set(GetBytesFromUInt64(nftItem.Id), b)
+
+	k.SetNftItemToAccount(ctx, nftItem.Owner, nftItem.Id)
+}
+
+func (k Keeper) SetNftItemToAccount(ctx sdk.Context, address string, nftID uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OwnerOfNftKey))
+	accountStore := prefix.NewStore(store, []byte(address))
+
+	accountStore.Set(GetBytesFromUInt64(nftID), GetBytesFromUInt64(1))
+
+	total := k.GetNftTotalToAccount(ctx, address)
+	k.SetNftTotalToAccount(ctx, address, total+1)
+}
+
+func (k Keeper) SetNftTotalToAccount(ctx sdk.Context, address string, total uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OwnerOfNftTotalKey))
+	accountStore := prefix.NewStore(store, []byte(address))
+
+	byteKey := types.KeyPrefix(types.OwnerOfNftTotalKey)
+	accountStore.Set(byteKey, GetBytesFromUInt64(total))
+}
+
 // GetNftItemCount get the total number of TypeName.LowerCamel
 func (k Keeper) GetNftItemCount(ctx sdk.Context) uint64 {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemCountKey))
-	byteKey := types.KeyPrefix(types.NftItemCountKey)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemTotalKey))
+	byteKey := types.KeyPrefix(types.NftItemTotalKey)
 	bz := store.Get(byteKey)
 
 	// Count doesn't exist: no element
@@ -30,69 +99,30 @@ func (k Keeper) GetNftItemCount(ctx sdk.Context) uint64 {
 	return count
 }
 
-func (k Keeper) SetNftItemCount(ctx sdk.Context, count uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemCountKey))
-
-	byteKey := types.KeyPrefix(types.NftItemCountKey)
-	bz := []byte(strconv.FormatUint(count, 10))
-
-	store.Set(byteKey, bz)
-}
-
-func (k Keeper) AddNftItemToAccount(ctx sdk.Context, address string, nftID uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemAccountMapKey))
+func (k Keeper) GetNftTotalToAccount(ctx sdk.Context, address string) uint64 {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OwnerOfNftTotalKey))
 	accountStore := prefix.NewStore(store, []byte(address))
 
-	accountStore.Set(GetNftItemIDBytes(nftID), GetNftItemIDBytes(1))
-}
+	byteKey := types.KeyPrefix(types.OwnerOfNftTotalKey)
+	byteTotal := accountStore.Get(byteKey)
 
-func (k Keeper) RemoveNftItemToAccount(ctx sdk.Context, address string, nftID uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemAccountMapKey))
-	accountStore := prefix.NewStore(store, []byte(address))
+	// Count doesn't exist: no element
+	if byteTotal == nil {
+		return 0
+	}
 
-	accountStore.Delete(GetNftItemIDBytes(nftID))
-}
-
-func (k Keeper) AppendNftItem(
-	ctx sdk.Context,
-	nftItem types.NftItem,
-) uint64 {
-
-	// Create the nftItem
-	count := k.GetNftItemCount(ctx)
-
-	// Set the ID of the appended value
-	nftItem.Id = count
-
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
-	appendedValue := k.cdc.MustMarshal(&nftItem)
-	store.Set(GetNftItemIDBytes(nftItem.Id), appendedValue)
-
-	// Update nftItem count
-	k.SetNftItemCount(ctx, count+1)
+	// Parse bytes
+	count := GetUInt64FromBytes(byteTotal)
 
 	return count
 }
 
-// SetNftItem set a specific nftItem in the store
-func (k Keeper) SetNftItem(ctx sdk.Context, nftItem types.NftItem) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
-	b := k.cdc.MustMarshal(&nftItem)
-	store.Set(GetNftItemIDBytes(nftItem.Id), b)
-}
-
 // GetNftItem returns a nftItem from its id
 func (k Keeper) GetNftItem(ctx sdk.Context, id uint64) types.NftItem {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemDataKey))
 	var nftItem types.NftItem
-	k.cdc.MustUnmarshal(store.Get(GetNftItemIDBytes(id)), &nftItem)
+	k.cdc.MustUnmarshal(store.Get(GetBytesFromUInt64(id)), &nftItem)
 	return nftItem
-}
-
-// HasNftItem checks if the nftItem exists in the store
-func (k Keeper) HasNftItem(ctx sdk.Context, id uint64) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
-	return store.Has(GetNftItemIDBytes(id))
 }
 
 // GetNftItemOwner returns the creator of the
@@ -100,15 +130,9 @@ func (k Keeper) GetNftItemOwner(ctx sdk.Context, id uint64) string {
 	return k.GetNftItem(ctx, id).Owner
 }
 
-// RemoveNftItem removes a nftItem from the store
-func (k Keeper) RemoveNftItem(ctx sdk.Context, id uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
-	store.Delete(GetNftItemIDBytes(id))
-}
-
 // GetAllNftItem returns all nftItem
 func (k Keeper) GetAllNftItem(ctx sdk.Context) (list []types.NftItem) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemDataKey))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
@@ -122,14 +146,20 @@ func (k Keeper) GetAllNftItem(ctx sdk.Context) (list []types.NftItem) {
 	return
 }
 
-// GetNftItemIDBytes returns the byte representation of the ID
-func GetNftItemIDBytes(id uint64) []byte {
+// HasNftItem checks if the nftItem exists in the store
+func (k Keeper) HasNftItem(ctx sdk.Context, id uint64) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemDataKey))
+	return store.Has(GetBytesFromUInt64(id))
+}
+
+// GetBytesFromUInt64 returns the byte representation of the UInt64
+func GetBytesFromUInt64(id uint64) []byte {
 	bz := make([]byte, 8)
 	binary.BigEndian.PutUint64(bz, id)
 	return bz
 }
 
-// GetNftItemIDFromBytes returns ID in uint64 format from a byte array
-func GetNftItemIDFromBytes(bz []byte) uint64 {
+// GetUInt64FromBytes returns uint64 format from a byte array
+func GetUInt64FromBytes(bz []byte) uint64 {
 	return binary.BigEndian.Uint64(bz)
 }

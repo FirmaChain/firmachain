@@ -28,9 +28,7 @@ func (k msgServer) Transfer(goCtx context.Context, msg *types.MsgTransfer) (*typ
 	item.Owner = newOwnder
 
 	k.SetNftItem(ctx, item)
-
 	k.RemoveNftItemToAccount(ctx, oldOwner, msg.NftId)
-	k.AddNftItemToAccount(ctx, newOwnder, msg.NftId)
 
 	return &types.MsgTransferResponse{}, nil
 }

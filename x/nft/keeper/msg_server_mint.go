@@ -21,7 +21,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		nftItem,
 	)
 
-	k.AddNftItemToAccount(ctx, msg.Owner, id)
+	//k.AddNftItemToAccount(ctx, msg.Owner, id)
 
 	// write nftID info to transaction event log
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
