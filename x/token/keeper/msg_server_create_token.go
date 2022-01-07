@@ -27,6 +27,12 @@ func (k msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken)
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
 	}
 
+	// send minted coins to receiver
+	receiver, err := sdk.AccAddressFromBech32(msg.Owner)
+	if err != nil {
+		return nil, err
+	}
+
 	const mintSequence = 1
 	const burnSequence = 0
 
@@ -45,9 +51,9 @@ func (k msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken)
 	}
 
 	k.SetTokenData(ctx, tokenData)
-	k.AddTokenDataToAccount(ctx, msg.Owner, tokenID)
 
 	// bank module
+	// mint
 	newCoin := sdk.NewInt64Coin(tokenID, int64(msg.TotalSupply))
 	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
 
@@ -55,18 +61,14 @@ func (k msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken)
 		return nil, err
 	}
 
-	// send minted coins to receiver
-	receiver, err := sdk.AccAddressFromBech32(msg.Owner)
-	if err != nil {
-		return nil, err
-	}
-
+	// transfer to account
 	err = k.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx,
 		types.ModuleName,
 		receiver,
 		sdk.NewCoins(newCoin),
 	)
+
 	if err != nil {
 		return nil, err
 	}

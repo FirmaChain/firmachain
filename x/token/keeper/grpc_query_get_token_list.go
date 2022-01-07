@@ -17,7 +17,7 @@ func (k Keeper) GetTokenList(goCtx context.Context, req *types.QueryGetTokenList
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataAccountMapKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OwnerOfTokenKey))
 	accountStore := prefix.NewStore(store, []byte(req.OwnerAddress))
 
 	iterator := accountStore.Iterator(nil, nil)
@@ -28,7 +28,7 @@ func (k Keeper) GetTokenList(goCtx context.Context, req *types.QueryGetTokenList
 	for ; iterator.Valid(); iterator.Next() {
 
 		// bytes to string
-		tokenId := string(iterator.Value()[:])
+		tokenId := string(iterator.Key()[:])
 		tokenDataArray = append(tokenDataArray, tokenId)
 	}
 

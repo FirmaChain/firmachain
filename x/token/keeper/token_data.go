@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"encoding/binary"
 	"fmt"
 	"regexp"
 
@@ -40,22 +41,40 @@ func (k Keeper) CheckCommonError(tokenID string, symbol string, name string, tot
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, errStr)
 	}
 
+	if totalSupply <= 0 {
+		errStr := "TotalSupply cannot be minus or zero"
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, errStr)
+	}
+
 	return nil
+}
+
+// RemoveTokenData removes a tokenData from the store
+func (k Keeper) RemoveTokenData(
+	ctx sdk.Context,
+	tokenID string,
+
+) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataKeyPrefix))
+	store.Delete(types.TokenDataKey(
+		tokenID,
+	))
 }
 
 // SetTokenData set a specific tokenData in the store from its index
 func (k Keeper) SetTokenData(ctx sdk.Context, tokenData types.TokenData) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataKeyPrefix))
 	b := k.cdc.MustMarshal(&tokenData)
-	store.Set(types.TokenDataKey(
-		tokenData.TokenID), b)
+	store.Set(types.TokenDataKey(tokenData.TokenID), b)
+
+	k.SetTokenDataToAccount(ctx, tokenData)
 }
 
-func (k Keeper) AddTokenDataToAccount(ctx sdk.Context, address string, tokenID string) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataAccountMapKey))
-	accountStore := prefix.NewStore(store, []byte(address))
+func (k Keeper) SetTokenDataToAccount(ctx sdk.Context, tokenData types.TokenData) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OwnerOfTokenKey))
+	accountStore := prefix.NewStore(store, []byte(tokenData.Owner))
 
-	accountStore.Set([]byte(tokenID), []byte(tokenID))
+	accountStore.Set([]byte(tokenData.TokenID), GetBytesFromUInt64(1))
 }
 
 // GetTokenData returns a tokenData from its index
@@ -77,18 +96,6 @@ func (k Keeper) GetTokenData(
 	return val, true
 }
 
-// RemoveTokenData removes a tokenData from the store
-func (k Keeper) RemoveTokenData(
-	ctx sdk.Context,
-	tokenID string,
-
-) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataKeyPrefix))
-	store.Delete(types.TokenDataKey(
-		tokenID,
-	))
-}
-
 // GetAllTokenData returns all tokenData
 func (k Keeper) GetAllTokenData(ctx sdk.Context) (list []types.TokenData) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataKeyPrefix))
@@ -103,4 +110,16 @@ func (k Keeper) GetAllTokenData(ctx sdk.Context) (list []types.TokenData) {
 	}
 
 	return
+}
+
+// GetBytesFromUInt64 returns the byte representation of the Uint64
+func GetBytesFromUInt64(id uint64) []byte {
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, id)
+	return bz
+}
+
+// GetUInt64FromBytes returns uint64 format from a byte array
+func GetUInt64FromBytes(bz []byte) uint64 {
+	return binary.BigEndian.Uint64(bz)
 }

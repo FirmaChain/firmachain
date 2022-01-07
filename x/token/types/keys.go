@@ -16,7 +16,7 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_token"
 
-	TokenDataAccountMapKey = "TokenData-AccountMap-value-"
+	OwnerOfTokenKey = "OwnerOfTokenKey"
 )
 
 func KeyPrefix(p string) []byte {

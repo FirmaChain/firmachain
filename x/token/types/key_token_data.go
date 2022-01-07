@@ -6,7 +6,7 @@ var _ binary.ByteOrder
 
 const (
 	// TokenDataKeyPrefix is the prefix to retrieve all TokenData
-	TokenDataKeyPrefix = "TokenData/value/"
+	TokenDataKeyPrefix = "TokenDataKeyPrefix"
 )
 
 // TokenDataKey returns the store key to retrieve a TokenData from the index fields
