@@ -21,7 +21,7 @@ func (k Keeper) ContractLogAll(c context.Context, req *types.QueryAllContractLog
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	contractLogStore := prefix.NewStore(store, types.KeyPrefix(types.ContractLogKey))
+	contractLogStore := prefix.NewStore(store, types.KeyPrefix(types.ContractLogDataKey))
 
 	pageRes, err := query.Paginate(contractLogStore, req.Pagination, func(key []byte, value []byte) error {
 		var contractLog types.ContractLog
@@ -52,8 +52,8 @@ func (k Keeper) ContractLog(c context.Context, req *types.QueryGetContractLogReq
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractLogKey))
-	k.cdc.MustUnmarshal(store.Get(GetContractLogIDBytes(req.Id)), &contractLog)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractLogDataKey))
+	k.cdc.MustUnmarshal(store.Get(GetBytesFromUInt64(req.Id)), &contractLog)
 
 	return &types.QueryGetContractLogResponse{ContractLog: &contractLog}, nil
 }

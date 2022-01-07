@@ -22,10 +22,8 @@ func KeyPrefix(p string) []byte {
 }
 
 const (
-	ContractLogKey      = "ContractLog-value-"
-	ContractLogCountKey = "ContractLog-count-"
-)
-
-const (
-	ContractFileKey = "ContractFile-value-"
+	ContractLogDataKey      = "ContractLogDataKey"
+	ContractLogDataTotalKey = "ContractLogDataTotalKey"
+	ContractLogHashKey      = "ContractLogHashKey"
+	ContractFileKey         = "ContractFileKey"
 )

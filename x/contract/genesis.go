@@ -16,12 +16,12 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 
 	// Set all the contractLog
 	for _, elem := range genState.ContractLogList {
+		// INFO: the hashStore value can be restored with ContractLog, so it is not stored separately.
 		k.SetContractLog(ctx, *elem)
 	}
 
 	// Set contractLog count
 	k.SetContractLogCount(ctx, genState.ContractLogCount)
-
 }
 
 // ExportGenesis returns the capability module's exported genesis.
