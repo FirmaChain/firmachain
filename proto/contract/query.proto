@@ -26,6 +26,11 @@ service Query {
 		option (google.api.http).get = "/firmachain/firmachain/contract/contractFile";
 	}
 
+	// Queries a contractLog by hash
+	rpc GetContractListFromHash(QueryGetContractListFromHashRequest) returns (QueryGetContractListFromHashResponse) {
+		option (google.api.http).get = "/firmachain/firmachain/contract/ContractListFromHash/{hash}";
+	}
+
 	// Queries a contractLog by id.
 	rpc ContractLog(QueryGetContractLogRequest) returns (QueryGetContractLogResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/contract/contractLog/{id}";
@@ -67,8 +72,16 @@ message QueryGetContractLogRequest {
 	uint64 id = 1;
 }
 
+message QueryGetContractListFromHashRequest {
+	string hash = 1;
+}
+
 message QueryGetContractLogResponse {
 	ContractLog ContractLog = 1;
+}
+
+message QueryGetContractListFromHashResponse {
+	repeated uint64 idList = 1;
 }
 
 message QueryAllContractLogRequest {
