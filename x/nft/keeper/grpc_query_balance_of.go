@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/firmachain/firmachain/x/nft/types"
@@ -18,17 +19,18 @@ func (k Keeper) BalanceOf(goCtx context.Context, req *types.QueryBalanceOfReques
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemAccountMapKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OwnerOfNftTotalKey))
 	accountStore := prefix.NewStore(store, []byte(req.OwnerAddress))
 
-	iterator := accountStore.Iterator(nil, nil)
-	defer iterator.Close()
+	fmt.Println("0")
+	byteKey := types.KeyPrefix(types.OwnerOfNftTotalKey)
+	byteTotal := accountStore.Get(byteKey)
 
-	totalBalance := 0
-
-	for ; iterator.Valid(); iterator.Next() {
-		totalBalance++
+	// Count doesn't exist: no element
+	if byteTotal == nil {
+		return &types.QueryBalanceOfResponse{Total: uint64(0)}, nil
 	}
 
-	return &types.QueryBalanceOfResponse{Total: uint64(totalBalance)}, nil
+	count := GetUInt64FromBytes(byteTotal)
+	return &types.QueryBalanceOfResponse{Total: uint64(count)}, nil
 }

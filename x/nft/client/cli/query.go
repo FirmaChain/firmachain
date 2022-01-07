@@ -24,10 +24,8 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	cmd.AddCommand(CmdTokenOfOwnerByIndex())
-
+	cmd.AddCommand(CmdNftIdListOfOwner())
 	cmd.AddCommand(CmdBalanceOf())
-
 	cmd.AddCommand(CmdListNftItem())
 	cmd.AddCommand(CmdShowNftItem())
 

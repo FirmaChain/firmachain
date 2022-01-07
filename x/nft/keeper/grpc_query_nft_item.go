@@ -21,7 +21,7 @@ func (k Keeper) NftItemAll(c context.Context, req *types.QueryAllNftItemRequest)
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	nftItemStore := prefix.NewStore(store, types.KeyPrefix(types.NftItemKey))
+	nftItemStore := prefix.NewStore(store, types.KeyPrefix(types.NftItemDataKey))
 
 	pageRes, err := query.Paginate(nftItemStore, req.Pagination, func(key []byte, value []byte) error {
 		var nftItem types.NftItem
@@ -52,8 +52,8 @@ func (k Keeper) NftItem(c context.Context, req *types.QueryGetNftItemRequest) (*
 		return nil, sdkerrors.ErrKeyNotFound
 	}
 
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemKey))
-	k.cdc.MustUnmarshal(store.Get(GetNftItemIDBytes(req.Id)), &nftItem)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemDataKey))
+	k.cdc.MustUnmarshal(store.Get(GetBytesFromUInt64(req.Id)), &nftItem)
 
 	return &types.QueryGetNftItemResponse{NftItem: &nftItem}, nil
 }

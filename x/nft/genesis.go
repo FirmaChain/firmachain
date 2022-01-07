@@ -11,12 +11,13 @@ import (
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	// Set all the nftItem
 	for _, elem := range genState.NftItemList {
+
+		// INFO: the nftList and totalCount for owner can be restored with NftItem, so it is not stored separately.
 		k.SetNftItem(ctx, *elem)
 	}
 
 	// Set nftItem count
 	k.SetNftItemCount(ctx, genState.NftItemCount)
-
 }
 
 // ExportGenesis returns the capability module's exported genesis.
