@@ -47,7 +47,7 @@ Firstly, look at \~/.firmachain/config/app.toml file.\
 You can reject any incoming transaction that is lower than the minimum gas price.
 
 ```
-sed -i 's/minimum-gas-prices = "0stake"/minimum-gas-prices = "1ufct"/g' ~/.firmachain/config/app.toml
+sed -i 's/minimum-gas-prices = "0stake"/minimum-gas-prices = "0.1ufct"/g' ~/.firmachain/config/app.toml
 ```
 
 #### P2P options

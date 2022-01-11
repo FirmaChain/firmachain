@@ -23,7 +23,7 @@ vi ~/.firmachain/config/app.toml
 ###                           Base Configuration                            ###
 ###############################################################################
 
-minimum-gas-prices = "0.01ufct"
+minimum-gas-prices = "0.1ufct"
 ```
 
 #### Support RPC-API
@@ -191,6 +191,6 @@ firmachaind tx staking create-validator \
 --commission-max-change-rate 0.01 \
 --min-self-delegation 1 \
 --amount <staking amount>ufct \
---fees 2000ufct \
+--fees 20000ufct \
 --from <key_name>
 ```

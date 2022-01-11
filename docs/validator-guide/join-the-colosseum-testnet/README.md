@@ -2,7 +2,7 @@
 
 #### Have you completed the previous step?
 
-* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](broken-reference)&#x20;
+* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](../../getting-started/install-firmachain.md)&#x20;
 
 ## How to setup
 
@@ -23,10 +23,10 @@ vi ~/.firmachain/config/app.toml
 ###                           Base Configuration                            ###
 ###############################################################################
 
-minimum-gas-prices = "1ufct"
+minimum-gas-prices = "0.1ufct"
 ```
 
-### Support RPC-API
+#### Support RPC-API
 
 REST API endpoint is not activated in the default settings. Therefore, if you want to support, please follow the directions below.
 
@@ -191,6 +191,6 @@ firmachaind tx staking create-validator \
 --commission-max-change-rate 0.01 \
 --min-self-delegation 1 \
 --amount <staking amount>ufct \
---fees 200000ufct \
+--fees 20000ufct \
 --from <key_name>
 ```

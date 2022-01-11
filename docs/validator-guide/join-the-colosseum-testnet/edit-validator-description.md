@@ -22,7 +22,7 @@ firmachaind tx staking edit-validator \
 --identity "key base 64bit code" \
 --details "simple context" \
 --chain-id <chain_id> \
---fees 200000ufct \
+--fees 20000ufct \
 --from <key_name>
 ```
 
