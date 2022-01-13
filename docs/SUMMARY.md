@@ -16,11 +16,6 @@
   * [For Genesis Validator](validator-guide/join-the-colosseum-mainnet/for-genesis-validator.md)
   * [For Validator](validator-guide/join-the-colosseum-mainnet/for-validator.md)
   * [Join the FirmaChain Node](validator-guide/join-the-colosseum-mainnet/join-the-firmachain-node.md)
-* [Join the Colosseum (testnet)](validator-guide/join-the-colosseum-testnet/README.md)
-  * [Colosseum Test App](validator-guide/join-the-colosseum-testnet/colosseum-test-app.md)
-  * [Edit Validator Description](validator-guide/join-the-colosseum-testnet/edit-validator-description.md)
-  * [Cosmovisor Guide](validator-guide/join-the-colosseum-testnet/cosmovisor-guide.md)
-  * [Cosmovisor Example](validator-guide/join-the-colosseum-testnet/cosmovisor-example.md)
 * [Join the Imperium (devnet)](validator-guide/join-the-imperium-devnet.md)
 * [FAQ](validator-guide/faq.md)
 
@@ -44,3 +39,11 @@
 
 * [Cli](resources-comming-soon/cli.md)
 * [Images](resources-comming-soon/images.md)
+
+## ARCHIVE
+
+* [Join the Colosseum (reward-testnet)](archive/join-the-colosseum-reward-testnet/README.md)
+  * [Colosseum Test App](archive/join-the-colosseum-reward-testnet/colosseum-test-app.md)
+  * [Cosmovisor Guide](archive/join-the-colosseum-reward-testnet/cosmovisor-guide.md)
+  * [Cosmovisor Example](archive/join-the-colosseum-reward-testnet/cosmovisor-example.md)
+  * [Edit Validator Description](archive/archive/join-the-colosseum-reward-testnet/edit-validator-description.md)

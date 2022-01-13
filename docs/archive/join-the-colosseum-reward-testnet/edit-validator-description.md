@@ -32,4 +32,4 @@ The process to retrieve this key data is relatively simple. Firstly, log in to k
 
 _\*_ _Do not include any space in the --identity field._
 
-![](../../.gitbook/assets/image.png)
+![](<../../.gitbook/assets/image (3).png>)

@@ -1,8 +1,12 @@
-# Join the Colosseum (testnet)
+# Join the Colosseum (reward-testnet)
+
+### Colosseum testnet has officially been terminated as of December 29, 2021.
+
+
 
 #### Have you completed the previous step?
 
-* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](../../getting-started/install-firmachain.md)&#x20;
+* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](../../getting-started/install-firmachain/)&#x20;
 
 ## How to setup
 
