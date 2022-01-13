@@ -1,4 +1,4 @@
-# Join the Colosseum (Mainnet)
+# Join the Colosseum (mainnet)
 
 ## Before Getting Started
 
