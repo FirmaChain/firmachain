@@ -4,7 +4,9 @@
 
 ## GETTING STARTED
 
-* [Install FirmaChain](getting-started/install-firmachain.md)
+* [Install FirmaChain](getting-started/install-firmachain/README.md)
+  * [Specification](getting-started/install-firmachain/specification.md)
+  * [Install](getting-started/install-firmachain/install.md)
 * [Deploy own network](getting-started/deploy-own-network.md)
 * [EndPoints](getting-started/endpoints.md)
 
