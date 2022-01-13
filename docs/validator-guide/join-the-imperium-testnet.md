@@ -2,7 +2,7 @@
 
 #### Have you completed the previous step?
 
-* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](../getting-started/install-firmachain.md)
+* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](../getting-started/install-firmachain/)
 
 ## How to setup
 
@@ -11,7 +11,7 @@ Please follow the directions below in order to become a validator.
 ### Initialize chain node
 
 ```
-firmachaind init <node_name> --chain-id imperium-2
+firmachaind init <node_name> --chain-id imperium-3
 ```
 
 ### Change gas prices
@@ -73,7 +73,7 @@ Re-enter keyring passphrase: XXXXXXXX
 genesis.json download
 
 ```
-wget https://github.com/FirmaChain/firmachain-devnet-imperium/raw/master/genesis.json
+wget https://github.com/FirmaChain/testnet/raw/master/genesis.json
 ```
 
 copy genesis.json from firmachain config folder
@@ -97,14 +97,14 @@ vi ~/.firmachain/config/config.toml
 # Address to listen for incoming connections
 laddr = "tcp://0.0.0.0:26656"
 
-# Comma separated list of nodes to keep persistent connections to
-persistent_peers = "peer list"
+# Comma separated list of seed nodes to connect to
+seeds = "seed list"
 ```
 
-#### Persistent Peer list (copy peer)
+#### Seed list (copy seeds)
 
 ```
-65db86dfd58c1e3732cfd81bf2129bba222b2cc7@175.114.59.48:26656
+6ffb2a8cabbcb17cb69b449c54d812b50306786d@testnet-seed1.firmachain.dev:26656,ede8f4b223b10b96ca1b1beda56350f94f400fb0@testnet-seed2.firmachain.dev:26656
 ```
 
 ### Start imperium network
@@ -185,7 +185,7 @@ firmachaind start
 firmachaind tx staking create-validator \
 --pubkey $(firmachaind tendermint show-validator) \
 --moniker <Your moniker name> \
---chain-id imperium-2 \
+--chain-id imperium-3 \
 --commission-rate 0.10 \
 --commission-max-rate 0.20 \
 --commission-max-change-rate 0.01 \

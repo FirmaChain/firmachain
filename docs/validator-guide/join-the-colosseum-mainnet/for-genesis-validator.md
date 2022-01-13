@@ -4,8 +4,8 @@
 
 This document is written for FirmaChain’s Genesis Validators, and if you are indeed a Genesis Validator participant, please be sure to double check your gentx submission deadline and the starting time of the **Colosseum** mainnet. In order to submit your gentx file to the FirmaChain team, please do so after updating your binary file to the most recent version. ‘Deadline’ and the ‘Mainnet Launch’ schedule is as follows.
 
-* _**NOT YET**_
-* _**NOT YET**_
+* _**Mainnet will launch on 01/26/2022 14:00 UTC.**_
+* _**The deadline to submit your gentx is 01/19/2022 14:00 UTC.**_
 
 _\* To submit your gentx file to the FirmaChain team, please follow the steps listed below._
 
@@ -17,14 +17,14 @@ If you have a previous record of operating a node and hence have a .firmachain f
 rm -rf ~/.firmachain
 ```
 
-### 1. Download FirmaChain’s most recent binary file.
+### Download FirmaChain’s most recent binary file.
 
 ```
 cd ~
 curl htps://build.firmachain.org | bash
 ```
 
-### 2. Check the binary build version and the integrity before setting global command.
+### Check the binary build version and the integrity before setting global command.
 
 ```
 ./firmachaind version
@@ -33,13 +33,13 @@ sha1sum ./firmachaind
 sudo mv ~/firmachaind /usr/local/bin/firmachaind
 ```
 
-### 3. Initialize(Reset) your firmachain node folder using the command provided below.
+### Initialize(Reset) your firmachain node folder using the command provided below.
 
 ```
-firmachaind init <your_moniker_name> —chain-id colosseum-1
+firmachaind init <your_moniker_name> --chain-id colosseum-1
 ```
 
-### 4. Retrieve your wallet using your mnemonic.
+### Retrieve your wallet using your mnemonic.
 
 ```
 firmachaind keys add <key_name> --recover --coin-type 7777777
@@ -62,7 +62,7 @@ If you do not have a mnemonic or if you are creating a new wallet, please use th
 firmachaind keys add <key_name> --coin-type 7777777
 ```
 
-### 5. Register Genesis account
+### Register Genesis account
 
 ```
 firmachaind add-genesis-account <your_wallet_address> 10000000ufct
@@ -72,7 +72,7 @@ Please check whether the \<your\_wallet\_address> value is identical to the addr
 _**\* When registering a genesis account, for the amount field, you MUST enter 10000000ufct.**_\
 &#x20;  _**If a different amount was put in, please start again by resetting your folder.**_
 
-### 6. Create gentx file (★)
+### Create gentx file (★)
 
 ```
 firmachaind gentx <key_name> --amount 10000000ufct --chain-id colosseum-1
@@ -85,7 +85,7 @@ firmachaind gentx <key_name> --amount 10000000ufct --chain-id colosseum-1
 --security-contact <email>
 ```
 
-### 7. Check gentx file
+### Check gentx file
 
 If all of the above steps were completed without any error, you will be able to find a json file starting with ‘gentx-’ in the \~/.firmachain/config/gentx/ path.
 
@@ -153,11 +153,99 @@ If all of the above steps were completed without any error, you will be able to 
 }
 ```
 
-### 8. Create pull request
+### Create pull request
 
-You must submit the gentx file to the FirmaChain team as a pull request to the https://github.com/firmachain/colosseum-1/gentx/ directory.\
+You must submit the gentx file to the FirmaChain team as a pull request to the https://github.com/FirmaChain/mainnet/gentxs/ directory.\
 _**\* Please change the file name to "vaildator\_name.json" and submit it.**_
 
-_****_
+### Download genesis.json (★)
 
-Please go to [Join the FirmaChain Node](broken-reference)  document once all of the above steps are complete.
+After collecting the gentx from our genesis validators, we will share a consolidated genesis.json file via mainnet git. Genesis validators should download the consolidated file.
+
+```
+wget https://github.com/FirmaChain/mainnet/raw/main/genesis.json
+```
+
+### Replace genesis.json
+
+```
+mv ~/genesis.json ~/.firmachain/config/genesis.json
+```
+
+### Node configuration file
+
+You must modify your configuration file in order for you to join the FirmaChain network.
+
+#### Change Minimum gas prices
+
+Firstly, look at \~/.firmachain/config/app.toml file.\
+You can reject any incoming transaction that is lower than the minimum gas price.
+
+```
+sed -i 's/minimum-gas-prices = "0stake"/minimum-gas-prices = "0.1ufct"/g' ~/.firmachain/config/app.toml
+```
+
+#### P2P options
+
+FirmaChain discloses information on seed nodes for the purpose of P2P connection.\
+The list of seed addresses can be found in [**this link**](https://github.com/FirmaChain/mainnet).
+
+```
+#######################################################
+###           P2P Configuration Options             ###
+#######################################################
+[p2p]
+
+# Address to listen for incoming connections
+laddr = "tcp://0.0.0.0:26656"
+
+# Comma separated list of seed nodes to connect to
+seeds = "seed list"
+```
+
+#### Seed list (copy seeds)
+
+```
+seeds = "id0000000000000000@13.51.211.18:26656,id0000000000000001@38.209.37.78:26656"
+```
+
+### Start FirmaChain
+
+```
+firmachaind start
+```
+
+### Register as daemon (Optional)
+
+It is absolutely crucial that the FirmaChain nodes remain active at all times. The simplest solution would be to register this as a system. After a reboot or any other type of event, the service registered on the system will be activated and hence, FirmaChain will be able to start the operation of the nodes.
+
+```
+sudo tee /etc/systemd/system/firmachaind.service > /dev/null <<EOF  
+[Unit]
+Description=Firmachain Node
+After=network-online.target
+
+[Service]
+User=$USER
+ExecStart=$(which cosmovisor) start
+Restart=always
+RestartSec=3
+LimitNOFILE=65535
+
+Environment="DAEMON_HOME=$HOME/.firmachain"
+Environment="DAEMON_NAME=firmachaind"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="UNSAFE_SKIP_BACKUP=false"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Now you are all set to operate FirmaChain using daemon. Please join our network using the command provided below.
+
+```
+sudo systemctl daemon-reload
+sudo systemctl restart firmachaind
+```

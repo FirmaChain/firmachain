@@ -2,9 +2,9 @@
 
 #### Have you completed the previous step?
 
-* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](install-firmachain.md)
+* If you are unsure about the minimum specifications or the ‘firmachaind’ binary files, please visit the following link. [Install FirmaChain](install-firmachain/)
 
-## How to set-up
+## How to setup
 
 In order to become a Validator, you must follow the direction below.
 
@@ -23,7 +23,7 @@ vi ~/.firmachain/config/app.toml
 ###                           Base Configuration                            ###
 ###############################################################################
 
-minimum-gas-prices = "1ufct"
+minimum-gas-prices = "0.1ufct"
 ```
 
 ### Create Wallet

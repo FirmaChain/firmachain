@@ -12,11 +12,11 @@
 
 ## VALIDATOR GUIDE
 
-* [Join the Colosseum (Mainnet)](validator-guide/join-the-colosseum-mainnet/README.md)
+* [Join the Colosseum (mainnet)](validator-guide/join-the-colosseum-mainnet/README.md)
   * [For Genesis Validator](validator-guide/join-the-colosseum-mainnet/for-genesis-validator.md)
   * [For Validator](validator-guide/join-the-colosseum-mainnet/for-validator.md)
-  * [Join the FirmaChain Node](validator-guide/join-the-colosseum-mainnet/join-the-firmachain-node.md)
-* [Join the Imperium (devnet)](validator-guide/join-the-imperium-devnet.md)
+  * [Edit Validator Description](validator-guide/join-the-colosseum-mainnet/edit-validator-description.md)
+* [Join the Imperium (testnet)](validator-guide/join-the-imperium-testnet.md)
 * [FAQ](validator-guide/faq.md)
 
 ## GENERAL GUIDES
@@ -46,4 +46,3 @@
   * [Colosseum Test App](archive/join-the-colosseum-reward-testnet/colosseum-test-app.md)
   * [Cosmovisor Guide](archive/join-the-colosseum-reward-testnet/cosmovisor-guide.md)
   * [Cosmovisor Example](archive/join-the-colosseum-reward-testnet/cosmovisor-example.md)
-  * [Edit Validator Description](archive/archive/join-the-colosseum-reward-testnet/edit-validator-description.md)

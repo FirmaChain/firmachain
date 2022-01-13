@@ -15,7 +15,3 @@ The validator guide details the necessary steps a participant must take in order
 {% content-ref url="for-validator.md" %}
 [for-validator.md](for-validator.md)
 {% endcontent-ref %}
-
-{% content-ref url="join-the-firmachain-node.md" %}
-[join-the-firmachain-node.md](join-the-firmachain-node.md)
-{% endcontent-ref %}

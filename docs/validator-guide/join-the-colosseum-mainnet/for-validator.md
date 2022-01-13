@@ -53,22 +53,94 @@ sed -i 's/minimum-gas-prices = "0stake"/minimum-gas-prices = "0.1ufct"/g' ~/.fir
 #### P2P options
 
 FirmaChain discloses information on seed nodes for the purpose of P2P connection.\
-The list of seed addresses can be found in **this link**.
+The list of seed addresses can be found in [**this link**](https://github.com/FirmaChain/mainnet).
 
 ```
 #######################################################
 ###           P2P Configuration Options             ###
 #######################################################
 [p2p]
-...
+
+# Address to listen for incoming connections
+laddr = "tcp://0.0.0.0:26656"
+
 # Comma separated list of seed nodes to connect to
-seeds = ""
+seeds = "seed list"
 ```
 
-example)
+#### Seed list (copy seeds)
 
 ```
 seeds = "id0000000000000000@13.51.211.18:26656,id0000000000000001@38.209.37.78:26656"
 ```
 
-Please go to [Join the FirmaChain Node](broken-reference) document once all of the above steps are complete.
+### Download genesis.json (★)
+
+In order to participate in the mainnet you will need a genesis.json file. Genesis.json file can be found in the FirmaChain github repository and can be downloaded from server local using the following command
+
+```
+wget https://github.com/FirmaChain/mainnet/raw/master/genesis.json
+```
+
+### Replace genesis.json
+
+```
+mv ~/genesis.json ~/.firmachain/config/genesis.json
+```
+
+### Start FirmaChain
+
+```
+firmachaind start
+```
+
+### Register as Validator
+
+```
+firmachaind tx staking create-validator \
+--pubkey $(firmachaind tendermint show-validator) \
+--moniker <Your moniker name> \
+--chain-id imperium-3 \
+--commission-rate 0.10 \
+--commission-max-rate 0.20 \
+--commission-max-change-rate 0.01 \
+--min-self-delegation 1 \
+--amount <staking amount>ufct \
+--fees 20000ufct \
+--from <key_name>
+```
+
+### Register as daemon (Optional)
+
+It is absolutely crucial that the FirmaChain nodes remain active at all times. The simplest solution would be to register this as a system. After a reboot or any other type of event, the service registered on the system will be activated and hence, FirmaChain will be able to start the operation of the nodes.
+
+```
+sudo tee /etc/systemd/system/firmachaind.service > /dev/null <<EOF  
+[Unit]
+Description=Firmachain Node
+After=network-online.target
+
+[Service]
+User=$USER
+ExecStart=$(which cosmovisor) start
+Restart=always
+RestartSec=3
+LimitNOFILE=65535
+
+Environment="DAEMON_HOME=$HOME/.firmachain"
+Environment="DAEMON_NAME=firmachaind"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+Environment="UNSAFE_SKIP_BACKUP=false"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+Now you are all set to operate FirmaChain using daemon. Please join our network using the command provided below.
+
+```
+sudo systemctl daemon-reload
+sudo systemctl restart firmachaind
+```
