@@ -75,15 +75,18 @@ _**\* When registering a genesis account, for the amount field, you MUST enter 1
 ### Create gentx file (★)
 
 ```
-firmachaind gentx <key_name> --amount 10000000ufct --chain-id colosseum-1
---commission-rate 0.1
---commission-max-rate 0.2
---commission-max-change-rate 0.01
---moniker <moniker_name>
---website <website_link>
---details <description>
---security-contact <email>
+firmachaind gentx <key_name> --amount 10000000ufct --chain-id colosseum-1 \
+--commission-rate 0.1 \
+--commission-max-rate 0.2 \
+--commission-max-change-rate 0.01 \
+--moniker <moniker_name> \
+--website <website_link> \
+--details <description> \
+--security-contact <email> \
+--identity "key base 64bit code"
 ```
+
+"Keybase 64bit code" can be found through [this link](edit-validator-description.md#how-to-get-identity-64bit-code).
 
 ### Check gentx file
 
@@ -206,7 +209,7 @@ seeds = "seed list"
 #### Seed list (copy seeds)
 
 ```
-seeds = "id0000000000000000@13.51.211.18:26656,id0000000000000001@38.209.37.78:26656"
+fffa9c85e3182342e4db7fc8027332c43a0cfa15@mainnet-seed1.firmachain.dev:26656,3ca16236b26a83ab8ab5de583c20a79b9843c274@mainnet-seed2.firmachain.dev:26656,8335d246b6703d112ae0726bfc2b6e3a5b0010c2@mainnet-seed3.firmachain.dev:26656
 ```
 
 ### Start FirmaChain

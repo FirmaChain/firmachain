@@ -71,7 +71,7 @@ seeds = "seed list"
 #### Seed list (copy seeds)
 
 ```
-seeds = "id0000000000000000@13.51.211.18:26656,id0000000000000001@38.209.37.78:26656"
+fffa9c85e3182342e4db7fc8027332c43a0cfa15@mainnet-seed1.firmachain.dev:26656,3ca16236b26a83ab8ab5de583c20a79b9843c274@mainnet-seed2.firmachain.dev:26656,8335d246b6703d112ae0726bfc2b6e3a5b0010c2@mainnet-seed3.firmachain.dev:26656
 ```
 
 ### Download genesis.json (★)
@@ -105,10 +105,13 @@ firmachaind tx staking create-validator \
 --commission-max-rate 0.20 \
 --commission-max-change-rate 0.01 \
 --min-self-delegation 1 \
+--identity "key base 64bit code" \
 --amount <staking amount>ufct \
 --fees 20000ufct \
 --from <key_name>
 ```
+
+"Keybase 64bit code" can be found through [this link](edit-validator-description.md#how-to-get-identity-64bit-code).
 
 ### Register as daemon (Optional)
 
