@@ -21,7 +21,7 @@ rm -rf ~/.firmachain
 
 ```
 cd ~
-curl htps://build.firmachain.org | bash
+curl https://build.firmachain.org | bash
 ```
 
 ### Check the binary build version and the integrity before setting global command.
@@ -75,7 +75,7 @@ _**\* When registering a genesis account, for the amount field, you MUST enter 1
 ### Create gentx file (★)
 
 ```
-firmachaind gentx <key_name> --amount 10000000ufct --chain-id colosseum-1 \
+firmachaind gentx <key_name> 10000000ufct --chain-id colosseum-1 \
 --commission-rate 0.1 \
 --commission-max-rate 0.2 \
 --commission-max-change-rate 0.01 \
@@ -83,7 +83,7 @@ firmachaind gentx <key_name> --amount 10000000ufct --chain-id colosseum-1 \
 --website <website_link> \
 --details <description> \
 --security-contact <email> \
---identity "key base 64bit code"
+--identity <key base 64bit code>
 ```
 
 "Keybase 64bit code" can be found through [this link](edit-validator-description.md#how-to-get-identity-64bit-code).

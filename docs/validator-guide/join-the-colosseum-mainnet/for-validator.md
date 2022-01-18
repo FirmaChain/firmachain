@@ -105,7 +105,7 @@ firmachaind tx staking create-validator \
 --commission-max-rate 0.20 \
 --commission-max-change-rate 0.01 \
 --min-self-delegation 1 \
---identity "key base 64bit code" \
+--identity <key base 64bit code> \
 --amount <staking amount>ufct \
 --fees 20000ufct \
 --from <key_name>

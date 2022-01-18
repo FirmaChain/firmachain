@@ -12,7 +12,7 @@ The FirmaChain is based on [Cosmos-SDK](https://docs.cosmos.network/v0.42/intro/
 
 ### **What is 'staking'?**
 
-The FirmaChain is a public Proof-Of-Stake (PoS, Proof of Stake) blockchain, meaning that the weight of validators is determined by the amount of staking tokens (FCTs) bonded as collateral. These FCTs can be self-delegated directly by the validator or delegated to them by other Atom holders. **** Any user in the system can declare their intention to become a validator by sending a `create-validator` transaction. From there, they become validator candidates.\
+The FirmaChain is a public Proof-Of-Stake (PoS, Proof of Stake) blockchain, meaning that the weight of validators is determined by the amount of staking tokens (FCTs) bonded as collateral. These FCTs can be self-delegated directly by the validator or delegated to them by other FCT holders. **** Any user in the system can declare their intention to become a validator by sending a `create-validator` transaction. From there, they become validator candidates.\
 The weight (i.e. voting power) of a validator determines whether or not they are an active validator. Initially, only the top 125 validators with the most voting power will be active validators.
 
 ### **What is a full-node?**
@@ -23,7 +23,7 @@ Of course, it is possible and encouraged for users to run full-nodes even if the
 
 ### **What is a delegator?**
 
-Delegators are Atom holders who cannot, or do not want to run a validator themselves. Atom holders can delegate FCTs to a validator and obtain a part of their revenue in exchange (for more detail on how revenue is distributed, see [What is the incentive to stake?](https://hub.cosmos.network/main/validators/validator-faq.html#what-is-the-incentive-to-stake?) and [What are validators commission?](https://hub.cosmos.network/main/validators/validator-faq.html#what-are-validators-commission?) sections below).
+Delegators are FCT holders who cannot, or do not want to run a validator themselves. FCT holders can delegate FCTs to a validator and obtain a part of their revenue in exchange (for more detail on how revenue is distributed, see [What is the incentive to stake?](https://hub.cosmos.network/main/validators/validator-faq.html#what-is-the-incentive-to-stake?) and [What are validators commission?](https://hub.cosmos.network/main/validators/validator-faq.html#what-are-validators-commission?) sections below).
 
 Because they share revenue with their validators, delegators also share risks. Should a validator misbehave, each of their delegators will be partially slashed in proportion to their delegated stake. This is why delegators should perform due diligence on validators before delegating, as well as spreading their stake over multiple validators.
 
@@ -45,7 +45,7 @@ Any participant in the network can signal that they want to become a validator b
 * **Commission max change rate**: The maximum daily increase of the validator commission. This parameter cannot be changed after `create-validator` is processed.
 * **Minimum self-delegation**: Minimum amount of FCTs the validator needs to have bonded at all time. If the validator's self-delegated stake falls below this limit, their entire staking pool will unbond.
 
-Once a validator is created, Atom holders can delegate FCTs to them, effectively adding stake to their pool. The total stake of an address is the combination of FCTs bonded by delegators and FCTs self-bonded by the entity which designated themselves.
+Once a validator is created, FCT holders can delegate FCTs to them, effectively adding stake to their pool. The total stake of an address is the combination of FCTs bonded by delegators and FCTs self-bonded by the entity which designated themselves.
 
 Out of all validator candidates that signaled themselves, the 125 with the most total stake are the ones who are designated as validators. They become validators If a validator's total stake falls below the top 125 then that validator loses their validator privileges: they don't participate in consensus and generate rewards any more. Over time, the maximum number of validators may be increased via on-chain governance proposal.
 
@@ -136,8 +136,8 @@ Yes, they will. If governance decides so, validators of the FirmaChain may be re
 
 Each member of a validator's staking pool earns different types of revenue:
 
-* Block rewards: Native tokens of applications run by validators (e.g. FCTs on the FirmaChain) are inflated to produce block provisions. These provisions exist to incentivize Atom holders to bond their stake, as non-bonded Atom will be diluted over time.
-* Transaction fees: The FirmaChain maintains a whitelist of token that are accepted as fee payment. The initial fee token is the atom.
+* Block rewards: Native tokens of applications run by validators (e.g. FCTs on the FirmaChain) are inflated to produce block provisions. These provisions exist to incentivize FCT holders to bond their stake, as non-bonded FCT will be diluted over time.
+* Transaction fees: The FirmaChain maintains a whitelist of token that are accepted as fee payment. The initial fee token is the fct.
 
 This total revenue is divided among validators' staking pools according to each validator's weight. Then, within each validator's staking pool the revenue is divided among delegators in proportion to each delegator's stake. A commission on delegators' revenue is applied by the validator before it is distributed.
 
@@ -201,7 +201,7 @@ If a validator misbehaves, their delegated stake will be partially slashed. Ther
 
 ### **Do validators need to self-delegate** FCTs**?**
 
-Yes, they do need to self-delegate at least 1 atom. Even though there is no obligation for validators to self-delegate more than 1 atom, delegators should want their validator to have more self-delegated FCTs in their staking pool. In other words, validators should have skin in the game.
+Yes, they do need to self-delegate at least 1 fct. Even though there is no obligation for validators to self-delegate more than 1 fct, delegators should want their validator to have more self-delegated FCTs in their staking pool. In other words, validators should have skin in the game.
 
 In order for delegators to have some guarantee about how much skin-in-the-game their validator has, the latter can signal a minimum amount of self-delegated FCTs. If a validator's self-delegation goes below the limit that it predefined, this validator and all of its delegators will unbond.
 
