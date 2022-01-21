@@ -191,19 +191,25 @@ sed -i 's/minimum-gas-prices = "0stake"/minimum-gas-prices = "0.1ufct"/g' ~/.fir
 #### P2P options
 
 FirmaChain discloses information on seed nodes for the purpose of P2P connection.\
-The list of seed addresses can be found in [**this link**](https://github.com/FirmaChain/mainnet).
+Details are available on [github](https://github.com/FirmaChain/mainnet).
 
 ```
 #######################################################
 ###           P2P Configuration Options             ###
 #######################################################
-[p2p]
+...
 
-# Address to listen for incoming connections
-laddr = "tcp://0.0.0.0:26656"
+# example: 159.89.10.97:26656
+external_address = ""
 
 # Comma separated list of seed nodes to connect to
 seeds = "seed list"
+```
+
+#### Input your 'external address'
+
+```
+external_address = "your_external_address:26656"
 ```
 
 #### Seed list (copy seeds)
@@ -230,7 +236,7 @@ After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$(which cosmovisor) start
+ExecStart=$(which firmachaind) start
 Restart=always
 RestartSec=3
 LimitNOFILE=65535
