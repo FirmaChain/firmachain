@@ -71,7 +71,7 @@ seeds = "seed list"
 #### Seed list (copy seeds)
 
 ```
-fffa9c85e3182342e4db7fc8027332c43a0cfa15@mainnet-seed1.firmachain.dev:26656,3ca16236b26a83ab8ab5de583c20a79b9843c274@mainnet-seed2.firmachain.dev:26656,8335d246b6703d112ae0726bfc2b6e3a5b0010c2@mainnet-seed3.firmachain.dev:26656
+f89dcc15241e30323ae6f491011779d53f9a5487@mainnet-seed1.firmachain.dev:26656,04cce0da4cf5ceb5ffc04d158faddfc5dc419154@mainnet-seed2.firmachain.dev:26656,940977bdc070422b3a62e4985f2fe79b7ee737f7@mainnet-seed3.firmachain.dev:26656
 ```
 
 ### Download genesis.json (★)
@@ -100,7 +100,7 @@ firmachaind start
 firmachaind tx staking create-validator \
 --pubkey $(firmachaind tendermint show-validator) \
 --moniker <Your moniker name> \
---chain-id imperium-3 \
+--chain-id colosseum-1 \
 --commission-rate 0.10 \
 --commission-max-rate 0.20 \
 --commission-max-change-rate 0.01 \
@@ -125,7 +125,7 @@ After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$(which cosmovisor) start
+ExecStart=$(which firmachaind) start
 Restart=always
 RestartSec=3
 LimitNOFILE=65535
