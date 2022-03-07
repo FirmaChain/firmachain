@@ -26,11 +26,11 @@ FirmaChain now builds on [Tendermint](https://github.com/tendermint/tendermint) 
 
 ## Installation
 
-### 1. From curl command from https://build.firmachain.org
+### 1. From curl command from https://build.firmachain.dev
 
 You can download a pre-built binary for your operating system easily below command. 
 ```bash
-curl https://build.firmachain.org | bash
+curl https://build.firmachain.dev | bash
 ```
 
 or you can find the latest binaries on the [releases](https://github.com/firmachain/firmachain/releases) page.
@@ -81,10 +81,10 @@ If you are interested, please contact us through contact@firmachain.org
 
 ## Network 
 
-- Testnet **Imperium-2** is ready for online. (private testnet for only chain developer)
-- Testnet **Colosseum-1** is ready for online. (public testnet for validator)
-- Mainnet **Augustus-1** launched at 29.09.2020
-	- FirmaChain is currently operating on Ethereum as an ERC-20 Token **FCT**. All contracts and tokens will be migrated to our main network once it is complete network stabilization.
+- Maintnet **Colosseum-1** launced at 2022.01.26
+    - FirmaChain is currently operating on Ethereum as an ERC-20 Token FCT. 
+    - All contracts and tokens will be migrated to our main network once it is complete network stabilization.
+- Testnet **Imperium-3** is ready for online. (private testnet for only chain developer)
 
 ## EcoSystem
 - [FirmaChain-BlockExplorer](https://github.com/FirmaChain/firmachain-explorer)
