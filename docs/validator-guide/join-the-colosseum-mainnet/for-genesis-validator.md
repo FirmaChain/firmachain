@@ -21,7 +21,7 @@ rm -rf ~/.firmachain
 
 ```
 cd ~
-curl https://build.firmachain.org | bash
+curl https://build.firmachain.dev | bash
 ```
 
 ### Check the binary build version and the integrity before setting global command.
@@ -78,7 +78,7 @@ _**\* When registering a genesis account, for the amount field, you MUST enter 1
 firmachaind gentx <key_name> 10000000ufct --chain-id colosseum-1 \
 --commission-rate 0.1 \
 --commission-max-rate 0.2 \
---commission-max-change-rate 0.01 \
+--commission-max-change-rate 0.1 \
 --moniker <moniker_name> \
 --website <website_link> \
 --details <description> \
@@ -166,7 +166,7 @@ _**\* Please change the file name to "vaildator\_name.json" and submit it.**_
 After collecting the gentx from our genesis validators, we will share a consolidated genesis.json file via mainnet git. Genesis validators should download the consolidated file.
 
 ```
-wget https://github.com/FirmaChain/mainnet/raw/main/genesis.json
+wget https://raw.githubusercontent.com/FirmaChain/mainnet/main/colosseum-1/genesis.json
 ```
 
 ### Replace genesis.json

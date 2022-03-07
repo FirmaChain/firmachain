@@ -79,7 +79,7 @@ f89dcc15241e30323ae6f491011779d53f9a5487@mainnet-seed1.firmachain.dev:26656,04cc
 In order to participate in the mainnet you will need a genesis.json file. Genesis.json file can be found in the FirmaChain github repository and can be downloaded from server local using the following command
 
 ```
-wget https://github.com/FirmaChain/mainnet/raw/master/genesis.json
+wget https://raw.githubusercontent.com/FirmaChain/mainnet/main/colosseum-1/genesis.json
 ```
 
 ### Replace genesis.json
@@ -103,7 +103,7 @@ firmachaind tx staking create-validator \
 --chain-id colosseum-1 \
 --commission-rate 0.10 \
 --commission-max-rate 0.20 \
---commission-max-change-rate 0.01 \
+--commission-max-change-rate 0.1 \
 --min-self-delegation 1 \
 --identity <key base 64bit code> \
 --amount <staking amount>ufct \

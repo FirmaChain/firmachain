@@ -8,17 +8,17 @@ _\* Before using the Ledger Nano hardware wallet, please check whether you have 
 
 * Ledger Live Application
 
-![ledger live application version](<../../.gitbook/assets/image (13).png>)
+![Ledger live application version](<../../.gitbook/assets/image (13).png>)
 
 * Ledger Nano Wallet
 
-![ledger nano S firmware version](<../../.gitbook/assets/image (4).png>)
+![Ledger nano S firmware version](<../../.gitbook/assets/image (4).png>)
 
 ## How to access your Ledger wallet
 
 ### 1. Connect your Ledger waller to the computer.
 
-Once you connect your ledger wallet to your computer, please enter the pin code to allow access. As you can see in the image below, you must be able to view the downloaded applications in the screen of your ledger.
+Once you connect your Ledger wallet to your computer, please enter the pin code to allow access. As you can see in the image below, you must be able to view the downloaded applications in the screen of your Ledger.
 
 ![](<../../.gitbook/assets/image (25).png>)
 

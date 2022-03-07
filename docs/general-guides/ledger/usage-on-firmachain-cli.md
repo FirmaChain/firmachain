@@ -79,7 +79,7 @@ If you are using mnemonic, please run the command provided below.
 firmachaind keys add <key_name> --recover --coin-type 7777777 --ledger
 ```
 
-Once you complete the steps above, an address will appear on the screen of your connected Ledger Nano S/X. By clicking on the button on the right, you can check your wallet information. Finally, approve by simultaneously clicking on the two buttons located on the top of your ledger.
+Once you complete the steps above, an address will appear on the screen of your connected Ledger Nano S/X. By clicking on the button on the right, you can check your wallet information. Finally, approve by simultaneously clicking on the two buttons located on the top of your Ledger.
 
 ![](<../../.gitbook/assets/image (8).png>)
 
@@ -132,7 +132,7 @@ _\* --note_ is optional. _Only the flag has been changed to --note from the orig
 
 If you’ve successfully sent the above command (transaction) from your OS, please check your Ledger Nano S/X. You approve the transaction request from your Ledger Nano S/X. Using the top right button of your Ledger Nano S/X, please check whether all transaction information is correct before proceeding to the ‘Approve or Reject’ stage.
 
-_\* You can proceed by simultaneously clicking on the two buttons located on the top of your ledger._
+_\* You can proceed by simultaneously clicking on the two buttons located on the top of your Ledger._
 
 ![](<../../.gitbook/assets/image (7).png>)
 

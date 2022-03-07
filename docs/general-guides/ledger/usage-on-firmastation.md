@@ -2,7 +2,7 @@
 
 ## Before Starting
 
-Depending on the browser of your choice, some browsers may not support the Ledger Nano S/X connection. Please check whether the browser of your choice supports ledger connection.
+Depending on the browser of your choice, some browsers may not support the Ledger Nano S/X connection. Please check whether the browser of your choice supports Ledger connection.
 
 | Browser       | is support |
 | ------------- | ---------- |
@@ -16,15 +16,15 @@ Depending on the browser of your choice, some browsers may not support the Ledge
 
 ### 1. Connect your Ledger waller to the computer.
 
-Once you connect your ledger wallet to your computer, please enter the pin code to allow access. As you can see in the image below, you must be able to view the downloaded applications in the screen of your ledger.
+Once you connect your Ledger wallet to your computer, please enter the pin code to allow access. As you can see in the image below, you must be able to view the downloaded applications in the screen of your Ledger.
 
 ![](<../../.gitbook/assets/image (28).png>)
 
 ### 2. Open the FirmaChain application.
 
-You can navigate through the apps by using the two buttons located on the top of the ledger. Once you choose the FirmaChain app, you can open the application by clicking the two buttons simultaneously.
+You can navigate through the apps by using the two buttons located on the top of the Ledger. Once you choose the FirmaChain app, you can open the application by clicking the two buttons simultaneously.
 
-_\* As can be seen in the image below, you can see the phrase ‘FirmaChain ready’ in the screen of the ledger once you enter the FirmaChain app._
+_\* As can be seen in the image below, you can see the phrase ‘FirmaChain ready’ in the screen of the Ledger once you enter the FirmaChain app._
 
 ![](<../../.gitbook/assets/image (32).png>)
 
