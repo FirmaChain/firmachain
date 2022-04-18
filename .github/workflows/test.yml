@@ -29,6 +29,7 @@ jobs:
       uses: golangci/golangci-lint-action@v2
       with:
         version: v1.30
+        skip-pkg-cache: true
         
     - name: codecov-action
       uses: codecov/codecov-action@v2
