@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/ignite-hq/cli/ignite/pkg/cosmoscmd"
+	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
