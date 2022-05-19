@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/firmachain/firmachain/app"
-	"github.com/ignite-hq/cli/ignite/pkg/cosmoscmd"
+	"github.com/tendermint/starport/starport/pkg/cosmoscmd"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 		app.New,
 	)
 
-	rootCmd.AddCommand(server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Marshaler))
+	rootCmd.AddCommand(server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Marshaler), AddGenesisWasmMsgCmd(app.DefaultNodeHome))
 
 	// below 2 codes use for command line description by starport and makefile.
 	rootCmd.Use = "firmachaind"
