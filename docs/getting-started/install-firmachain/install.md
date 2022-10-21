@@ -8,7 +8,7 @@ You can easily download a pre-built binary for your operating system using the c
 
 ```shell
 # On Bash
-curl https://build.firmachain.org | bash
+curl https://build.firmachain.dev | bash
 
 sudo mv ./firmachaind /usr/local/bin/firmachaind
 ```
@@ -17,29 +17,29 @@ sudo mv ./firmachaind /usr/local/bin/firmachaind
 
 ```
 firmachaind version
-0.3.3
+0.3.3-6bcd9e15
 ```
 
 ```
 firmachaind version --long
 name: Firmachain
 server_name: firmachaind
-version: 0.3.3
-commit: 9df9ce421987823a94259bee257e436ba4562c3b
+version: 0.3.3-6bcd9e15
+commit: 6bcd9e15407f5207e8a2d03e6488301aecb9f98b
 ...
-cosmos_sdk_version: v0.44.5
+cosmos_sdk_version: v0.44.5-patch
 ```
 
 ```
 sha1sum /usr/local/bin/firmachaind
-14cfd7a09d4d53293f07c65fbf7b9032140a0da6  firmachaind
+b59534ef087becc442f04a6cd42e4fc153c18bb7 firmachaind
 ```
 
 ### Ways 2. Download from Github Release page
 
-You can download a prebuilt binary from the link below. [https://github.com/FirmaChain/firmachain/releases](https://github.com/FirmaChain/firmachain/releases)​​​
+You can download a prebuilt binary from the link below. [https://github.com/FirmaChain/firmachain/releases](https://github.com/FirmaChain/firmachain/releases)​
 
-![](../../.gitbook/assets/github-release-image.png)
+<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption><p><a href="https://github.com/FirmaChain/firmachain/releases">https://github.com/FirmaChain/firmachain/releases</a></p></figcaption></figure>
 
 Select, download and unzip a binary that suits your OS.\
 Please confirm whether you’ve downloaded the correct version, using the method provided in Ways 1.
