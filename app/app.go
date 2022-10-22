@@ -780,10 +780,7 @@ func (app App) GetBaseApp() *baseapp.BaseApp { return app.BaseApp }
 
 // BeginBlocker application updates every begin block
 func (app *App) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
-
-	// call the before-modification hook since we're about to update the commission
 	app.updateValidatorMinCommision(ctx)
-
 	return app.mm.BeginBlock(ctx, req)
 }
 
@@ -800,6 +797,7 @@ func (app *App) updateValidatorMinCommision(ctx sdk.Context) {
 			v.Commission.Rate = minCommissionRate
 			v.Commission.UpdateTime = ctx.BlockHeader().Time
 
+			// call the before-modification hook since we're about to update the commission
 			staking.BeforeValidatorModified(ctx, v.GetOperator())
 			staking.SetValidator(ctx, v)
 		}
