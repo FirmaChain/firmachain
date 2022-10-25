@@ -253,8 +253,6 @@ func init() {
 type App struct {
 	*baseapp.BaseApp
 
-	initTest bool
-
 	cdc               *codec.LegacyAmino
 	appCodec          codec.Codec
 	interfaceRegistry types.InterfaceRegistry
