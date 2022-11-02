@@ -34,7 +34,7 @@ init:
     minimum-gas-prices: "0.1ufct"
 
 genesis:
-  chain_id: "imperium-3"
+  chain_id: "imperium-4"
   app_state:
     crisis:
       constant_fee:
