@@ -1,3 +1,3 @@
 # Images
 
-**Comming Soon**
+**Comming soon**

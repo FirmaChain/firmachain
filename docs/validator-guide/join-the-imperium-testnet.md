@@ -1,4 +1,4 @@
-# Join the Imperium (devnet)
+# Join the Imperium (testnet)
 
 #### Have you completed the previous step?
 
@@ -11,7 +11,7 @@ Please follow the directions below in order to become a validator.
 ### Initialize chain node
 
 ```
-firmachaind init <node_name> --chain-id imperium-3
+firmachaind init <node_name> --chain-id imperium-4
 ```
 
 ### Change gas prices
@@ -23,7 +23,7 @@ vi ~/.firmachain/config/app.toml
 ###                           Base Configuration                            ###
 ###############################################################################
 
-minimum-gas-prices = "0.1ufct"
+minimum-gas-prices = "0.01ufct"
 ```
 
 #### Support RPC-API
@@ -73,7 +73,7 @@ Re-enter keyring passphrase: XXXXXXXX
 genesis.json download
 
 ```
-wget https://github.com/FirmaChain/testnet/raw/master/genesis.json
+wget https://raw.githubusercontent.com/FirmaChain/testnet/master/imperium-4/genesis.json
 ```
 
 copy genesis.json from firmachain config folder
@@ -104,7 +104,7 @@ seeds = "seed list"
 #### Seed list (copy seeds)
 
 ```
-6ffb2a8cabbcb17cb69b449c54d812b50306786d@testnet-seed1.firmachain.dev:26656,ede8f4b223b10b96ca1b1beda56350f94f400fb0@testnet-seed2.firmachain.dev:26656
+ddeaeb19dbe29558ac3f8569f99c0906adf7d8cf@testnet-seed1.firmachain.dev:26656,a195e07dad206431293ab141434331a8373221ab@testnet-seed2.firmachain.dev:26656
 ```
 
 ### Start imperium network
@@ -185,7 +185,7 @@ firmachaind start
 firmachaind tx staking create-validator \
 --pubkey $(firmachaind tendermint show-validator) \
 --moniker <Your moniker name> \
---chain-id imperium-3 \
+--chain-id imperium-4 \
 --commission-rate 0.10 \
 --commission-max-rate 0.20 \
 --commission-max-change-rate 0.01 \

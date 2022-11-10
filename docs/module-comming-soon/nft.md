@@ -1,3 +1,3 @@
 # Nft
 
-**Comming Soon**
+**Comming soon**

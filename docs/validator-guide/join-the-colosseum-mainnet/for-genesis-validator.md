@@ -172,7 +172,7 @@ wget https://raw.githubusercontent.com/FirmaChain/mainnet/main/colosseum-1/genes
 ### Replace genesis.json
 
 ```
-mv ~/genesis.json ~/.firmachain/config/genesis.json
+mv ./genesis.json ~/.firmachain/config/genesis.json
 ```
 
 ### Node configuration file

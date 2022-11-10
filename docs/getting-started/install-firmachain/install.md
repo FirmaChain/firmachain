@@ -39,7 +39,7 @@ b59534ef087becc442f04a6cd42e4fc153c18bb7 firmachaind
 
 You can download a prebuilt binary from the link below. [https://github.com/FirmaChain/firmachain/releases](https://github.com/FirmaChain/firmachain/releases)​
 
-<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption><p><a href="https://github.com/FirmaChain/firmachain/releases">https://github.com/FirmaChain/firmachain/releases</a></p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (8).png" alt=""><figcaption><p><a href="https://github.com/FirmaChain/firmachain/releases">https://github.com/FirmaChain/firmachain/releases</a></p></figcaption></figure>
 
 Select, download and unzip a binary that suits your OS.\
 Please confirm whether you’ve downloaded the correct version, using the method provided in Ways 1.

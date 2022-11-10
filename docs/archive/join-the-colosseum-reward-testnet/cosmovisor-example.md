@@ -106,7 +106,7 @@ mkdir -p $DAEMON_HOME/cosmovisor/upgrades/v0.3.2/bin
 #### 2. Binary File Download
 
 ```
-curl https://build.firmachain.org/@v0.3.2 | bash
+curl https://build.firmachain.dev/@v0.3.2 | bash
 ```
 
 #### 3. Copy and Paste the Binary File to the Cosmovisor Upgrade Folder Directory

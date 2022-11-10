@@ -6,12 +6,13 @@ _\* `--moniker` defaults to the machine name_
 
 ### Flag parameter
 
-| Flags            | Type   | Description                                 |
-| ---------------- | ------ | ------------------------------------------- |
-| details          | string | Brief Introduction                          |
-| website          | string | Your website address (only if you have one) |
-| security-contact | string | Your e-mail address                         |
-| identity         | string | keybase 64bit security code                 |
+| Flags            | Type   | Description                                                    |
+| ---------------- | ------ | -------------------------------------------------------------- |
+| details          | string | Brief Introduction                                             |
+| website          | string | Your website address (only if you have one)                    |
+| security-contact | string | Your e-mail address                                            |
+| identity         | string | keybase 64bit security code                                    |
+| commission-rate  | float  | <p>Start commission rate<br>ex) commission-rate 0.10 = 10%</p> |
 
 ### How to edit description
 
@@ -21,6 +22,7 @@ firmachaind tx staking edit-validator \
 --website "introduce web site" \
 --identity "key base 64bit code" \
 --details "simple context" \
+--commission-rate 0.10 \
 --chain-id <chain_id> \
 --fees 20000ufct \
 --from <key_name>

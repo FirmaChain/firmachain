@@ -1,3 +1,3 @@
 # Burn
 
-**Comming Soon**
+**Comming soon**

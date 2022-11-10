@@ -1,39 +1,34 @@
 # Install
 
-This document is a user’s guide to Ledger Nano S/X. If you are a holder of FirmaChain Token, you can manage your tokens by transferring the tokens to the Ledger Nano hardware wallet through Ledger Live.
+This document is a user’s guide to Ledger Nano S/X/S Plus. If you are a holder of FirmaChain Token, you can manage your tokens by transferring the tokens to the Ledger Nano hardware wallet through Ledger Live.
 
 _\* Before using the Ledger Nano hardware wallet, please check whether you have the latest version of Ledger Live (desktop application) and hardware firmware installed._
 
-#### How to Check Your Version
+__
 
-* Ledger Live Application
+## How to install FIRMACHAIN Ledger app
 
-![Ledger live application version](<../../.gitbook/assets/image (13).png>)
+### 1. Please connect the Ledger Nano wallet to the computer.
 
-* Ledger Nano Wallet
+### 2. After running "Ledger Live", click "My Ledger" in the left tab menu.
 
-![Ledger nano S firmware version](<../../.gitbook/assets/image (4).png>)
+<figure><img src="../../.gitbook/assets/image (4).png" alt=""><figcaption><p>go to my ledger</p></figcaption></figure>
 
-## How to access your Ledger wallet
+### 3. Please allow access from Ledger Nano Hardware Wallet.
 
-### 1. Connect your Ledger waller to the computer.
+<figure><img src="../../.gitbook/assets/image (2).png" alt=""><figcaption><p>allowed ledger</p></figcaption></figure>
 
-Once you connect your Ledger wallet to your computer, please enter the pin code to allow access. As you can see in the image below, you must be able to view the downloaded applications in the screen of your Ledger.
+### 4. Please turn on "Developer Mode" on "Experimental Feature" tab.
 
-![](<../../.gitbook/assets/image (25).png>)
+<figure><img src="../../.gitbook/assets/image (6).png" alt=""><figcaption><p>enable development mode</p></figcaption></figure>
 
-### 2. Download the FirmaChain App from Ledger Live
+### 5. Search for "FirmaChain" in the "Ledger Live" search window and then "Install".
 
-FirmaChain App can only be downloaded once you activate the developer mode in the Ledger Live application. Please refer to the image below for more information.
+<figure><img src="../../.gitbook/assets/image (5).png" alt=""><figcaption><p>install firmachain ledger app</p></figcaption></figure>
 
-#### 2-1. Enter \[Settings] by clicking on the \[Settings] button located on the top right corner of the screen as can be seen in the image below.
+### Support
 
-![](<../../.gitbook/assets/image (29).png>)
+If you have any issue with your Ledger installation and use station, please join to our community channel and email.
 
-#### 2-2. Click on the \[Experimental Features] tab and activate \[Developer Mode]. Please refer to the image below for additional guidance.
-
-![](<../../.gitbook/assets/image (15).png>)
-
-#### 2-3. Once you’ve completed the previous steps, click on the \[Manager] menu located on the left of your screen and search for the \[FirmaChain] application. Please refer to the image below.
-
-![](<../../.gitbook/assets/image (34).png>)
+Telegram : [https://t.me/firmachain\_global](https://t.me/firmachain\_global)\
+Mailto : [contact@firmachain.org](mailto:contact@firmachain.org?bcc=contact@firmachain.org)

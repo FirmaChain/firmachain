@@ -1,3 +1,3 @@
 # Contract
 
-**Comming Soon**
+**Comming soon**

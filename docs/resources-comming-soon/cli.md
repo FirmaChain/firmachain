@@ -1,3 +1,3 @@
 # Cli
 
-**Comming Soon**
+**Comming soon**

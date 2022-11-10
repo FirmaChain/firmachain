@@ -44,30 +44,38 @@ firmachaind start
 
 ## Create an address with the Ledger
 
-Please unlock your Ledger Nano S/X by entering the pin code. Additionally, if either your Ledger Live application is running or if you have a running application that connects your Ledger Nano S/X (e.g. Ledger Live), please close all such applications.&#x20;
+Please unlock your Ledger Nano S/X/S Plus by entering the pin code. Additionally, if either your Ledger Live application is running or if you have a running application that connects your Ledger Nano S/X/S Plus (e.g. Ledger Live), please close all such applications.&#x20;
 
-_\* Ledger Nano S/X only supports 1:1 connection._
+_\* Ledger Nano S/X/S Plus only supports 1:1 connection._
 
 ### Preparations
 
-This stage outlines the necessary steps you must take to create a Ledger Nano S/X wallet.
+This stage outlines the necessary steps you must take to create a Ledger Nano S/X/S Plus wallet.
 
-initialize chain
+**initialize chain**
 
 ```
 firmachaind init test-node-001 --chain-id roma-1
 ```
 
-change gas prices
+**change gas prices**
 
 ```
 vim ~/.firmachain/config/app.toml
 # minimum-gas-prices = "0.01ufct"
 ```
 
+### Open the FirmaChain application.
+
+You can navigate through the apps by using the two buttons located on the top of the ledger. Once you choose the FirmaChain app, you can open the application by clicking the two buttons simultaneously.
+
+_\* Currently, the "Firma Chain app" is distributed in developer mode, and the "Pending Ledger review" message is visible in developer mode. Press the top two buttons at the same time to move on._
+
+<figure><img src="../../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
+
 ### Create FirmaChain Wallet using the Ledger Tag
 
-By running the command provided below, you can create the key information connected with your Ledger Nano S/X on local.
+By running the command provided below, you can create the key information connected with your Ledger Nano S/X/S Plus on local.
 
 ```
 firmachaind keys add <key_name> --coin-type 7777777 --ledger
@@ -79,13 +87,13 @@ If you are using mnemonic, please run the command provided below.
 firmachaind keys add <key_name> --recover --coin-type 7777777 --ledger
 ```
 
-Once you complete the steps above, an address will appear on the screen of your connected Ledger Nano S/X. By clicking on the button on the right, you can check your wallet information. Finally, approve by simultaneously clicking on the two buttons located on the top of your Ledger.
+Once you complete the steps above, an address will appear on the screen of your connected Ledger Nano S/X/S Plus. By clicking on the button on the right, you can check your wallet information. Finally, approve by simultaneously clicking on the two buttons located on the top of your Ledger.
 
-![](<../../.gitbook/assets/image (8).png>)
+![](<../../.gitbook/assets/image (8) (1).png>)
 
 ![](<../../.gitbook/assets/image (33).png>)
 
-Now, the address created with your \<key\_name> will include the information of your Ledger Nano S/X.
+Now, the address created with your \<key\_name> will include the information of your Ledger Nano S/X/S Plus.
 
 ## Receive FirmaChain Tokens <a href="#b6bc" id="b6bc"></a>
 
@@ -96,7 +104,7 @@ Using the following command, you can check your wallet information.
 firmachaind keys list
 ```
 
-Following is the information of your Ledger Nano S/X you can obtain by running the above command.
+Following is the information of your Ledger Nano S/X/S Plus you can obtain by running the above command.
 
 ```
 - name: <key_name>
@@ -106,7 +114,7 @@ Following is the information of your Ledger Nano S/X you can obtain by running t
   mnemonic: ""
 ```
 
-_\* All keys saved on local will be displayed. The type of your Ledger Nano S/X wallet information will be shown as ‘ledger.’_
+_\* All keys saved on local will be displayed. The type of your Ledger Nano S/X/S Plus wallet information will be shown as ‘ledger.’_
 
 ## Send Tokens
 
@@ -128,9 +136,9 @@ firmachaind tx bank send <ledger_nano_key_name> \
 
 _\* --note_ is optional. _Only the flag has been changed to --note from the original memo._\
 &#x20; _The item you must pay attention to at this stage is ._ \
-&#x20; _The  must show the name of your Ledger Nano S/X._
+&#x20; _The  must show the name of your Ledger Nano S/X/S Plus._
 
-If you’ve successfully sent the above command (transaction) from your OS, please check your Ledger Nano S/X. You approve the transaction request from your Ledger Nano S/X. Using the top right button of your Ledger Nano S/X, please check whether all transaction information is correct before proceeding to the ‘Approve or Reject’ stage.
+If you’ve successfully sent the above command (transaction) from your OS, please check your Ledger Nano S/X/S Plus. You approve the transaction request from your Ledger Nano S/X/S Plus. Using the top right button of your Ledger Nano S/X/S Plus, please check whether all transaction information is correct before proceeding to the ‘Approve or Reject’ stage.
 
 _\* You can proceed by simultaneously clicking on the two buttons located on the top of your Ledger._
 
@@ -154,4 +162,11 @@ pagination:
   total: "0"
 ```
 
-Ledger Nano S/X can be used with FirmaChain CLI.
+Ledger Nano S/X/S Plus can be used with FirmaChain CLI.
+
+### Support
+
+If you have any issue with your Ledger installation and use station, please join to our community channel and email.
+
+Telegram : [https://t.me/firmachain\_global](https://t.me/firmachain\_global)\
+Mailto : [contact@firmachain.org](mailto:contact@firmachain.org?bcc=contact@firmachain.org)
