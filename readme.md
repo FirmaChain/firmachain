@@ -33,8 +33,9 @@ Go v1.18+ or higher is required for FirmaChain.
 ## - Official Build  ##
 
 
-https://docs.firmachain.org/master/getting-started/install-firmachain/install
-https://docs.firmachain.org/master/validator-guide/upgrade/v0.3.5
+v0.3.3 : https://docs.firmachain.org/master/getting-started/install-firmachain/install
+
+v0.3.5 : https://docs.firmachain.org/master/validator-guide/upgrade/v0.3.5
 
 </br>
 
