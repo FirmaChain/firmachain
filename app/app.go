@@ -311,8 +311,40 @@ func (app *App) registerUpgradeHandlers(icaModule ica.AppModule) {
 
 	app.UpgradeKeeper.SetUpgradeHandler(newVersionName, func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
 
+		// cosmos 0.44.5 consensus version (old)
+		fromVM := map[string]uint64{
+			"auth":         2,
+			"authz":        1,
+			"bank":         2,
+			"capability":   1,
+			"crisis":       1,
+			"distribution": 2,
+			"evidence":     1,
+			"gov":          2,
+			"mint":         1,
+			"params":       1,
+			"slashing":     2,
+			"staking":      2,
+			"upgrade":      1,
+			"vesting":      1,
+			"ibc":          1,
+			"genutil":      1,
+			"transfer":     1,
+			"feegrant":     1,
+			"contract":     1,
+			"nft":          1,
+			"token":        1,
+			"burn":         1,
+		}
+
+		// Add Interchain Accounts host module
+		// set the ICS27 consensus version so InitGenesis is not run
+		fromVM[icatypes.ModuleName] = icaModule.ConsensusVersion()
+
+		// create ICS27 Controller submodule params, controller module not enabled.
 		controllerParams := icacontrollertypes.Params{}
 
+		// create ICS27 Host submodule params
 		hostParams := icahosttypes.Params{
 			HostEnabled: true,
 			AllowMessages: []string{
@@ -349,32 +381,6 @@ func (app *App) registerUpgradeHandlers(icaModule ica.AppModule) {
 		// called once and as an alternative to InitGenesis.
 		icaModule.InitModule(ctx, controllerParams, hostParams)
 
-		// cosmos 0.44.5 consensus version (old)
-		fromVM := map[string]uint64{
-			"auth":         2,
-			"authz":        1,
-			"bank":         2,
-			"capability":   1,
-			"crisis":       1,
-			"distribution": 2,
-			"evidence":     1,
-			"gov":          2,
-			"mint":         1,
-			"params":       1,
-			"slashing":     2,
-			"staking":      2,
-			"upgrade":      1,
-			"vesting":      1,
-			"ibc":          1,
-			"genutil":      1,
-			"transfer":     1,
-			"feegrant":     1,
-			"contract":     1,
-			"nft":          1,
-			"token":        1,
-			"burn":         1,
-		}
-
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
 
@@ -387,7 +393,8 @@ func (app *App) registerUpgradeHandlers(icaModule ica.AppModule) {
 
 	if upgradeInfo.Name == newVersionName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		storeUpgrades := storetypes.StoreUpgrades{
-			Added: []string{"wasm", icatypes.ModuleName},
+			// NOTICE: https://github.com/cosmos/ibc-go/issues/1088
+			Added: []string{"wasm", icacontrollertypes.StoreKey, icahosttypes.StoreKey},
 		}
 
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
