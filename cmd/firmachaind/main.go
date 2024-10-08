@@ -19,7 +19,7 @@ func main() {
 		app.New,
 	)
 
-	rootCmd.AddCommand(server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Marshaler), AddGenesisWasmMsgCmd(app.DefaultNodeHome))
+	rootCmd.AddCommand(server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Marshaler))
 
 	// below 2 codes use for command line description by starport and makefile.
 	rootCmd.Use = "firmachaind"
