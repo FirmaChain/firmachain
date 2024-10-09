@@ -1,5 +1,5 @@
 syntax = "proto3";
-package firmachain.firmachain.burn;
+package firmachain.burn;
 
 import "gogoproto/gogo.proto";
 

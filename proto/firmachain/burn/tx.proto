@@ -1,5 +1,5 @@
 syntax = "proto3";
-package firmachain.firmachain.burn;
+package firmachain.burn;
 
 // this line is used by starport scaffolding # proto/tx/import
 
