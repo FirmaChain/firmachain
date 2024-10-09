@@ -18,8 +18,8 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/tendermint/tendermint v0.34.27
 	github.com/tendermint/tm-db v0.6.7
-	google.golang.org/genproto/googleapis/api v0.0.0-20231106174013-bbf56f31fb17
-	google.golang.org/grpc v1.60.0
+	google.golang.org/genproto/googleapis/api v0.0.0-20240102182953-50ed04b92917
+	google.golang.org/grpc v1.62.1
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -40,7 +40,7 @@ require (
 	github.com/cosmos/btcutil v1.0.4 // indirect
 	github.com/cosmos/cosmos-proto v1.0.0-beta.2 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
-	github.com/cosmos/gogoproto v1.4.6
+	github.com/cosmos/gogoproto v1.7.0
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.5 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
@@ -117,7 +117,7 @@ require (
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/protobuf v1.31.0 // indirect
+	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	nhooyr.io/websocket v1.8.6 // indirect
@@ -155,8 +155,8 @@ require (
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
-	google.golang.org/genproto v0.0.0-20231106174013-bbf56f31fb17 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20231120223509-83a465c0220f // indirect
+	google.golang.org/genproto v0.0.0-20240116215550-a9fa1716bcac // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240123012728-ef4313101c80 // indirect
 )
 
 replace (
