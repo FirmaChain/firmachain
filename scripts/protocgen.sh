@@ -11,7 +11,7 @@ set -eo pipefail
 
 echo "Generating gogo proto code"
 cd proto
-buf dep update
+buf mod update
 cd ..
 buf generate
 
