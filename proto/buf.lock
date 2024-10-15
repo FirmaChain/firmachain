@@ -4,24 +4,16 @@ deps:
   - remote: buf.build
     owner: cosmos
     repository: cosmos-proto
-    commit: 04467658e59e44bbb22fe568206e1f70
+    commit: 1935555c206d4afb9e94615dfd0fad31
   - remote: buf.build
     owner: cosmos
     repository: cosmos-sdk
-    commit: 05419252bcc241ea8023acf1ed4cadc5
+    commit: 1706a742a274436cb0eabf4950ed85cf
   - remote: buf.build
     owner: cosmos
     repository: gogo-proto
-    commit: 88ef6483f90f478fb938c37dde52ece3
+    commit: 34d970b699f84aa382f3c29773a60836
   - remote: buf.build
     owner: googleapis
     repository: googleapis
-    commit: e7f8d366f5264595bcc4cd4139af9973
-  - remote: buf.build
-    owner: protocolbuffers
-    repository: wellknowntypes
-    commit: 657250e6a39648cbb169d079a60bd9ba
-  - remote: buf.build
-    owner: tendermint
-    repository: tendermint
-    commit: 33ed361a90514289beabf3189e1d7665
+    commit: 8d7204855ec14631a499bd7393ce1970
