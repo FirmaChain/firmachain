@@ -1,5 +1,5 @@
 syntax = "proto3";
-package firmachain.token;
+package firmachain.firmachain.token;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";

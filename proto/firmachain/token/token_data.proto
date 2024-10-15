@@ -1,5 +1,5 @@
 syntax = "proto3";
-package firmachain.token;
+package firmachain.firmachain.token;
 
 option go_package = "github.com/firmachain/firmachain/x/token/types";
 
