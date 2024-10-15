@@ -58,6 +58,6 @@ proto-gen: build-proto-image
 	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoGen}$$"; then \
 	    docker start -a $(containerProtoGen); \
 	else \
-	    docker run --name $(containerProtoGen) -v $(CURDIR):/workspace --workdir /workspace $(protoImageName) \
+	    docker run --name $(containerProtoGen) -v $(CURDIR):/firmachain --workdir /firmachain $(protoImageName) \
 	        sh ./scripts/protocgen.sh; \
 	fi

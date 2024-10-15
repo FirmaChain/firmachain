@@ -8,17 +8,27 @@
 ## + protobuf v3
 
 set -eo pipefail
-
-echo "Generating gogo proto code"
+echo "Removing old proto go files..."
+find . -type f -name "*.pb.go" -exec rm -f {} +
+find . -type f -name "*.pb.gw.go" -exec rm -f {} +
+echo "Generating gogo proto code..."
 cd proto
 buf mod update
 cd ..
-buf generate
+buf generate --template ./proto/buf.gen.gogo.yaml
 
 # move proto files to the right places
-cp -r ./github.com/firmachain/firmachain/x/* x/
-rm -rf ./github.com
+if [ -d "./github.com" ]; then
+    echo "Copying generated files..."
+    cp -r ./github.com/firmachain/firmachain/x/* x/
+    rm -rf ./github.com
+else
+    echo "No files in ./github.com, skipping..."
+fi
 
+ echo "Running go mod tidy..."
 go mod tidy -compat=1.17
+
+echo "Done."
 
 # ./scripts/protocgen2.sh
