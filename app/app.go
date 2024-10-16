@@ -403,6 +403,10 @@ func (app *App) registerUpgradeHandlers(icaModule ica.AppModule) {
 		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 	})
 
+	app.UpgradeKeeper.SetUpgradeHandler("v04", func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+		return app.mm.RunMigrations(ctx, app.configurator, vm)
+	})
+
 	// in case of new module added first
 
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
