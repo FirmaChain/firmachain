@@ -117,10 +117,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
-
 	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"
-	icacontrollertypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/controller/types"
 	icahost "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host"
 	icahostkeeper "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/keeper"
 	icahosttypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/types"
@@ -325,105 +322,113 @@ type App struct {
 
 func (app *App) registerUpgradeHandlers(icaModule ica.AppModule) {
 
-	// candidate version to create upgrade proposal
-	const newVersionName = "v0.3.5"
+	// old upgradehandler
+	/*
+		app.UpgradeKeeper.SetUpgradeHandler("v0.3.5", func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
 
-	app.UpgradeKeeper.SetUpgradeHandler(newVersionName, func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
+			// cosmos 0.44.5 consensus version (old)
+			fromVM := map[string]uint64{
+				"auth":         2,
+				"authz":        1,
+				"bank":         2,
+				"capability":   1,
+				"crisis":       1,
+				"distribution": 2,
+				"evidence":     1,
+				"gov":          2,
+				"mint":         1,
+				"params":       1,
+				"slashing":     2,
+				"staking":      2,
+				"upgrade":      1,
+				"vesting":      1,
+				"ibc":          1,
+				"genutil":      1,
+				"transfer":     1,
+				"feegrant":     1,
+				"contract":     1,
+				"nft":          1,
+				"token":        1,
+				"burn":         1,
+			}
 
-		// cosmos 0.44.5 consensus version (old)
-		fromVM := map[string]uint64{
-			"auth":         2,
-			"authz":        1,
-			"bank":         2,
-			"capability":   1,
-			"crisis":       1,
-			"distribution": 2,
-			"evidence":     1,
-			"gov":          2,
-			"mint":         1,
-			"params":       1,
-			"slashing":     2,
-			"staking":      2,
-			"upgrade":      1,
-			"vesting":      1,
-			"ibc":          1,
-			"genutil":      1,
-			"transfer":     1,
-			"feegrant":     1,
-			"contract":     1,
-			"nft":          1,
-			"token":        1,
-			"burn":         1,
-		}
+			// Add Interchain Accounts host module
+			// set the ICS27 consensus version so InitGenesis is not run
+			fromVM[icatypes.ModuleName] = icaModule.ConsensusVersion()
 
-		// Add Interchain Accounts host module
-		// set the ICS27 consensus version so InitGenesis is not run
-		fromVM[icatypes.ModuleName] = icaModule.ConsensusVersion()
+			// create ICS27 Controller submodule params, controller module not enabled.
+			controllerParams := icacontrollertypes.Params{}
 
-		// create ICS27 Controller submodule params, controller module not enabled.
-		controllerParams := icacontrollertypes.Params{}
+			// create ICS27 Host submodule params
+			hostParams := icahosttypes.Params{
+				HostEnabled: true,
+				AllowMessages: []string{
+					"/cosmos.bank.v1beta1.MsgSend",
+					"/cosmos.bank.v1beta1.MsgMultiSend",
+					"/cosmos.staking.v1beta1.MsgDelegate",
+					"/cosmos.staking.v1beta1.MsgUndelegate",
+					"/cosmos.staking.v1beta1.MsgBeginRedelegate",
+					"/cosmos.staking.v1beta1.MsgCreateValidator",
+					"/cosmos.staking.v1beta1.MsgEditValidator",
+					"/cosmos.vesting.v1beta1.MsgCreateVestingAccount",
+					"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+					"/cosmos.distribution.v1beta1.MsgSetWithdrawAddress",
+					"/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission",
+					"/cosmos.distribution.v1beta1.MsgFundCommunityPool",
+					"/cosmos.feegrant.v1beta1.MsgGrantAllowance",
+					"/cosmos.feegrant.v1beta1.MsgRevokeAllowance",
+					"/cosmos.gov.v1beta1.MsgVote",
+					"/cosmos.gov.v1beta1.MsgVoteWeighted",
+					"/cosmos.gov.v1beta1.MsgSubmitProposal",
+					"/cosmos.gov.v1beta1.MsgDeposit",
+					"/cosmos.authz.v1beta1.MsgExec",
+					"/cosmos.authz.v1beta1.MsgGrant",
+					"/cosmos.authz.v1beta1.MsgRevoke",
+					"/cosmwasm.wasm.v1.MsgStoreCode",
+					"/cosmwasm.wasm.v1.MsgInstantiateContract",
+					"/cosmwasm.wasm.v1.InstantiateContract2",
+					"/cosmwasm.wasm.v1.MsgExecuteContract",
+					"/ibc.applications.transfer.v1.MsgTransfer",
+				},
+			}
 
-		// create ICS27 Host submodule params
-		hostParams := icahosttypes.Params{
-			HostEnabled: true,
-			AllowMessages: []string{
-				"/cosmos.bank.v1beta1.MsgSend",
-				"/cosmos.bank.v1beta1.MsgMultiSend",
-				"/cosmos.staking.v1beta1.MsgDelegate",
-				"/cosmos.staking.v1beta1.MsgUndelegate",
-				"/cosmos.staking.v1beta1.MsgBeginRedelegate",
-				"/cosmos.staking.v1beta1.MsgCreateValidator",
-				"/cosmos.staking.v1beta1.MsgEditValidator",
-				"/cosmos.vesting.v1beta1.MsgCreateVestingAccount",
-				"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-				"/cosmos.distribution.v1beta1.MsgSetWithdrawAddress",
-				"/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission",
-				"/cosmos.distribution.v1beta1.MsgFundCommunityPool",
-				"/cosmos.feegrant.v1beta1.MsgGrantAllowance",
-				"/cosmos.feegrant.v1beta1.MsgRevokeAllowance",
-				"/cosmos.gov.v1beta1.MsgVote",
-				"/cosmos.gov.v1beta1.MsgVoteWeighted",
-				"/cosmos.gov.v1beta1.MsgSubmitProposal",
-				"/cosmos.gov.v1beta1.MsgDeposit",
-				"/cosmos.authz.v1beta1.MsgExec",
-				"/cosmos.authz.v1beta1.MsgGrant",
-				"/cosmos.authz.v1beta1.MsgRevoke",
-				"/cosmwasm.wasm.v1.MsgStoreCode",
-				"/cosmwasm.wasm.v1.MsgInstantiateContract",
-				"/cosmwasm.wasm.v1.InstantiateContract2",
-				"/cosmwasm.wasm.v1.MsgExecuteContract",
-				"/ibc.applications.transfer.v1.MsgTransfer",
-			},
-		}
+			// InitModule will initialize the interchain accounts moudule. It should only be
+			// called once and as an alternative to InitGenesis.
+			icaModule.InitModule(ctx, controllerParams, hostParams)
 
-		// InitModule will initialize the interchain accounts moudule. It should only be
-		// called once and as an alternative to InitGenesis.
-		icaModule.InitModule(ctx, controllerParams, hostParams)
+			return app.mm.RunMigrations(ctx, app.configurator, fromVM)
+		})
+	*/
 
-		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
-	})
-
-	app.UpgradeKeeper.SetUpgradeHandler("v04", func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+	// new upgradehandler (v0.4.0)
+	// should match upgradename with governance convention
+	app.UpgradeKeeper.SetUpgradeHandler("v0.4.0", func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
 		return app.mm.RunMigrations(ctx, app.configurator, vm)
 	})
 
 	// in case of new module added first
+	// upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 
-	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+	_, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {
 		panic(err)
 	}
 
-	if upgradeInfo.Name == newVersionName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{
-			// NOTICE: https://github.com/cosmos/ibc-go/issues/1088
-			Added: []string{"wasm", icacontrollertypes.StoreKey, icahosttypes.StoreKey},
+	// old upgradestoreloader
+	/*
+		if upgradeInfo.Name == "v0.3.5" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+			storeUpgrades := storetypes.StoreUpgrades{
+				// NOTICE: https://github.com/cosmos/ibc-go/issues/1088
+				Added: []string{"wasm", icacontrollertypes.StoreKey, icahosttypes.StoreKey},
+			}
+
+			// configure store loader that checks if version == upgradeHeight and applies store upgrades
+			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
 		}
+	*/
 
-		// configure store loader that checks if version == upgradeHeight and applies store upgrades
-		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
-	}
-
+	// new upgradestoreloader (v0.4.0)
+	// there are no new module or data structure upgrades in the v0.4.0 so pass.
 }
 
 // New returns a reference to an initialized Firmachain.
