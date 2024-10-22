@@ -1,5 +1,7 @@
 package main
 
+/* The following is not compatible with wasmd v0.31.0
+
 import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/spf13/cobra"
@@ -25,3 +27,4 @@ func AddGenesisWasmMsgCmd(defaultNodeHome string) *cobra.Command {
 	)
 	return txCmd
 }
+*/

@@ -1,0 +1,9 @@
+FROM tendermintdev/sdk-proto-gen:v0.7
+
+ENV GOLANG_VERSION=1.21.0
+ENV PATH=/usr/local/go/bin:$PATH
+
+RUN wget -q "https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz" && \
+    tar -C /usr/local -xzf "go${GOLANG_VERSION}.linux-amd64.tar.gz" && \
+    rm "go${GOLANG_VERSION}.linux-amd64.tar.gz" && \
+    go version

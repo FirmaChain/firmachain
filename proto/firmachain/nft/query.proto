@@ -3,7 +3,7 @@ package firmachain.firmachain.nft;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "nft/nft_item.proto";
+import "firmachain/nft/nft_item.proto";
 
 option go_package = "github.com/firmachain/firmachain/x/nft/types";
 

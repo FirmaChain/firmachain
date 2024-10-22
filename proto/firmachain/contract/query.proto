@@ -3,8 +3,8 @@ package firmachain.firmachain.contract;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "contract/contract_file.proto";
-import "contract/contract_log.proto";
+import "firmachain/contract/contract_file.proto";
+import "firmachain/contract/contract_log.proto";
 
 option go_package = "github.com/firmachain/firmachain/x/contract/types";
 
