@@ -12,45 +12,52 @@
 </a>
 
 
-### A BLOCKCHAIN BASED E-CONTRACT PLATFORM
+## A BLOCKCHAIN BASED E-CONTRACT PLATFORM
 
-FirmaChain adds a signing and verifying e-contract function to the blockchain. 
+FirmaChain adds a signing and verifying e-contract function to the blockchain.
 
 Unlocking new limits of electronic contracts with blockchain technology, FirmaChain seeks to resolve all the social and legal issues (contracts, notarial, etc.) with written contracts through the use of electronic contracts based on FirmaChain’s data blockchain.
 
 FirmaChain now builds on [Tendermint](https://github.com/tendermint/tendermint) consensus and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk) toolkits and [Ignite](https://github.com/ignite/cli/)
 
----
 
 ## Installation
 
-## - Install Go ##
+### Install Go ###
 
-Go v1.18+ or higher is required for FirmaChain.
+**Go v1.21 or higher** is required for building and running FirmaChain.
 
-</br>
-
-## - Official Build  ##
-
-
-v0.3.3 : https://docs.firmachain.org/master/getting-started/install-firmachain/install
-
-v0.3.5 : https://docs.firmachain.org/master/validator-guide/upgrade/v0.3.5
+NOTE : we updated Go requirements from `v1.18` to `v1.21` in `Firmachain v0.4.0`
 
 </br>
 
+### Official Build  ###
 
-## - Development Build : using make ##
+We are not providing official prebuilt binaries from v0.3.5. Please check the guide to build your own binary.
+
+https://docs.firmachain.org/master/node-and-validators-guide/run-a-full-node/installation-firmachaind
+
+Currently available tags:
+| Version | Tag
+| - | - |
+| v0.4.0 | `v0.4.0` |
+| v0.3.5 | `v0.3.5-patch` |
+| v0.3.3 (Deprecated) | `v0.3.3-patch` |
+
+</br>
+
+### Development Build : using make ###
 
 ```bash
 git clone https://github.com/firmachain/firmachain
 cd firmachain
+git checkout (desired tags)
 make install
 ```
 
 </br>
 
-## - Development Build : using ignite ##
+### Development Build : using ignite ###
 
 **Step 1: Install ignite v0.23.0**
 ```
@@ -78,8 +85,6 @@ ignite chain serve
 ```
 
 </br>
-
----
 </br>
 
 ## Validator & Node
@@ -88,6 +93,7 @@ We are currently looking for validators to contribute to our network.
 
 If you are interested, please contact us through contact@firmachain.org
 
+</br>
 
 ## Network 
 
@@ -96,10 +102,14 @@ If you are interested, please contact us through contact@firmachain.org
     - All contracts and tokens will be migrated to our main network once it is complete network stabilization.
 - Testnet **Imperium-4** is ready for online. (private testnet for only chain developer)
 
+</br>
+
 ## EcoSystem
 - [FirmaChain-BlockExplorer](https://github.com/FirmaChain/firmachain-explorer)
 - [FirmaChain-Station](https://github.com/FirmaChain/firma-station) 
 - [FirmaChain-Faucet (testnet only)](https://github.com/FirmaChain/firmachain-faucet) 
+
+</br>
 
 ## Community
 - [Website](https://firmachain.org/#/)
