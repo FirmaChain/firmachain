@@ -18,8 +18,7 @@ FirmaChain adds a signing and verifying e-contract function to the blockchain.
 
 Unlocking new limits of electronic contracts with blockchain technology, FirmaChain seeks to resolve all the social and legal issues (contracts, notarial, etc.) with written contracts through the use of electronic contracts based on FirmaChain’s data blockchain.
 
-FirmaChain now builds on [Tendermint](https://github.com/tendermint/tendermint) consensus and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk) toolkits and [Ignite](https://github.com/ignite/cli/)
-
+FirmaChain now builds on [CometBFT](https://github.com/cometbft/cometbft) consensus and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk) toolkits.
 
 ## Installation
 
@@ -27,13 +26,13 @@ FirmaChain now builds on [Tendermint](https://github.com/tendermint/tendermint) 
 
 **Go v1.21 or higher** is required for building and running FirmaChain.
 
-NOTE : we updated Go requirements from `v1.18` to `v1.21` in `Firmachain v0.4.0`
+**NOTE** : we updated Go requirements from `v1.18` to `v1.21` in `Firmachain v0.4.0`
 
 </br>
 
 ### Official Build  ###
 
-We are not providing official prebuilt binaries from v0.3.5. Please check the guide to build your own binary.
+We are not providing official prebuilt binaries from `v0.3.5`. Please check the guide to build your own binary.
 
 https://docs.firmachain.org/master/node-and-validators-guide/run-a-full-node/installation-firmachaind
 
@@ -46,45 +45,19 @@ Currently available tags:
 
 </br>
 
-### Development Build : using make ###
+### Build Guide : using make ###
 
 ```bash
 git clone https://github.com/firmachain/firmachain
 cd firmachain
 git checkout (desired tags)
+
 make install
+...
 ```
 
-</br>
+After the successful build, you will find `firmachaind` binary on the `~/go/bin` build path.
 
-### Development Build : using ignite ###
-
-**Step 1: Install ignite v0.23.0**
-```
-// 1. download and unarchive the file below. 
-https://github.com/ignite/cli/releases/tag/v0.23.0
-
-// Then run this command to move the ignite executable to /usr/local/bin/:
-sudo mv ignite /usr/local/bin/
-```
-
-**Step 2: Install FirmaChain**
-
-```bash
-git clone https://github.com/firmachain/firmachain
-cd firmachain
-ignite chain build
-```
-
-After build, you can find the firmachaind file on "~/go/bin/firmachaind".
-
-If you want to run FirmaChain on dev env, just run this command.
-
-```bash
-ignite chain serve
-```
-
-</br>
 </br>
 
 ## Validator & Node
@@ -97,17 +70,17 @@ If you are interested, please contact us through contact@firmachain.org
 
 ## Network 
 
-- Maintnet **Colosseum-1** launced at 2022.01.26
+- Firmachain Mainnet **Colosseum-1** launched on 2022.01.26
     - FirmaChain is currently operating on Ethereum as an ERC-20 Token FCT. 
     - All contracts and tokens will be migrated to our main network once it is complete network stabilization.
-- Testnet **Imperium-4** is ready for online. (private testnet for only chain developer)
+- Firmachain Pubilc Testnet **Imperium-4** is also available.
 
 </br>
 
-## EcoSystem
-- [FirmaChain-BlockExplorer](https://github.com/FirmaChain/firmachain-explorer)
-- [FirmaChain-Station](https://github.com/FirmaChain/firma-station) 
-- [FirmaChain-Faucet (testnet only)](https://github.com/FirmaChain/firmachain-faucet) 
+## Ecosystem
+- [Firmachain Block Explorer](https://github.com/FirmaChain/firmachain-explorer)
+- [Firma Station](https://github.com/FirmaChain/firma-station) 
+- [Firmachain Faucet (Testnet, Imperium-4)](https://github.com/FirmaChain/firmachain-faucet) 
 
 </br>
 
