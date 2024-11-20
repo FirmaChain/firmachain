@@ -32,8 +32,8 @@ jobs:
 
     - name: codecov-action
       uses: codecov/codecov-action@v4
-      #env:
-      #CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
         files: ./coverage.txt
         fail_ci_if_error: true # optional (default = false)
