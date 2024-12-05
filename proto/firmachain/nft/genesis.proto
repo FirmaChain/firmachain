@@ -1,7 +1,7 @@
 syntax = "proto3";
 package firmachain.firmachain.nft;
 
-import "nft/nft_item.proto";
+import "firmachain/nft/nft_item.proto";
 
 option go_package = "github.com/firmachain/firmachain/x/nft/types";
 

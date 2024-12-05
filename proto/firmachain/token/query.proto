@@ -3,7 +3,7 @@ package firmachain.firmachain.token;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "token/token_data.proto";
+import "firmachain/token/token_data.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 

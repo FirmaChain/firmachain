@@ -46,7 +46,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-	"github.com/prometheus/client_golang/prometheus"
+
+	"github.com/ignite-hq/cli/ignite/pkg/openapiconsole"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
@@ -79,20 +80,17 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/cosmos/ibc-go/v3/modules/apps/transfer"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v3/modules/apps/transfer/keeper"
-	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
-	ibc "github.com/cosmos/ibc-go/v3/modules/core"
-	ibcclient "github.com/cosmos/ibc-go/v3/modules/core/02-client"
-	ibcclientclient "github.com/cosmos/ibc-go/v3/modules/core/02-client/client"
-	ibcclienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
-	ibcporttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
-	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
+	"github.com/cosmos/ibc-go/v4/modules/apps/transfer"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v4/modules/apps/transfer/keeper"
+	ibctransfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
+	ibc "github.com/cosmos/ibc-go/v4/modules/core"
+	ibcclient "github.com/cosmos/ibc-go/v4/modules/core/02-client"
+	ibcclientclient "github.com/cosmos/ibc-go/v4/modules/core/02-client/client"
+	ibcclienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
+	ibcporttypes "github.com/cosmos/ibc-go/v4/modules/core/05-port/types"
+	ibchost "github.com/cosmos/ibc-go/v4/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v4/modules/core/keeper"
 	"github.com/spf13/cast"
-
-	"github.com/ignite/cli/ignite/pkg/cosmoscmd"
-	"github.com/ignite/cli/ignite/pkg/openapiconsole"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
@@ -118,21 +116,23 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	// storetypes "github.com/cosmos/cosmos-sdk/store/types"
 
-	ica "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts"
-	icacontrollertypes "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/controller/types"
-	icahost "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/host"
-	icahostkeeper "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/host/keeper"
-	icahosttypes "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/host/types"
-	icatypes "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/types"
+	ica "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts"
+	// icacontrollertypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/controller/types"
+	icahost "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host"
+	icahostkeeper "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/keeper"
+	icahosttypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/host/types"
+	icatypes "github.com/cosmos/ibc-go/v4/modules/apps/27-interchain-accounts/types"
+
+	encparams "github.com/firmachain/firmachain/app/params"
 )
 
 const (
 	AccountAddressPrefix = "firma"
 	Name                 = "firmachain"
+	NodeDir              = ".firmachain"
 )
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
@@ -144,6 +144,26 @@ var (
 	// of "EnableAllProposals" (takes precedence over ProposalsEnabled)
 	// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
 	EnableSpecificProposals = ""
+)
+
+// These constants are derived from the above variables.
+// These are the ones we will want to use in the code, based on
+// any overrides above
+var (
+	Bech32Prefix = AccountAddressPrefix
+
+	// Bech32PrefixAccAddr defines the Bech32 prefix of an account's address
+	Bech32PrefixAccAddr = Bech32Prefix
+	// Bech32PrefixAccPub defines the Bech32 prefix of an account's public key
+	Bech32PrefixAccPub = Bech32Prefix + sdk.PrefixPublic
+	// Bech32PrefixValAddr defines the Bech32 prefix of a validator's operator address
+	Bech32PrefixValAddr = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixOperator
+	// Bech32PrefixValPub defines the Bech32 prefix of a validator's operator public key
+	Bech32PrefixValPub = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixOperator + sdk.PrefixPublic
+	// Bech32PrefixConsAddr defines the Bech32 prefix of a consensus node address
+	Bech32PrefixConsAddr = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixConsensus
+	// Bech32PrefixConsPub defines the Bech32 prefix of a consensus node public key
+	Bech32PrefixConsPub = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixConsensus + sdk.PrefixPublic
 )
 
 // GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
@@ -233,7 +253,6 @@ var (
 )
 
 var (
-	_ cosmoscmd.CosmosApp     = (*App)(nil)
 	_ servertypes.Application = (*App)(nil)
 	_ simapp.App              = (*App)(nil)
 )
@@ -306,104 +325,116 @@ type App struct {
 
 func (app *App) registerUpgradeHandlers(icaModule ica.AppModule) {
 
-	// candidate version to create upgrade proposal
-	const newVersionName = "v0.3.5"
+	// old upgradehandler
+	/*
+		app.UpgradeKeeper.SetUpgradeHandler("v0.3.5", func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
 
-	app.UpgradeKeeper.SetUpgradeHandler(newVersionName, func(ctx sdk.Context, plan upgradetypes.Plan, _ module.VersionMap) (module.VersionMap, error) {
+			// cosmos 0.44.5 consensus version (old)
+			fromVM := map[string]uint64{
+				"auth":         2,
+				"authz":        1,
+				"bank":         2,
+				"capability":   1,
+				"crisis":       1,
+				"distribution": 2,
+				"evidence":     1,
+				"gov":          2,
+				"mint":         1,
+				"params":       1,
+				"slashing":     2,
+				"staking":      2,
+				"upgrade":      1,
+				"vesting":      1,
+				"ibc":          1,
+				"genutil":      1,
+				"transfer":     1,
+				"feegrant":     1,
+				"contract":     1,
+				"nft":          1,
+				"token":        1,
+				"burn":         1,
+			}
 
-		// cosmos 0.44.5 consensus version (old)
-		fromVM := map[string]uint64{
-			"auth":         2,
-			"authz":        1,
-			"bank":         2,
-			"capability":   1,
-			"crisis":       1,
-			"distribution": 2,
-			"evidence":     1,
-			"gov":          2,
-			"mint":         1,
-			"params":       1,
-			"slashing":     2,
-			"staking":      2,
-			"upgrade":      1,
-			"vesting":      1,
-			"ibc":          1,
-			"genutil":      1,
-			"transfer":     1,
-			"feegrant":     1,
-			"contract":     1,
-			"nft":          1,
-			"token":        1,
-			"burn":         1,
-		}
+			// Add Interchain Accounts host module
+			// set the ICS27 consensus version so InitGenesis is not run
+			fromVM[icatypes.ModuleName] = icaModule.ConsensusVersion()
 
-		// Add Interchain Accounts host module
-		// set the ICS27 consensus version so InitGenesis is not run
-		fromVM[icatypes.ModuleName] = icaModule.ConsensusVersion()
+			// create ICS27 Controller submodule params, controller module not enabled.
+			controllerParams := icacontrollertypes.Params{}
 
-		// create ICS27 Controller submodule params, controller module not enabled.
-		controllerParams := icacontrollertypes.Params{}
+			// create ICS27 Host submodule params
+			hostParams := icahosttypes.Params{
+				HostEnabled: true,
+				AllowMessages: []string{
+					"/cosmos.bank.v1beta1.MsgSend",
+					"/cosmos.bank.v1beta1.MsgMultiSend",
+					"/cosmos.staking.v1beta1.MsgDelegate",
+					"/cosmos.staking.v1beta1.MsgUndelegate",
+					"/cosmos.staking.v1beta1.MsgBeginRedelegate",
+					"/cosmos.staking.v1beta1.MsgCreateValidator",
+					"/cosmos.staking.v1beta1.MsgEditValidator",
+					"/cosmos.vesting.v1beta1.MsgCreateVestingAccount",
+					"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+					"/cosmos.distribution.v1beta1.MsgSetWithdrawAddress",
+					"/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission",
+					"/cosmos.distribution.v1beta1.MsgFundCommunityPool",
+					"/cosmos.feegrant.v1beta1.MsgGrantAllowance",
+					"/cosmos.feegrant.v1beta1.MsgRevokeAllowance",
+					"/cosmos.gov.v1beta1.MsgVote",
+					"/cosmos.gov.v1beta1.MsgVoteWeighted",
+					"/cosmos.gov.v1beta1.MsgSubmitProposal",
+					"/cosmos.gov.v1beta1.MsgDeposit",
+					"/cosmos.authz.v1beta1.MsgExec",
+					"/cosmos.authz.v1beta1.MsgGrant",
+					"/cosmos.authz.v1beta1.MsgRevoke",
+					"/cosmwasm.wasm.v1.MsgStoreCode",
+					"/cosmwasm.wasm.v1.MsgInstantiateContract",
+					"/cosmwasm.wasm.v1.InstantiateContract2",
+					"/cosmwasm.wasm.v1.MsgExecuteContract",
+					"/ibc.applications.transfer.v1.MsgTransfer",
+				},
+			}
 
-		// create ICS27 Host submodule params
-		hostParams := icahosttypes.Params{
-			HostEnabled: true,
-			AllowMessages: []string{
-				"/cosmos.bank.v1beta1.MsgSend",
-				"/cosmos.bank.v1beta1.MsgMultiSend",
-				"/cosmos.staking.v1beta1.MsgDelegate",
-				"/cosmos.staking.v1beta1.MsgUndelegate",
-				"/cosmos.staking.v1beta1.MsgBeginRedelegate",
-				"/cosmos.staking.v1beta1.MsgCreateValidator",
-				"/cosmos.staking.v1beta1.MsgEditValidator",
-				"/cosmos.vesting.v1beta1.MsgCreateVestingAccount",
-				"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-				"/cosmos.distribution.v1beta1.MsgSetWithdrawAddress",
-				"/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission",
-				"/cosmos.distribution.v1beta1.MsgFundCommunityPool",
-				"/cosmos.feegrant.v1beta1.MsgGrantAllowance",
-				"/cosmos.feegrant.v1beta1.MsgRevokeAllowance",
-				"/cosmos.gov.v1beta1.MsgVote",
-				"/cosmos.gov.v1beta1.MsgVoteWeighted",
-				"/cosmos.gov.v1beta1.MsgSubmitProposal",
-				"/cosmos.gov.v1beta1.MsgDeposit",
-				"/cosmos.authz.v1beta1.MsgExec",
-				"/cosmos.authz.v1beta1.MsgGrant",
-				"/cosmos.authz.v1beta1.MsgRevoke",
-				"/cosmwasm.wasm.v1.MsgStoreCode",
-				"/cosmwasm.wasm.v1.MsgInstantiateContract",
-				"/cosmwasm.wasm.v1.InstantiateContract2",
-				"/cosmwasm.wasm.v1.MsgExecuteContract",
-				"/ibc.applications.transfer.v1.MsgTransfer",
-			},
-		}
+			// InitModule will initialize the interchain accounts moudule. It should only be
+			// called once and as an alternative to InitGenesis.
+			icaModule.InitModule(ctx, controllerParams, hostParams)
 
-		// InitModule will initialize the interchain accounts moudule. It should only be
-		// called once and as an alternative to InitGenesis.
-		icaModule.InitModule(ctx, controllerParams, hostParams)
+			return app.mm.RunMigrations(ctx, app.configurator, fromVM)
+		})
+	*/
 
-		return app.mm.RunMigrations(ctx, app.configurator, fromVM)
+	// new upgradehandler (v0.4.0)
+	// should match upgradename with governance convention
+	app.UpgradeKeeper.SetUpgradeHandler("v0.4.0", func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+		return app.mm.RunMigrations(ctx, app.configurator, vm)
 	})
 
 	// in case of new module added first
+	// upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 
-	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+	_, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {
 		panic(err)
 	}
 
-	if upgradeInfo.Name == newVersionName && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		storeUpgrades := storetypes.StoreUpgrades{
-			// NOTICE: https://github.com/cosmos/ibc-go/issues/1088
-			Added: []string{"wasm", icacontrollertypes.StoreKey, icahosttypes.StoreKey},
+	// old upgradestoreloader
+	/*
+		if upgradeInfo.Name == "v0.3.5" && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+			storeUpgrades := storetypes.StoreUpgrades{
+				// NOTICE: https://github.com/cosmos/ibc-go/issues/1088
+				Added: []string{"wasm", icacontrollertypes.StoreKey, icahosttypes.StoreKey},
+			}
+
+			// configure store loader that checks if version == upgradeHeight and applies store upgrades
+			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
 		}
+	*/
 
-		// configure store loader that checks if version == upgradeHeight and applies store upgrades
-		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
-	}
-
+	// new upgradestoreloader (v0.4.0)
+	// there are no new module or data structure upgrades in the v0.4.0 so pass.
 }
 
-// New returns a reference to an initialized Gaia.
+// New returns a reference to an initialized Firmachain.
 func New(
 	logger log.Logger,
 	db dbm.DB,
@@ -412,10 +443,12 @@ func New(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig cosmoscmd.EncodingConfig,
+	encodingConfig encparams.EncodingConfig,
+	enabledProposals []wasm.ProposalType,
 	appOpts servertypes.AppOptions,
+	wasmOpts []wasm.Option,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) cosmoscmd.App {
+) *App {
 	appCodec := encodingConfig.Marshaler
 	cdc := encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
@@ -559,7 +592,6 @@ func New(
 		panic("error : read wasm config: " + err.Error())
 	}
 
-	wasmOpts := GetWasmOpts(appOpts)
 	supportedFeatures := "iterator,staking,stargate"
 
 	app.WasmKeeper = wasm.NewKeeper(
@@ -570,6 +602,7 @@ func New(
 		app.BankKeeper,
 		app.StakingKeeper,
 		app.DistrKeeper,
+		app.IBCKeeper.ChannelKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
@@ -583,7 +616,6 @@ func New(
 	)
 
 	// register wasm gov proposal types
-	enabledProposals := GetEnabledProposals()
 	if len(enabledProposals) != 0 {
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals))
 	}
@@ -596,7 +628,7 @@ func New(
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
-	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper))
+	ibcRouter.AddRoute(wasm.ModuleName, wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCKeeper.ChannelKeeper))
 	ibcRouter.AddRoute(icahosttypes.SubModuleName, icaHostIBCModule)
 	// this line is used by starport scaffolding # ibc/app/router
 	app.IBCKeeper.SetRouter(ibcRouter)
@@ -839,15 +871,6 @@ func New(
 	// this line is used by starport scaffolding # stargate/app/beforeInitReturn
 
 	return app
-}
-
-func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
-	var wasmOpts []wasm.Option
-	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
-		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
-	}
-
-	return wasmOpts
 }
 
 // Name returns the name of the App

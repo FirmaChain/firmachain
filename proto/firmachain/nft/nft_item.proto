@@ -3,10 +3,12 @@ package firmachain.firmachain.nft;
 
 option go_package = "github.com/firmachain/firmachain/x/nft/types";
 
-import "gogoproto/gogo.proto";
-
+// An NFT Item
 message NftItem {
+  // Owner
   string owner = 1;
+  // Id
   uint64 id = 2;
+  // TokenURI
   string tokenURI = 3; 
 }
