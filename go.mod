@@ -1,4 +1,4 @@
-module github.com/firmachain/firmachain
+module github.com/firmachain/firmachain/v05
 
 go 1.21
 
@@ -11,6 +11,7 @@ require (
 	github.com/cometbft/cometbft-db v0.11.0
 	github.com/cosmos/cosmos-sdk v0.47.5
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.0.0-20230629164013-34f5e666f806
+	github.com/cosmos/ibc-apps/modules/async-icq/v7 v7.0.0
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v7 v7.0.0-20230629164013-34f5e666f806
 	github.com/cosmos/ibc-go/v7 v7.3.0
 	github.com/gogo/protobuf v1.3.3
