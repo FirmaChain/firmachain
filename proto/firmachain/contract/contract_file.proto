@@ -1,7 +1,7 @@
 syntax = "proto3";
 package firmachain.firmachain.contract;
 
-option go_package = "github.com/firmachain/firmachain/x/contract/types";
+option go_package = "github.com/firmachain/firmachain/v05/x/contract/types";
 
 import "gogoproto/gogo.proto";
 

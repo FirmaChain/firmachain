@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/firmachain/firmachain/x/burn/types"
+	"github.com/firmachain/firmachain/v05/x/burn/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

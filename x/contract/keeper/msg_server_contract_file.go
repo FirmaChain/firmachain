@@ -6,7 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/firmachain/firmachain/x/contract/types"
+	"github.com/firmachain/firmachain/v05/x/contract/types"
 )
 
 func (k msgServer) CreateContractFile(goCtx context.Context, msg *types.MsgCreateContractFile) (*types.MsgCreateContractFileResponse, error) {

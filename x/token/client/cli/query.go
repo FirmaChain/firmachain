@@ -10,7 +10,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/firmachain/firmachain/x/token/types"
+	"github.com/firmachain/firmachain/v05/x/token/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

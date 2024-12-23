@@ -97,25 +97,25 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	tmos "github.com/cometbft/cometbft/libs/os"
 
-	"github.com/firmachain/firmachain/app/upgrades"
-	v04 "github.com/firmachain/firmachain/app/upgrades/v04"
-	v05 "github.com/firmachain/firmachain/app/upgrades/v05"
-	"github.com/firmachain/firmachain/client/docs"
+	upgrades "github.com/firmachain/firmachain/v05/app/upgrades"
+	v04 "github.com/firmachain/firmachain/v05/app/upgrades/v04"
+	v05 "github.com/firmachain/firmachain/v05/app/upgrades/v05"
+	"github.com/firmachain/firmachain/v05/client/docs"
 
-	contractmodule "github.com/firmachain/firmachain/x/contract"
-	contractmodulekeeper "github.com/firmachain/firmachain/x/contract/keeper"
-	contractmoduletypes "github.com/firmachain/firmachain/x/contract/types"
-	nftmodule "github.com/firmachain/firmachain/x/nft"
-	nftmodulekeeper "github.com/firmachain/firmachain/x/nft/keeper"
-	nftmoduletypes "github.com/firmachain/firmachain/x/nft/types"
+	contractmodule "github.com/firmachain/firmachain/v05/x/contract"
+	contractmodulekeeper "github.com/firmachain/firmachain/v05/x/contract/keeper"
+	contractmoduletypes "github.com/firmachain/firmachain/v05/x/contract/types"
+	nftmodule "github.com/firmachain/firmachain/v05/x/nft"
+	nftmodulekeeper "github.com/firmachain/firmachain/v05/x/nft/keeper"
+	nftmoduletypes "github.com/firmachain/firmachain/v05/x/nft/types"
 
-	tokenmodule "github.com/firmachain/firmachain/x/token"
-	tokenmodulekeeper "github.com/firmachain/firmachain/x/token/keeper"
-	tokenmoduletypes "github.com/firmachain/firmachain/x/token/types"
+	tokenmodule "github.com/firmachain/firmachain/v05/x/token"
+	tokenmodulekeeper "github.com/firmachain/firmachain/v05/x/token/keeper"
+	tokenmoduletypes "github.com/firmachain/firmachain/v05/x/token/types"
 
-	burnmodule "github.com/firmachain/firmachain/x/burn"
-	burnmodulekeeper "github.com/firmachain/firmachain/x/burn/keeper"
-	burnmoduletypes "github.com/firmachain/firmachain/x/burn/types"
+	burnmodule "github.com/firmachain/firmachain/v05/x/burn"
+	burnmodulekeeper "github.com/firmachain/firmachain/v05/x/burn/keeper"
+	burnmoduletypes "github.com/firmachain/firmachain/v05/x/burn/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 
@@ -157,6 +157,7 @@ import (
 	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
+	"github.com/firmachain/firmachain/v05/app/keepers"
 )
 
 const (
@@ -318,68 +319,13 @@ type App struct {
 	interfaceRegistry types.InterfaceRegistry
 	configurator      module.Configurator
 
-	AppKeepers AppKeepers
+	AppKeepers keepers.AppKeepers
 
 	// Module Manager
 	mm *module.Manager
 
 	// Simulation Manager
 	sm *module.SimulationManager
-}
-
-type AppKeepers struct {
-	// keys to access the substores
-	keys    map[string]*storetypes.KVStoreKey
-	tkeys   map[string]*storetypes.TransientStoreKey
-	memKeys map[string]*storetypes.MemoryStoreKey
-
-	// SDK Keepers
-	AccountKeeper         authkeeper.AccountKeeper
-	AuthzKeeper           authzkeeper.Keeper
-	BankKeeper            bankkeeper.Keeper
-	CapabilityKeeper      *capabilitykeeper.Keeper
-	ConsensusParamsKeeper consensusparamkeeper.Keeper
-	CrisisKeeper          *crisiskeeper.Keeper
-	DistrKeeper           distrkeeper.Keeper
-	EvidenceKeeper        evidencekeeper.Keeper
-	FeeGrantKeeper        feegrantkeeper.Keeper
-	GovKeeper             govkeeper.Keeper
-	MintKeeper            mintkeeper.Keeper
-	ParamsKeeper          paramskeeper.Keeper
-	SlashingKeeper        slashingkeeper.Keeper
-	StakingKeeper         *stakingkeeper.Keeper
-	UpgradeKeeper         *upgradekeeper.Keeper
-
-	// IBC Keepers
-	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	TransferKeeper      ibctransferkeeper.Keeper
-	IBCFeeKeeper        ibcfeekeeper.Keeper
-	IBCHooksKeeper      *ibchookskeeper.Keeper
-	PacketForwardKeeper *packetforwardkeeper.Keeper
-	ICAHostKeeper       icahostkeeper.Keeper
-	ICAControllerKeeper icacontrollerkeeper.Keeper
-	ICQKeeper           icqkeeper.Keeper
-
-	// Wasm Keepers
-	WasmKeeper wasmkeeper.Keeper
-
-	// Custom Keepers
-	NftKeeper      nftmodulekeeper.Keeper
-	ContractKeeper contractmodulekeeper.Keeper
-	TokenKeeper    tokenmodulekeeper.Keeper
-	BurnKeeper     burnmodulekeeper.Keeper
-
-	// Scoped Keepers (public for test purposes)
-	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
-	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
-	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
-	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
-	ScopedICQKeeper           capabilitykeeper.ScopedKeeper
-	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
-
-	// IBC Hooks
-	Ics20WasmHooks   *ibc_hooks.WasmHooks
-	HooksICS4Wrapper ibc_hooks.ICS4Middleware
 }
 
 func (app *App) setupUpgradeHandlers(cfg module.Configurator) {
@@ -395,24 +341,25 @@ func (app *App) setupUpgradeHandlers(cfg module.Configurator) {
 	}
 }
 
-func (app *App) registerUpgradeHandlers() {
-
-	// new upgradehandler (v0.4.0)
-	// should match upgradename with governance convention
-	app.AppKeepers.UpgradeKeeper.SetUpgradeHandler("v0.4.0", func(ctx sdk.Context, plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
-		return app.mm.RunMigrations(ctx, app.configurator, vm)
-	})
-
-	// in case of new module added first
-	// upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
-
-	_, err := app.AppKeepers.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+// configure store loader that checks if version == upgradeHeight and applies store upgrades
+func (app *App) setupUpgradeStoreLoaders() {
+	upgradeInfo, err := app.AppKeepers.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {
-		panic(err)
+		panic("failed to read upgrade info from disk" + err.Error())
 	}
 
-	// new upgradestoreloader (v0.4.0)
-	// there are no new module or data structure upgrades in the v0.4.0 so pass.
+	if app.AppKeepers.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		return
+	}
+
+	for _, upgrade := range Upgrades {
+		if upgradeInfo.Name == upgrade.UpgradeName {
+			storeUpgrades := upgrade.StoreUpgrades
+			app.SetStoreLoader(
+				upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades),
+			)
+		}
+	}
 }
 
 // New returns a reference to an initialized Firmachain.
@@ -482,10 +429,7 @@ func New(
 		legacyAmino:       legacyAmino,
 		appCodec:          appCodec,
 		interfaceRegistry: interfaceRegistry,
-		AppKeepers: AppKeepers{
-			tkeys:   tkeys,
-			memKeys: memKeys,
-		},
+		AppKeepers:        keepers.NewAppKeepersWithKeys(keys, tkeys, memKeys),
 	}
 	invCheckPeriod := cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod))
 	skipUpgradeHeights := map[int64]bool{}
@@ -495,6 +439,7 @@ func New(
 	homePath := cast.ToString(appOpts.Get(flags.FlagHome))
 
 	// ============ Keepers ============
+	// TODO: Move keepers in app/keepers/keepers.go
 	app.AppKeepers.CapabilityKeeper = capabilitykeeper.NewKeeper(
 		appCodec,
 		keys[capabilitytypes.StoreKey],
@@ -640,7 +585,7 @@ func New(
 	)
 	// Initialize packet forward middleware router
 	app.AppKeepers.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
-		appCodec, app.AppKeepers.keys[packetforwardtypes.StoreKey],
+		appCodec, app.AppKeepers.GetKeys()[packetforwardtypes.StoreKey],
 		app.GetSubspace(packetforwardtypes.ModuleName),
 		app.AppKeepers.TransferKeeper, // Will be zero-value here. Reference is set later on with SetTransferKeeper.
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
@@ -662,7 +607,7 @@ func New(
 	)
 	app.AppKeepers.PacketForwardKeeper.SetTransferKeeper(app.AppKeepers.TransferKeeper)
 	hooksKeeper := ibchookskeeper.NewKeeper(
-		app.AppKeepers.keys[ibchookstypes.StoreKey],
+		app.AppKeepers.GetKeys()[ibchookstypes.StoreKey],
 	)
 	app.AppKeepers.IBCHooksKeeper = &hooksKeeper
 	wasmHooks := ibc_hooks.NewWasmHooks(app.AppKeepers.IBCHooksKeeper, &app.AppKeepers.WasmKeeper, Bech32Prefix) // The contract keeper needs to be set later
@@ -683,7 +628,7 @@ func New(
 		app.MsgServiceRouter(),
 	)
 	app.AppKeepers.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
-		appCodec, app.AppKeepers.keys[icacontrollertypes.StoreKey],
+		appCodec, app.AppKeepers.GetKeys()[icacontrollertypes.StoreKey],
 		app.GetSubspace(icacontrollertypes.SubModuleName),
 		app.AppKeepers.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
@@ -693,7 +638,7 @@ func New(
 	)
 	app.AppKeepers.ICQKeeper = icqkeeper.NewKeeper(
 		appCodec,
-		app.AppKeepers.keys[icqtypes.StoreKey],
+		app.AppKeepers.GetKeys()[icqtypes.StoreKey],
 		app.GetSubspace(icqtypes.ModuleName),
 		app.AppKeepers.IBCKeeper.ChannelKeeper, // may be replaced with middleware
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
@@ -706,7 +651,7 @@ func New(
 	// We need to wait for Channel Upgradability before we can use this for any other middleware.
 	app.AppKeepers.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		appCodec,
-		app.AppKeepers.keys[ibcfeetypes.StoreKey],
+		app.AppKeepers.GetKeys()[ibcfeetypes.StoreKey],
 		app.AppKeepers.HooksICS4Wrapper, // replaced with IBC middleware
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
 		&app.AppKeepers.IBCKeeper.PortKeeper,
@@ -995,7 +940,7 @@ func New(
 	app.sm.RegisterStoreDecoders()
 
 	// ============ Initialization ============
-	app.registerUpgradeHandlers()
+	app.setupUpgradeHandlers(app.configurator)
 
 	// initialize stores
 	app.MountKVStores(keys)
@@ -1158,21 +1103,21 @@ func (app *App) InterfaceRegistry() types.InterfaceRegistry {
 //
 // NOTE: This is solely to be used for testing purposes.
 func (app *App) GetKey(storeKey string) *storetypes.KVStoreKey {
-	return app.AppKeepers.keys[storeKey]
+	return app.AppKeepers.GetKeys()[storeKey]
 }
 
 // GetTKey returns the TransientStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
 func (app *App) GetTKey(storeKey string) *storetypes.TransientStoreKey {
-	return app.AppKeepers.tkeys[storeKey]
+	return app.AppKeepers.GetTkeys()[storeKey]
 }
 
 // GetMemKey returns the MemStoreKey for the provided mem key.
 //
 // NOTE: This is solely used for testing purposes.
 func (app *App) GetMemKey(storeKey string) *storetypes.MemoryStoreKey {
-	return app.AppKeepers.memKeys[storeKey]
+	return app.AppKeepers.GetMemKeys()[storeKey]
 }
 
 // GetSubspace returns a param subspace for a given module name.

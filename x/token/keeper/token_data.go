@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/firmachain/firmachain/x/token/types"
+	"github.com/firmachain/firmachain/v05/x/token/types"
 )
 
 const (

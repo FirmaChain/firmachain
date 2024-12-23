@@ -6,7 +6,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "firmachain/contract/contract_file.proto";
 import "firmachain/contract/contract_log.proto";
 
-option go_package = "github.com/firmachain/firmachain/x/contract/types";
+option go_package = "github.com/firmachain/firmachain/v05/x/contract/types";
 
 // Query defines the gRPC querier service.
 service Query {

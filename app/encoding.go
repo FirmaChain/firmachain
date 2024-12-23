@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/firmachain/firmachain/app/params"
+	"github.com/firmachain/firmachain/v05/app/params"
 
 	"github.com/cosmos/cosmos-sdk/std"
 )

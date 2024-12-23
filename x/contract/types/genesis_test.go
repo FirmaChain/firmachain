@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/firmachain/firmachain/x/contract/types"
+	"github.com/firmachain/firmachain/v05/x/contract/types"
 	"github.com/stretchr/testify/require"
 )
 

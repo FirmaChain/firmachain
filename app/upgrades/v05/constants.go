@@ -7,7 +7,7 @@ import (
 	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
 	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
 	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
-	upgrades "github.com/firmachain/firmachain/app/upgrades"
+	upgrades "github.com/firmachain/firmachain/v05/app/upgrades"
 )
 
 // UpgradeName defines the on-chain upgrade name for the upgrade.

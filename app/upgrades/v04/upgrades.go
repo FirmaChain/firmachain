@@ -7,13 +7,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	"github.com/firmachain/firmachain/app"
+	"github.com/firmachain/firmachain/v05/app/keepers"
 )
 
 func CreateV0_4_0UpgradeHandler(
 	mm *module.Manager,
 	cfg module.Configurator,
-	keepers *app.AppKeepers,
+	keepers *keepers.AppKeepers,
 ) upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, _ upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
 		logger := ctx.Logger().With("upgrade", UpgradeName)

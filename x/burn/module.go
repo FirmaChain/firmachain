@@ -17,9 +17,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/firmachain/firmachain/x/burn/client/cli"
-	"github.com/firmachain/firmachain/x/burn/keeper"
-	"github.com/firmachain/firmachain/x/burn/types"
+	"github.com/firmachain/firmachain/v05/x/burn/client/cli"
+	"github.com/firmachain/firmachain/v05/x/burn/keeper"
+	"github.com/firmachain/firmachain/v05/x/burn/types"
 )
 
 var (

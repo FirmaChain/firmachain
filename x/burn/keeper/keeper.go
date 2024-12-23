@@ -9,7 +9,7 @@ import (
 
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/x/burn/types"
+	"github.com/firmachain/firmachain/v05/x/burn/types"
 )
 
 type (

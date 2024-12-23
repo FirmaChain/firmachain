@@ -4,7 +4,7 @@ import (
 	store "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/firmachain/firmachain/app"
+	"github.com/firmachain/firmachain/v05/app/keepers"
 )
 
 // Upgrade defines a struct containing necessary fields that a SoftwareUpgradeProposal
@@ -19,7 +19,7 @@ type Upgrade struct {
 	CreateUpgradeHandler func(
 		*module.Manager,
 		module.Configurator,
-		*app.AppKeepers,
+		*keepers.AppKeepers,
 	) upgradetypes.UpgradeHandler
 
 	// Store upgrades, should be used for any new modules introduced, new modules deleted, or store names renamed.

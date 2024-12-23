@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y git wget
 
 # Download from GitHub instead of using COPY
 RUN rm firmachain -rf
-RUN git clone https://github.com/firmachain/firmachain /firmachain
+RUN git clone https://github.com/firmachain/firmachain/v05 /firmachain
 WORKDIR "/firmachain"
 
 # Checkout a specific version
@@ -17,7 +17,7 @@ RUN git checkout v0.2.3
 RUN make 
 #RUN LEDGER_ENABLED=false make 
 
-RUN wget https://github.com/FirmaChain/firmachain-devnet-imperium/raw/master/genesis.json;
+RUN wget https://github.com/firmachain/firmachain/v05-devnet-imperium/raw/master/genesis.json;
 
 # Create final container
 FROM ubuntu:latest

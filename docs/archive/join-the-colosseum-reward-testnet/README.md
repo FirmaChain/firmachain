@@ -77,7 +77,7 @@ Re-enter keyring passphrase: XXXXXXXX
 genesis.json download
 
 ```
-wget https://github.com/FirmaChain/firmachain-testnet-colosseum/raw/main/genesis.json
+wget https://github.com/firmachain/firmachain/v05-testnet-colosseum/raw/main/genesis.json
 ```
 
 copy genesis.json from firmachain config folder

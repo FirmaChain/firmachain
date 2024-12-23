@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/firmachain/firmachain/x/contract/types"
+	"github.com/firmachain/firmachain/v05/x/contract/types"
 )
 
 var _ = strconv.Itoa(0)

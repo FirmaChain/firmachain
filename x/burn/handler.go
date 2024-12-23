@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/firmachain/firmachain/x/burn/keeper"
-	"github.com/firmachain/firmachain/x/burn/types"
+	"github.com/firmachain/firmachain/v05/x/burn/keeper"
+	"github.com/firmachain/firmachain/v05/x/burn/types"
 )
 
 // NewHandler ...

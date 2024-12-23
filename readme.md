@@ -1,12 +1,12 @@
 # FirmaChain
 
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/firmachain/firmachain)](https://github.com/firmachain/firmachain/releases)
-[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/firmachain/firmachain/blob/master/LICENSE)
-[![Go Reference](https://pkg.go.dev/badge/github.com/firmachain/firmachain/.svg)](https://pkg.go.dev/github.com/firmachain/firmachain/)
-[![report](https://goreportcard.com/badge/github.com/firmachain/firmachain)](https://goreportcard.com/report/github.com/firmachain/firmachain)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/firmachain/firmachain)](https://github.com/firmachain/firmachain/v05/releases)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/firmachain/firmachain/v05/blob/master/LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/firmachain/firmachain/v05/.svg)](https://pkg.go.dev/github.com/firmachain/firmachain/v05/)
+[![report](https://goreportcard.com/badge/github.com/firmachain/firmachain/v05)](https://goreportcard.com/report/github.com/firmachain/firmachain/v05)
 ![Lines of code](https://img.shields.io/tokei/lines/github/firmachain/firmachain)
 
-![ci](https://github.com/firmachain/firmachain/actions/workflows/test.yml/badge.svg)
+![ci](https://github.com/firmachain/firmachain/v05/actions/workflows/test.yml/badge.svg)
 <a href="https://codecov.io/gh/firmachain/firmachain">
     <img src="https://codecov.io/gh/firmachain/firmachain/branch/master/graph/badge.svg">
 </a>
@@ -48,7 +48,7 @@ Currently available tags:
 ### Build Guide : using make ###
 
 ```bash
-git clone https://github.com/firmachain/firmachain
+git clone https://github.com/firmachain/firmachain/v05
 cd firmachain
 git checkout (desired tags)
 
@@ -78,9 +78,9 @@ If you are interested, please contact us through contact@firmachain.org
 </br>
 
 ## Ecosystem
-- [Firmachain Block Explorer](https://github.com/FirmaChain/firmachain-explorer)
+- [Firmachain Block Explorer](https://github.com/firmachain/firmachain/v05-explorer)
 - [Firma Station](https://github.com/FirmaChain/firma-station) 
-- [Firmachain Faucet (Testnet, Imperium-4)](https://github.com/FirmaChain/firmachain-faucet) 
+- [Firmachain Faucet (Testnet, Imperium-4)](https://github.com/firmachain/firmachain/v05-faucet) 
 
 </br>
 

@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/firmachain/firmachain/x/contract/types"
+	"github.com/firmachain/firmachain/v05/x/contract/types"
 )
 
 type msgServer struct {

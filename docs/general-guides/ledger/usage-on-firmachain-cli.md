@@ -26,7 +26,7 @@ sudo snap install go --classic
 #### 2. Install FirmaChain
 
 ```
-git clone https://github.com/firmachain/firmachain.git
+git clone https://github.com/firmachain/firmachain/v05.git
 
 cd firmachain/
 

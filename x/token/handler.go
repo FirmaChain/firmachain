@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/firmachain/firmachain/x/token/keeper"
-	"github.com/firmachain/firmachain/x/token/types"
+	"github.com/firmachain/firmachain/v05/x/token/keeper"
+	"github.com/firmachain/firmachain/v05/x/token/types"
 )
 
 // NewHandler ...

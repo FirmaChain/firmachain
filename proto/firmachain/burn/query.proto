@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "firmachain/burn/params.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "github.com/firmachain/firmachain/x/burn/types";
+option go_package = "github.com/firmachain/firmachain/v05/x/burn/types";
 
 // Query defines the gRPC querier service.
 service Query {

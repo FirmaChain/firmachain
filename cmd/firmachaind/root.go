@@ -34,8 +34,8 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	"github.com/firmachain/firmachain/app"
-	"github.com/firmachain/firmachain/app/params"
+	"github.com/firmachain/firmachain/v05/app"
+	"github.com/firmachain/firmachain/v05/app/params"
 )
 
 // NewRootCmd creates a new root command for firmachaind. It is called once in the

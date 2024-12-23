@@ -16,9 +16,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/firmachain/firmachain/x/nft/client/cli"
-	"github.com/firmachain/firmachain/x/nft/keeper"
-	"github.com/firmachain/firmachain/x/nft/types"
+	"github.com/firmachain/firmachain/v05/x/nft/client/cli"
+	"github.com/firmachain/firmachain/v05/x/nft/keeper"
+	"github.com/firmachain/firmachain/v05/x/nft/types"
 )
 
 var (

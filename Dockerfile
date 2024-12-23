@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y git
 
 # Download from GitHub instead of using COPY
 RUN rm firmachain -rf
-RUN git clone https://github.com/firmachain/firmachain /firmachain
+RUN git clone https://github.com/firmachain/firmachain/v05 /firmachain
 WORKDIR "/firmachain"
 
 # Always run on latest version

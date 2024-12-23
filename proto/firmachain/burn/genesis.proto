@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "firmachain/burn/params.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "github.com/firmachain/firmachain/x/burn/types";
+option go_package = "github.com/firmachain/firmachain/v05/x/burn/types";
 
 // GenesisState defines the burn module's genesis state.
 message GenesisState {

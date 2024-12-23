@@ -16,9 +16,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/firmachain/firmachain/x/contract/client/cli"
-	"github.com/firmachain/firmachain/x/contract/keeper"
-	"github.com/firmachain/firmachain/x/contract/types"
+	"github.com/firmachain/firmachain/v05/x/contract/client/cli"
+	"github.com/firmachain/firmachain/v05/x/contract/keeper"
+	"github.com/firmachain/firmachain/v05/x/contract/types"
 )
 
 var (

@@ -84,7 +84,7 @@ cp ./genesis.json ~/.firmachain/config/genesis.json
 
 #### P2P Setting
 
-We provide persistent peer node for P2P connection. You can find more details from [this link](https://github.com/FirmaChain/firmachain-devnet-imperium).
+We provide persistent peer node for P2P connection. You can find more details from [this link](https://github.com/firmachain/firmachain/v05-devnet-imperium).
 
 ```
 vi ~/.firmachain/config/config.toml

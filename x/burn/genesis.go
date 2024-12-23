@@ -2,8 +2,8 @@ package burn
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/x/burn/keeper"
-	"github.com/firmachain/firmachain/x/burn/types"
+	"github.com/firmachain/firmachain/v05/x/burn/keeper"
+	"github.com/firmachain/firmachain/v05/x/burn/types"
 )
 
 // InitGenesis initializes the capability module's state from a provided genesis state.
