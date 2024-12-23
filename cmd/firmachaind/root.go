@@ -246,6 +246,11 @@ func (ac appCreator) newApp(
 		skipUpgradeHeights[int64(h)] = true
 	}
 
+	var wasmOpts []wasmkeeper.Option
+	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	}
+
 	loadLatest := true
 
 	baseappOptions := server.DefaultBaseappOptions(appOpts)
@@ -285,6 +290,7 @@ func (ac appCreator) appExport(
 		db,
 		traceStore,
 		loadLatest,
+		app.GetEnabledProposals(),
 		appOpts,
 		emptyWasmOpts,
 	)
