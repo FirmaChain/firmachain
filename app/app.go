@@ -441,6 +441,8 @@ func New(
 	}
 	homePath := cast.ToString(appOpts.Get(flags.FlagHome))
 
+	govModAddress := authtypes.NewModuleAddress(govtypes.ModuleName).String()
+
 	// ============ Keepers ============
 	// TODO: Move keepers in app/keepers/keepers.go
 	app.AppKeepers.CapabilityKeeper = capabilitykeeper.NewKeeper(
@@ -472,7 +474,6 @@ func New(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	bApp.SetParamStore(&app.AppKeepers.ConsensusParamsKeeper)
-	govModAddress := authtypes.NewModuleAddress(govtypes.ModuleName).String()
 	app.AppKeepers.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
 		keys[authtypes.StoreKey],
