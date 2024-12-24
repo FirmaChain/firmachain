@@ -35,6 +35,9 @@ type AppModuleBasic struct {
 	cdc codec.BinaryCodec
 }
 
+// ConsensusVersion defines the current x/contract module consensus version.
+const ConsensusVersion = 2
+
 func NewAppModuleBasic(cdc codec.BinaryCodec) AppModuleBasic {
 	return AppModuleBasic{cdc: cdc}
 }
@@ -70,6 +73,11 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEncod
 		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}
 	return genState.Validate()
+}
+
+// ConsensusVersion returns the consensus state-breaking version for the module.
+func (AppModuleBasic) ConsensusVersion() uint64 {
+	return ConsensusVersion
 }
 
 // RegisterRESTRoutes registers the capability module's REST service handlers.
