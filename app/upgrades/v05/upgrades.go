@@ -15,6 +15,7 @@ import (
 	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
 	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
 	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 
 	// SDK v47 modules
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -70,7 +71,6 @@ func CreateV0_5_0UpgradeHandler(
 				keyTable = ibctransfertypes.ParamKeyTable()
 			case icahosttypes.SubModuleName:
 				keyTable = icahosttypes.ParamKeyTable()
-			//TODO: check if we have registered all the ibc modules present prior v05
 
 			// Wasm
 			case wasmtypes.ModuleName:
@@ -89,6 +89,10 @@ func CreateV0_5_0UpgradeHandler(
 		baseapp.MigrateParams(ctx, baseAppLegacySS, &keepers.ConsensusParamsKeeper)
 
 		// === New params ===
+		// https://github.com/cosmos/ibc-go/blob/v7.1.0/docs/migrations/v7-to-v7_1.md
+		// explicitly update the IBC 02-client params, adding the localhost client type
+		newIBCCoreParams := keepers.IBCKeeper.ClientKeeper.GetParams(ctx)
+		newIBCCoreParams.AllowedClients = append(newIBCCoreParams.AllowedClients, ibcexported.Localhost)
 		// ICA Host
 		newIcaHostParams := icahosttypes.Params{
 			HostEnabled: true,
@@ -114,6 +118,8 @@ func CreateV0_5_0UpgradeHandler(
 		// New modules run AFTER the migrations, so to set the correct params after the default.
 
 		// ==== Set Params ====
+		keepers.IBCKeeper.ClientKeeper.SetParams(ctx, newIBCCoreParams)
+		logger.Info(fmt.Sprintf("ibc core: ICQKeeper params set"))
 		keepers.ICAHostKeeper.SetParams(ctx, newIcaHostParams)
 		logger.Info(fmt.Sprintf("icahost: ICAHostKeeper params set"))
 		keepers.ICAControllerKeeper.SetParams(ctx, newIcaControllerParams)
