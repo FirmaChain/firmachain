@@ -13,6 +13,8 @@ import (
 // UpgradeName defines the on-chain upgrade name for the upgrade.
 const UpgradeName = "v0.5.0"
 
+const legacyBurnModuleStoreKey = "burn"
+
 var Upgrade = upgrades.Upgrade{
 	UpgradeName:          UpgradeName,
 	CreateUpgradeHandler: CreateV0_5_0UpgradeHandler,
@@ -24,6 +26,9 @@ var Upgrade = upgrades.Upgrade{
 			packetforwardtypes.StoreKey,
 			icahosttypes.StoreKey,
 			icacontrollertypes.StoreKey,
+		},
+		Deleted: []string{
+			legacyBurnModuleStoreKey,
 		},
 	},
 }

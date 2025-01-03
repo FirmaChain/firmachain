@@ -22988,42 +22988,6 @@ paths:
           type: boolean
       tags:
         - Query
-  /firmachain/firmachain/burn/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: FirmachainFirmachainBurnParams
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
   '/firmachain/firmachain/contract/ContractListFromHash/{hash}':
     get:
       summary: Queries a contractLog by hash
@@ -52438,16 +52402,6 @@ definitions:
     title: |-
       QuerySmartContractStateResponse is the response type for the
       Query/SmartContractState RPC method
-  firmachain.firmachain.burn.Params:
-    type: object
-    description: Params defines the parameters for the module.
-  firmachain.firmachain.burn.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params holds all the parameters of this module.
-        type: object
-    description: QueryParamsResponse is response type for the Query/Params RPC method.
   firmachain.firmachain.contract.ContractFile:
     type: object
     properties:

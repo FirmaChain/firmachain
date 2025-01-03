@@ -30,8 +30,6 @@ import (
 
 	tokenmodulekeeper "github.com/firmachain/firmachain/v05/x/token/keeper"
 
-	burnmodulekeeper "github.com/firmachain/firmachain/v05/x/burn/keeper"
-
 	// storetypes "github.com/cosmos/cosmos-sdk/store/types"
 
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
@@ -86,7 +84,6 @@ type AppKeepers struct {
 	NftKeeper      nftmodulekeeper.Keeper
 	ContractKeeper contractmodulekeeper.Keeper
 	TokenKeeper    tokenmodulekeeper.Keeper
-	BurnKeeper     burnmodulekeeper.Keeper
 
 	// Scoped Keepers (public for test purposes)
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper

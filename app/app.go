@@ -114,10 +114,6 @@ import (
 	tokenmodulekeeper "github.com/firmachain/firmachain/v05/x/token/keeper"
 	tokenmoduletypes "github.com/firmachain/firmachain/v05/x/token/types"
 
-	burnmodule "github.com/firmachain/firmachain/v05/x/burn"
-	burnmodulekeeper "github.com/firmachain/firmachain/v05/x/burn/keeper"
-	burnmoduletypes "github.com/firmachain/firmachain/v05/x/burn/types"
-
 	"github.com/CosmWasm/wasmd/x/wasm"
 
 	// storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -269,7 +265,6 @@ var (
 		// Wasm
 		wasm.AppModuleBasic{},
 		// Custom
-		burnmodule.AppModuleBasic{},
 		contractmodule.AppModuleBasic{},
 		nftmodule.AppModuleBasic{},
 		tokenmodule.AppModuleBasic{},
@@ -292,7 +287,6 @@ var (
 		// Wasm
 		wasmtypes.ModuleName: {authtypes.Burner},
 		// Custom
-		burnmoduletypes.ModuleName:  {authtypes.Burner},
 		tokenmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner},
 	}
 )
@@ -419,10 +413,9 @@ func New(
 		// Wasm
 		wasmtypes.StoreKey,
 		// Custom
-		nftmoduletypes.StoreKey,
 		contractmoduletypes.StoreKey,
+		nftmoduletypes.StoreKey,
 		tokenmoduletypes.StoreKey,
-		burnmoduletypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -706,13 +699,6 @@ func New(
 		keys[tokenmoduletypes.MemStoreKey],
 		app.AppKeepers.BankKeeper,
 	)
-	app.AppKeepers.BurnKeeper = *burnmodulekeeper.NewKeeper(
-		appCodec,
-		keys[burnmoduletypes.StoreKey],
-		keys[burnmoduletypes.MemStoreKey],
-		app.AppKeepers.BankKeeper,
-		app.AppKeepers.AccountKeeper,
-	)
 
 	// ============ Routers ============
 	// ------------ Gov ------------
@@ -796,7 +782,6 @@ func New(
 		// Wasm modules
 		wasm.NewAppModule(appCodec, &app.AppKeepers.WasmKeeper, app.AppKeepers.StakingKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		// Custom modules
-		burnmodule.NewAppModule(appCodec, app.AppKeepers.BurnKeeper),
 		contractmodule.NewAppModule(appCodec, app.AppKeepers.ContractKeeper),
 		nftmodule.NewAppModule(appCodec, app.AppKeepers.NftKeeper),
 		tokenmodule.NewAppModule(appCodec, app.AppKeepers.TokenKeeper),
@@ -829,7 +814,6 @@ func New(
 		nftmoduletypes.ModuleName,
 		contractmoduletypes.ModuleName,
 		tokenmoduletypes.ModuleName,
-		burnmoduletypes.ModuleName,
 		wasmtypes.ModuleName,
 		icatypes.ModuleName,
 		packetforwardtypes.ModuleName,
@@ -861,7 +845,6 @@ func New(
 		nftmoduletypes.ModuleName,
 		contractmoduletypes.ModuleName,
 		tokenmoduletypes.ModuleName,
-		burnmoduletypes.ModuleName,
 		wasmtypes.ModuleName,
 		icatypes.ModuleName,
 		packetforwardtypes.ModuleName,
@@ -898,7 +881,6 @@ func New(
 		nftmoduletypes.ModuleName,
 		contractmoduletypes.ModuleName,
 		tokenmoduletypes.ModuleName,
-		burnmoduletypes.ModuleName,
 		wasmtypes.ModuleName,
 		icatypes.ModuleName,
 		packetforwardtypes.ModuleName,
@@ -936,7 +918,6 @@ func New(
 		transfer.NewAppModule(app.AppKeepers.TransferKeeper),
 		ibcfee.NewAppModule(app.AppKeepers.IBCFeeKeeper),
 		// actually we don't use simulation manger yet.
-		// burnmodule.NewAppModule(appCodec, app.AppKeepers.BurnKeeper),
 		// contractmodule.NewAppModule(appCodec, app.AppKeepers.ContractKeeper),
 		// nftmodule.NewAppModule(appCodec, app.AppKeepers.NftKeeper),
 		// tokenmodule.NewAppModule(appCodec, app.AppKeepers.TokenKeeper),
@@ -1075,8 +1056,6 @@ func (app *App) ModuleAccountAddrsForBankModule() map[string]bool {
 	for acc := range maccPerms {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
 	}
-
-	modAccAddrs[authtypes.NewModuleAddress(burnmoduletypes.ModuleName).String()] = false
 	return modAccAddrs
 }
 
@@ -1206,10 +1185,9 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	// Wasm
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	// Custom
-	paramsKeeper.Subspace(nftmoduletypes.ModuleName)
 	paramsKeeper.Subspace(contractmoduletypes.ModuleName)
+	paramsKeeper.Subspace(nftmoduletypes.ModuleName)
 	paramsKeeper.Subspace(tokenmoduletypes.ModuleName)
-	paramsKeeper.Subspace(burnmoduletypes.ModuleName)
 
 	return paramsKeeper
 }
