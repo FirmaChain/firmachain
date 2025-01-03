@@ -26,8 +26,8 @@ else
     echo "No files in ./github.com, skipping..."
 fi
 
- echo "Running go mod tidy..."
-go mod tidy -compat=1.17
+echo "Running go mod tidy..."
+go mod tidy
 
 echo "Done."
 

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package firmachain.firmachain.nft;
+package firmachain.nft;
 
 option go_package = "github.com/firmachain/firmachain/v05/x/nft/types";
 

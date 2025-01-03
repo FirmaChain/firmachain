@@ -21,6 +21,8 @@ else
 	BUILD_FLAGS := -ldflags '$(ldflags)' $(build_tags)
 endif
 
+DOCKER := $(shell which docker)
+
 all: install
 
 install: go.sum
@@ -38,26 +40,10 @@ test:
 ###############################################################################
 
 # Variables for the image and version
-protoVer=v0.7
-protoImageName=tendermintdev/sdk-proto-gen-go-1.21-image
-GOLANG_VERSION=1.21.0
-containerProtoGen=firmachain-proto-gen-$(protoVer)-go-${GOLANG_VERSION}
+protoVer=0.14.0
+protoImageName=ghcr.io/cosmos/proto-builder:$(protoVer)
+protoImage=$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(protoImageName)
 
-# Target to build the image if it doesn't exist
-build-proto-image:
-	@if [ -z "$$(docker images -q $(protoImageName))" ]; then \
-		echo "Building Docker image with Go $(GOLANG_VERSION)..."; \
-		docker build -t $(protoImageName) -f Dockerfile.proto-gen .; \
-	else \
-		echo "Image $(protoImageName) already exists."; \
-	fi
-
-# Generate Protobuf files using the image
-proto-gen: build-proto-image
-	@echo "Generating Protobuf files..."
-	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoGen}$$"; then \
-	    docker start -a $(containerProtoGen); \
-	else \
-	    docker run --name $(containerProtoGen) -v $(CURDIR):/firmachain --workdir /firmachain $(protoImageName) \
-	        sh ./scripts/protocgen.sh; \
-	fi
+proto-gen:
+	@echo "Generating Protobuf files"
+	@$(protoImage) sh ./scripts/protocgen.sh

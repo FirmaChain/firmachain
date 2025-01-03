@@ -1,5 +1,5 @@
 syntax = "proto3";
-package firmachain.firmachain.contract;
+package firmachain.contract;
 
 import "firmachain/contract/contract_file.proto";
 import "firmachain/contract/contract_log.proto";

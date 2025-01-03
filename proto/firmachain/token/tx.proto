@@ -1,5 +1,5 @@
 syntax = "proto3";
-package firmachain.firmachain.token;
+package firmachain.token;
 
 import "firmachain/token/token_data.proto";
 // this line is used by starport scaffolding # proto/tx/import

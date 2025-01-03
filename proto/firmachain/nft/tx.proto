@@ -1,5 +1,5 @@
 syntax = "proto3";
-package firmachain.firmachain.nft;
+package firmachain.nft;
 
 import "firmachain/nft/nft_item.proto";
 
