@@ -1,7 +1,7 @@
 package v04
 
 import (
-	store "github.com/cosmos/cosmos-sdk/store/types"
+	store "cosmossdk.io/store/types"
 	upgrades "github.com/firmachain/firmachain/v05/app/upgrades"
 )
 

@@ -12,6 +12,8 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 
 	rosettaCmd "cosmossdk.io/tools/rosetta/cmd"
+	authcmd "cosmossdk.io/x/auth/client/cli"
+	authtypes "cosmossdk.io/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
 	"github.com/cosmos/cosmos-sdk/client/debug"
@@ -23,8 +25,6 @@ import (
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	"github.com/prometheus/client_golang/prometheus"
