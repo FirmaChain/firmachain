@@ -11,59 +11,66 @@ option go_package = "github.com/firmachain/firmachain/v05/x/nft/types";
 service Query {
 
 	// Queries a list of NftListOfOwner items.
-	rpc NftIdListOfOwner(QueryNftIdListOfOwnerRequest) returns (QueryNftIdListOfOwnerResponse) {
+	rpc NftIdListOfOwner(NftIdListOfOwnerRequest) returns (NftIdListOfOwnerResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/nft/nftIdListOfOwner";
 	}
 
 	// Queries a list of balanceOf items.
-	rpc BalanceOf(QueryBalanceOfRequest) returns (QueryBalanceOfResponse) {
+	rpc BalanceOf(BalanceOfRequest) returns (BalanceOfResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/nft/balanceOf";
 	}
 
-
 	// Queries a nftItem by id.
-	rpc NftItem(QueryGetNftItemRequest) returns (QueryGetNftItemResponse) {
+	rpc NftItem(NftItemRequest) returns (NftItemResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/nft/nftItem/{id}";
 	}
 
 	// Queries a list of nftItem items.
-	rpc NftItemAll(QueryAllNftItemRequest) returns (QueryAllNftItemResponse) {
+	rpc NftItemAll(NftItemAllRequest) returns (NftItemAllResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/nft/nftItem";
 	}
 
 }
 
-message QueryNftIdListOfOwnerRequest {
-  string ownerAddress = 1;
+// NftIdListOfOwnerRequest
+message NftIdListOfOwnerRequest {
+  string owner_address = 1;
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-message QueryNftIdListOfOwnerResponse {
-  repeated uint64 nftIdList = 1;
+// NftIdListOfOwnerResponse
+message NftIdListOfOwnerResponse {
+  repeated uint64 nft_id_list = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryBalanceOfRequest {
-  string ownerAddress = 1;
+// BalanceOfRequest
+message BalanceOfRequest {
+  string owner_address = 1;
 }
 
-message QueryBalanceOfResponse {
+// BalanceOfResponse
+message BalanceOfResponse {
   uint64 total = 1;
 }
 
-message QueryGetNftItemRequest {
+// NftItemRequest
+message NftItemRequest {
 	uint64 id = 1;
 }
 
-message QueryGetNftItemResponse {
-	NftItem NftItem = 1;
+// NftItemResponse
+message NftItemResponse {
+	NftItem nft_item = 1;
 }
 
-message QueryAllNftItemRequest {
+// NftItemAllRequest
+message NftItemAllRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-message QueryAllNftItemResponse {
-	repeated NftItem NftItem = 1;
+// NftItemAllResponse
+message NftItemAllResponse {
+	repeated NftItem nft_item = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

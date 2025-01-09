@@ -8,28 +8,42 @@ option go_package = "github.com/firmachain/firmachain/v05/x/contract/types";
 
 // Msg defines the Msg service.
 service Msg {
+  // CreateContractFile
   rpc CreateContractFile(MsgCreateContractFile) returns (MsgCreateContractFileResponse);
+
+  // AddContractLog
   rpc AddContractLog(MsgAddContractLog) returns (MsgAddContractLogResponse);  
 }
 
+// MsgCreateContractFile
 message MsgCreateContractFile {
+  option (amino.name) = "contract/CreateContractFile";
+  option (cosmos.msg.v1.signer) = "creator";
+
   string creator = 1;
-  string fileHash = 2;
-  uint64 timeStamp = 3;
-  repeated string ownerList = 4;
-  string metaDataJsonString = 5;
+  string file_hash = 2;
+  uint64 time_stamp = 3;
+  repeated string owner_list = 4;
+  string meta_data_json_string = 5;
 }
+
+// MsgCreateContractFileResponse
 message MsgCreateContractFileResponse { }
 
+// MsgAddContractLog
 message MsgAddContractLog {
+  option (amino.name) = "contract/AddContractLog";
+  option (cosmos.msg.v1.signer) = "creator";
+
   string creator = 1;
-  string contractHash = 2;
-  uint64 timeStamp = 3;
-  string eventName = 4;
-  string ownerAddress = 5;
-  string jsonString = 6;
+  string contract_hash = 2;
+  uint64 time_stamp = 3;
+  string event_name = 4;
+  string owner_address = 5;
+  string json_string = 6;
 }
 
+// MsgAddContractLogResponse
 message MsgAddContractLogResponse {
   uint64 id = 1;
 }

@@ -7,34 +7,54 @@ option go_package = "github.com/firmachain/firmachain/v05/x/nft/types";
 
 // Msg defines the Msg service.
 service Msg {
+  // Transfer
   rpc Transfer(MsgTransfer) returns (MsgTransferResponse);
+
+  // Burn
   rpc Burn(MsgBurn) returns (MsgBurnResponse);
+  
+  // Mint
   rpc Mint(MsgMint) returns (MsgMintResponse);  
 }
 
+// MsgTransfer
 message MsgTransfer {
+  option (amino.name) = "nft/Transfer";
+  option (cosmos.msg.v1.signer) = "owner";
+
   string owner = 1;
-  uint64 nftId = 2;
-  string toAddress = 3;
+  uint64 nft_id = 2;
+  string to_address = 3;
 }
 
+// MsgTransferResponse
 message MsgTransferResponse {
 }
 
+// MsgBurn
 message MsgBurn {
+  option (amino.name) = "nft/Burn";
+  option (cosmos.msg.v1.signer) = "owner";
+
   string owner = 1;
-  uint64 nftId = 2;
+  uint64 nft_id = 2;
 }
 
+// MsgBurnResponse
 message MsgBurnResponse {
   bool result = 1;
 }
 
+// MsgMint
 message MsgMint {
+  option (amino.name) = "nft/Mint";
+  option (cosmos.msg.v1.signer) = "owner";
+
   string owner = 1;
-  string tokenURI = 2;
+  string token_uri = 2;
 }
 
+// MsgMintResponse
 message MsgMintResponse {
-  uint64 nftId = 1;
+  uint64 nft_id = 1;
 }

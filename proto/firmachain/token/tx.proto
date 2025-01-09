@@ -2,59 +2,82 @@ syntax = "proto3";
 package firmachain.token;
 
 import "firmachain/token/token_data.proto";
-// this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/firmachain/firmachain/v05/x/token/types";
 
 // Msg defines the Msg service.
 service Msg {
+  // CreateToken
   rpc CreateToken(MsgCreateToken) returns (MsgCreateTokenResponse);
+  
+  // Mint
   rpc Mint(MsgMint) returns (MsgMintResponse);
+  
+  // Burn
   rpc Burn(MsgBurn) returns (MsgBurnResponse);
+  
+  // UpdateTokenURI
   rpc UpdateTokenURI(MsgUpdateTokenURI) returns (MsgUpdateTokenURIResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
 }
 
+// MsgCreateToken
 message MsgCreateToken {
+  option (amino.name) = "token/CreateToken";
+  option (cosmos.msg.v1.signer) = "owner";
+
   string owner = 1;
   string name = 2;
   string symbol = 3;
-  string tokenURI = 4;
-  uint64 totalSupply = 5;
+  string token_uri = 4;
+  uint64 total_supply = 5;
   uint64 decimal = 6;
   bool mintable = 7;
   bool burnable = 8;
 }
 
+// MsgCreateTokenResponse
 message MsgCreateTokenResponse {
 }
 
+// MsgMint
 message MsgMint {
+  option (amino.name) = "token/Mint";
+  option (cosmos.msg.v1.signer) = "owner";
+
   string owner = 1;
-  string tokenID = 2;
+  string token_id = 2;
   uint64 amount = 3;
-  string toAddress = 4;
+  string to_address = 4;
 }
 
+// MsgMintResponse
 message MsgMintResponse {
 }
 
+// MsgBurn
 message MsgBurn {
+  option (amino.name) = "token/Burn";
+  option (cosmos.msg.v1.signer) = "owner";
+
   string owner = 1;
-  string tokenID = 2;
+  string token_id = 2;
   uint64 amount = 3;
 }
 
+// MsgBurnResponse
 message MsgBurnResponse {
 }
 
+// MsgUpdateTokenURI
 message MsgUpdateTokenURI {
+  option (amino.name) = "token/UpdateTokenURI";
+  option (cosmos.msg.v1.signer) = "owner";
+
   string owner = 1;
-  string tokenID = 2;
-  string tokenURI = 3;
+  string token_id = 2;
+  string token_uri = 3;
 }
 
+// MsgUpdateTokenURIResponse
 message MsgUpdateTokenURIResponse {
 }
-
-// this line is used by starport scaffolding # proto/tx/message

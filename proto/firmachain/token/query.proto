@@ -4,7 +4,6 @@ package firmachain.token;
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "firmachain/token/token_data.proto";
-// this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
 option go_package = "github.com/firmachain/firmachain/v05/x/token/types";
@@ -12,47 +11,51 @@ option go_package = "github.com/firmachain/firmachain/v05/x/token/types";
 // Query defines the gRPC querier service.
 service Query {
     // Queries a tokenData by index.
-	rpc TokenData(QueryGetTokenDataRequest) returns (QueryGetTokenDataResponse) {
+	rpc TokenData(TokenDataRequest) returns (TokenDataResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/token/tokenData/{tokenID}";
 	}
 
 	// Queries a list of tokenData items.
-	rpc TokenDataAll(QueryAllTokenDataRequest) returns (QueryAllTokenDataResponse) {
+	rpc TokenDataAll(TokenDataAllRequest) returns (TokenDataAllResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/token/tokenData";
 	}
 
 	// Queries a list of getTokenList items.
-	rpc GetTokenList(QueryGetTokenListRequest) returns (QueryGetTokenListResponse) {
+	rpc GetTokenList(GetTokenListRequest) returns (GetTokenListResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/token/getTokenList";
 	}
 
-// this line is used by starport scaffolding # 2
 }
 
-message QueryGetTokenDataRequest {
-	  string tokenID = 1;
-
+// TokenDataRequest
+message TokenDataRequest {
+	string token_id = 1;
 }
 
-message QueryGetTokenDataResponse {
-	TokenData tokenData = 1 [(gogoproto.nullable) = false];
+// TokenDataResponse
+message TokenDataResponse {
+	TokenData token_data = 1 [(gogoproto.nullable) = false];
 }
 
-message QueryAllTokenDataRequest {
+
+// TokenDataAllRequest
+message TokenDataAllRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-message QueryAllTokenDataResponse {
-	repeated TokenData tokenData = 1 [(gogoproto.nullable) = false];
+// TokenDataAllResponse
+message TokenDataAllResponse {
+	repeated TokenData token_data = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetTokenListRequest {
-  string ownerAddress = 1;
+// GetTokenListRequest
+message GetTokenListRequest {
+  string owner_address = 1;
 }
 
-message QueryGetTokenListResponse {
-	repeated string tokenID = 1;
+// GetTokenListResponse
+message GetTokenListResponse {
+	repeated string token_id = 1;
 }
 
-// this line is used by starport scaffolding # 3

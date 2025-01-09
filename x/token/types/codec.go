@@ -2,34 +2,28 @@ package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/legacy"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgCreateToken{}, "token/CreateToken", nil)
-	cdc.RegisterConcrete(&MsgMint{}, "token/Mint", nil)
-	cdc.RegisterConcrete(&MsgBurn{}, "token/Burn", nil)
-	cdc.RegisterConcrete(&MsgUpdateTokenURI{}, "token/UpdateTokenURI", nil)
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	legacy.RegisterAminoMsg(cdc, &MsgCreateToken{}, "token/CreateToken")
+	legacy.RegisterAminoMsg(cdc, &MsgMint{}, "token/Mint")
+	legacy.RegisterAminoMsg(cdc, &MsgBurn{}, "token/Burn")
+	legacy.RegisterAminoMsg(cdc, &MsgUpdateTokenURI{}, "token/UpdateTokenURI")
 	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*sdk.Msg)(nil),
+	registry.RegisterImplementations(
+		(*sdk.Msg)(nil),
 		&MsgCreateToken{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgMint{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgBurn{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgUpdateTokenURI{},
 	)
-	// this line is used by starport scaffolding # 3
-
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 

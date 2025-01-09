@@ -10,5 +10,5 @@ message NftItem {
   // Id
   uint64 id = 2;
   // TokenURI
-  string tokenURI = 3; 
+  string token_uri = 3; 
 }
