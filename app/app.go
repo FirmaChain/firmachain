@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
+
+	//"strings"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	storetypes "cosmossdk.io/store/types"
@@ -93,8 +94,8 @@ import (
 	"github.com/spf13/cast"
 
 	"cosmossdk.io/log"
-	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
+	dbm "github.com/cosmos/cosmos-db"
 
 	upgrades "github.com/firmachain/firmachain/v05/app/upgrades"
 	v04 "github.com/firmachain/firmachain/v05/app/upgrades/v04"
@@ -114,8 +115,6 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 
-	// storetypes "cosmossdk.io/store/types"
-
 	ica "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts"
 	icacontroller "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/keeper"
@@ -127,7 +126,6 @@ import (
 
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
-	tendermint "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
@@ -164,13 +162,13 @@ const (
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
 var (
-	// If EnabledSpecificProposals is "", and this is "true", then enable all x/wasm proposals.
-	// If EnabledSpecificProposals is "", and this is not "true", then disable all x/wasm proposals.
-	ProposalsEnabled = "true"
-	// If set to non-empty string it must be comma-separated list of values that are all a subset
-	// of "EnableAllProposals" (takes precedence over ProposalsEnabled)
-	// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
-	EnableSpecificProposals = ""
+// If EnabledSpecificProposals is "", and this is "true", then enable all x/wasm proposals.
+// If EnabledSpecificProposals is "", and this is not "true", then disable all x/wasm proposals.
+// ProposalsEnabled = "true"
+// If set to non-empty string it must be comma-separated list of values that are all a subset
+// of "EnableAllProposals" (takes precedence over ProposalsEnabled)
+// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
+// EnableSpecificProposals = ""
 )
 
 // These constants are derived from the above variables.
@@ -199,7 +197,7 @@ var (
 
 // GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
 // produce a list of enabled proposals to pass into wasmd app.
-func GetEnabledProposals() []wasmtypes.ProposalType {
+/*func GetEnabledProposals() []wasmtypes.ProposalType {
 	if EnableSpecificProposals == "" {
 		if ProposalsEnabled == "true" {
 			return wasmtypes.EnableAllProposals
@@ -212,13 +210,13 @@ func GetEnabledProposals() []wasmtypes.ProposalType {
 		panic(err)
 	}
 	return proposals
-}
+}*/
 
 func getGovProposalHandlers() []govclient.ProposalHandler {
 	return []govclient.ProposalHandler{
 		paramsclient.ProposalHandler,
-		upgradeclient.LegacyProposalHandler,
-		upgradeclient.LegacyCancelProposalHandler,
+		//upgradeclient.LegacyProposalHandler,
+		//upgradeclient.LegacyCancelProposalHandler,
 		//ibcclientclient.UpdateClientProposalHandler,
 		//ibcclientclient.UpgradeProposalHandler,
 	}
@@ -365,8 +363,8 @@ func New(
 	/* skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig encparams.EncodingConfig, */
-	enabledProposals []wasmtypes.ProposalType,
+	encodingConfig encparams.EncodingConfig,
+	enabledProposals []wasmtypes.ProposalType,*/
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasmkeeper.Option,
 	baseAppOptions ...func(*baseapp.BaseApp),
@@ -381,7 +379,7 @@ func New(
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
 
-	keys := sdk.NewKVStoreKeys(
+	keys := storetypes.NewKVStoreKeys(
 		// SDK
 		authtypes.StoreKey,
 		authzkeeper.StoreKey,
@@ -704,9 +702,11 @@ func New(
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.AppKeepers.ParamsKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.AppKeepers.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.AppKeepers.IBCKeeper.ClientKeeper))
-	if len(enabledProposals) != 0 {
-		govRouter.AddRoute(wasmtypes.RouterKey, wasm.NewWasmProposalHandler(app.AppKeepers.WasmKeeper, enabledProposals))
-	}
+	// DEPRECATED: DO NOT USE
+	//
+	//if len(enabledProposals) != 0 {
+	//	govRouter.AddRoute(wasmtypes.RouterKey, wasm.NewWasmProposalHandler(app.AppKeepers.WasmKeeper, enabledProposals))
+	//}
 	// Set legacy router for backwards compatibility with gov v1beta1
 	app.AppKeepers.GovKeeper.SetLegacyRouter(govRouter)
 
