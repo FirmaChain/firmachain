@@ -2,23 +2,23 @@ package keepers
 
 import (
 	storetypes "cosmossdk.io/store/types"
-	authkeeper "cosmossdk.io/x/auth/keeper"
-	bankkeeper "cosmossdk.io/x/bank/keeper"
-	distrkeeper "cosmossdk.io/x/distribution/keeper"
 	evidencekeeper "cosmossdk.io/x/evidence/keeper"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
 
-	authzkeeper "cosmossdk.io/x/authz/keeper"
+	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 
 	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
 
-	govkeeper "cosmossdk.io/x/gov/keeper"
-	mintkeeper "cosmossdk.io/x/mint/keeper"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 
-	paramskeeper "cosmossdk.io/x/params/keeper"
-	slashingkeeper "cosmossdk.io/x/slashing/keeper"
-	stakingkeeper "cosmossdk.io/x/staking/keeper"
+	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	upgradekeeper "cosmossdk.io/x/upgrade/keeper"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
@@ -35,8 +35,8 @@ import (
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/keeper"
 	icahostkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/keeper"
 
-	consensusparamkeeper "cosmossdk.io/x/consensus/keeper"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	consensusparamkeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	packetforwardkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8/packetforward/keeper"
 	icqkeeper "github.com/cosmos/ibc-apps/modules/async-icq/v8/keeper"
 	ibc_hooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8"
