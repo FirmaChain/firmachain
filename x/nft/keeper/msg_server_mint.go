@@ -8,7 +8,7 @@ import (
 	"github.com/firmachain/firmachain/v05/x/nft/types"
 )
 
-func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMintResponse, error) {
+func (ms msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMintResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	var nftItem = types.NftItem{
@@ -16,7 +16,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		TokenURI: msg.TokenURI,
 	}
 
-	id := k.AppendNftItem(
+	id := ms.keeper.AppendNftItem(
 		ctx,
 		nftItem,
 	)

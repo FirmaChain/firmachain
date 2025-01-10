@@ -4,29 +4,30 @@ import (
 	"context"
 	"strconv"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/firmachain/v05/x/token/types"
 )
 
-func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBurnResponse, error) {
+func (ms msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBurnResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value exists
-	tokenData, isFound := k.GetTokenData(
+	tokenData, isFound := ms.keeper.GetTokenData(
 		ctx,
 		msg.TokenID,
 	)
 
 	if !isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
+		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
 	if !tokenData.Burnable {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "burn is not allowed.")
+		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "burn is not allowed.")
 	}
 
-	err := k.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
+	err := ms.keeper.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
 
 	if err != nil {
 		return nil, err
@@ -34,7 +35,7 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 
 	// Checks if the the msg owner is the same as the current owner
 	if msg.Owner != tokenData.Owner {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	// send minted coins to ownerAccAddress
@@ -43,15 +44,15 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, err
 	}
 
-	balance := k.bankKeeper.GetBalance(ctx, ownerAccAddress, msg.TokenID).Amount
+	balance := ms.keeper.bankKeeper.GetBalance(ctx, ownerAccAddress, msg.TokenID).Amount
 
 	if balance.Uint64() < msg.Amount {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "account balance is not enough to burn")
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "account balance is not enough to burn")
 	}
 
 	newCoin := sdk.NewInt64Coin(msg.TokenID, int64(msg.Amount))
 
-	err = k.bankKeeper.SendCoinsFromAccountToModule(
+	err = ms.keeper.bankKeeper.SendCoinsFromAccountToModule(
 		ctx,
 		ownerAccAddress,
 		types.ModuleName,
@@ -62,7 +63,7 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 		return nil, err
 	}
 
-	err = k.bankKeeper.BurnCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
+	err = ms.keeper.bankKeeper.BurnCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
 
 	if err != nil {
 		return nil, err
@@ -71,7 +72,7 @@ func (k msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgBu
 	tokenData.BurnSequence++
 	tokenData.TotalSupply -= msg.Amount
 
-	k.SetTokenData(ctx, tokenData)
+	ms.keeper.SetTokenData(ctx, tokenData)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		sdk.EventTypeMessage,

@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 
 	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/firmachain/firmachain/v05/x/contract/types"
 )
@@ -70,7 +71,7 @@ func (k Keeper) GetContractLogOwner(ctx sdk.Context, id uint64) string {
 
 func (k Keeper) GetAllContractLog(ctx sdk.Context) (list []types.ContractLog) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractLogDataKey))
-	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+	iterator := storetypes.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 

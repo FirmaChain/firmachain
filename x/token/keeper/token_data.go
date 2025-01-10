@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"regexp"
 
+	errorsmod "cosmossdk.io/errors"
 	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/firmachain/v05/x/token/types"
@@ -20,30 +22,30 @@ const (
 
 func (k Keeper) CheckCommonError(tokenID string, symbol string, name string, totalSupply uint64) error {
 	if len(symbol) > maxSymbolLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "input Symbol name lengh cannot exceed 20.")
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input Symbol name lengh cannot exceed 20.")
 	}
 
 	if len(name) > maxNameLength {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "input Token name lengh cannot exceed 40.")
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input Token name lengh cannot exceed 40.")
 	}
 
 	if tokenID == ufctTokenName {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "ufct is not supported.")
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "ufct is not supported.")
 	}
 
 	re := regexp.MustCompile("^[a-zA-Z0-9_-]*$")
 	if !re.MatchString(tokenID) {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "only alphabet, underscore, numbers are allowed for tokenID.")
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "only alphabet, underscore, numbers are allowed for tokenID.")
 	}
 
 	if totalSupply > maxTokenValue {
 		errStr := fmt.Sprintf("TotalSupply cannot exceed  %d", maxTokenValue)
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, errStr)
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, errStr)
 	}
 
 	if totalSupply <= 0 {
 		errStr := "TotalSupply cannot be minus or zero"
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, errStr)
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, errStr)
 	}
 
 	return nil
@@ -99,7 +101,7 @@ func (k Keeper) GetTokenData(
 // GetAllTokenData returns all tokenData
 func (k Keeper) GetAllTokenData(ctx sdk.Context) (list []types.TokenData) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataKeyPrefix))
-	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+	iterator := storetypes.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 

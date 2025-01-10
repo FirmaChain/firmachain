@@ -4,27 +4,28 @@ import (
 	"context"
 	"strings"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/firmachain/v05/x/token/types"
 )
 
-func (k msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken) (*types.MsgCreateTokenResponse, error) {
+func (ms msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken) (*types.MsgCreateTokenResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// ex) GAMETOKEN -> ugametoken
 	tokenID := "u" + strings.ToLower(msg.Symbol)
 
-	err := k.CheckCommonError(tokenID, msg.Symbol, msg.Name, msg.TotalSupply)
+	err := ms.keeper.CheckCommonError(tokenID, msg.Symbol, msg.Name, msg.TotalSupply)
 
 	if err != nil {
 		return nil, err
 	}
 
-	_, isFound := k.GetTokenData(ctx, tokenID)
+	_, isFound := ms.keeper.GetTokenData(ctx, tokenID)
 
 	if isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
 	}
 
 	// send minted coins to receiver
@@ -50,19 +51,19 @@ func (k msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken)
 		BurnSequence: burnSequence,
 	}
 
-	k.SetTokenData(ctx, tokenData)
+	ms.keeper.SetTokenData(ctx, tokenData)
 
 	// bank module
 	// mint
 	newCoin := sdk.NewInt64Coin(tokenID, int64(msg.TotalSupply))
-	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
+	err = ms.keeper.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
 
 	if err != nil {
 		return nil, err
 	}
 
 	// transfer to account
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(
+	err = ms.keeper.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx,
 		types.ModuleName,
 		receiver,

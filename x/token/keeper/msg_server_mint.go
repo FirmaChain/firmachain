@@ -5,29 +5,30 @@ import (
 	"fmt"
 	"strconv"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/firmachain/v05/x/token/types"
 )
 
-func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMintResponse, error) {
+func (ms msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMintResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value exists
-	tokenData, isFound := k.GetTokenData(
+	tokenData, isFound := ms.keeper.GetTokenData(
 		ctx,
 		msg.TokenID,
 	)
 
 	if !isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
+		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
 	if !tokenData.Mintable {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "mint is not allowed.")
+		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "mint is not allowed.")
 	}
 
-	err := k.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
+	err := ms.keeper.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
 
 	if err != nil {
 		return nil, err
@@ -35,7 +36,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 
 	// Checks if the the msg owner is the same as the current owner
 	if msg.Owner != tokenData.Owner {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	// bank module
@@ -43,11 +44,11 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 
 	if newTotal > maxTokenValue {
 		errStr := fmt.Sprintf("TotalSupply cannot exceed  %d", maxTokenValue)
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, errStr)
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, errStr)
 	}
 
 	newCoin := sdk.NewInt64Coin(msg.TokenID, int64(msg.Amount))
-	err = k.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
+	err = ms.keeper.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
 
 	if err != nil {
 		return nil, err
@@ -59,7 +60,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 		return nil, err
 	}
 
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, receiver, sdk.NewCoins(newCoin))
+	err = ms.keeper.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, receiver, sdk.NewCoins(newCoin))
 
 	if err != nil {
 		return nil, err
@@ -68,7 +69,7 @@ func (k msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMi
 	tokenData.MintSequence++
 	tokenData.TotalSupply += msg.Amount
 
-	k.SetTokenData(ctx, tokenData)
+	ms.keeper.SetTokenData(ctx, tokenData)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		sdk.EventTypeMessage,

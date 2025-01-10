@@ -3,15 +3,16 @@ package keeper
 import (
 	"context"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/firmachain/v05/x/contract/types"
 )
 
-func (k msgServer) AddContractLog(goCtx context.Context, msg *types.MsgAddContractLog) (*types.MsgAddContractLogResponse, error) {
+func (ms msgServer) AddContractLog(goCtx context.Context, msg *types.MsgAddContractLog) (*types.MsgAddContractLogResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.CheckCommonError(msg)
+	err := ms.keeper.CheckCommonError(msg)
 
 	if err != nil {
 		return nil, err
@@ -26,7 +27,7 @@ func (k msgServer) AddContractLog(goCtx context.Context, msg *types.MsgAddContra
 		JsonString:   msg.JsonString,
 	}
 
-	id := k.AppendContractLog(
+	id := ms.keeper.AppendContractLog(
 		ctx,
 		contractLog,
 	)
@@ -36,13 +37,13 @@ func (k msgServer) AddContractLog(goCtx context.Context, msg *types.MsgAddContra
 	}, nil
 }
 
-func (k Keeper) CheckCommonError(msg *types.MsgAddContractLog) error {
+func (ms Keeper) CheckCommonError(msg *types.MsgAddContractLog) error {
 	if len(msg.ContractHash) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "input ContractHash lengh cannot be zero.")
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input ContractHash lengh cannot be zero.")
 	}
 
 	if len(msg.EventName) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "input EventName lengh cannot be zero.")
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input EventName lengh cannot be zero.")
 	}
 
 	return nil

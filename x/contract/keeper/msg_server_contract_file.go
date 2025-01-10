@@ -4,19 +4,20 @@ import (
 	"context"
 	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/firmachain/v05/x/contract/types"
 )
 
-func (k msgServer) CreateContractFile(goCtx context.Context, msg *types.MsgCreateContractFile) (*types.MsgCreateContractFileResponse, error) {
+func (ms msgServer) CreateContractFile(goCtx context.Context, msg *types.MsgCreateContractFile) (*types.MsgCreateContractFileResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value already exists
-	_, isFound := k.GetContractFile(ctx, msg.FileHash)
+	_, isFound := ms.keeper.GetContractFile(ctx, msg.FileHash)
 
 	if isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("index %v already set", msg.FileHash))
+		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, fmt.Sprintf("index %v already set", msg.FileHash))
 	}
 
 	var contractFile = types.ContractFile{
@@ -27,7 +28,7 @@ func (k msgServer) CreateContractFile(goCtx context.Context, msg *types.MsgCreat
 		MetaDataJsonString: msg.MetaDataJsonString,
 	}
 
-	k.SetContractFile(
+	ms.keeper.SetContractFile(
 		ctx,
 		contractFile,
 	)
