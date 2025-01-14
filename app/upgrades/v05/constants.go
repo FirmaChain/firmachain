@@ -29,6 +29,8 @@ var Upgrade = upgrades.Upgrade{
 		},
 		Deleted: []string{
 			legacyBurnModuleStoreKey,
+			// TODO: capability?
+			// TODO: evidence?
 		},
 	},
 }

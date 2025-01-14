@@ -12,20 +12,25 @@ import (
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	math "cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
+
+	"cosmossdk.io/x/auth/tx"
 	"cosmossdk.io/x/evidence"
 	evidencekeeper "cosmossdk.io/x/evidence/keeper"
 	evidencetypes "cosmossdk.io/x/evidence/types"
+	"cosmossdk.io/x/tx/signing"
 	ctmos "github.com/cometbft/cometbft/libs/os"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec/address"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	"github.com/cosmos/cosmos-sdk/std"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
@@ -50,12 +55,14 @@ import (
 	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 
+	"github.com/cosmos/gogoproto/proto"
 	"github.com/firmachain/firmachain/v05/app/openapiconsole"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 
+	//clienthelpers "cosmossdk.io/client/v2/helpers"
 	"cosmossdk.io/x/feegrant"
 	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
 	feegrantmodule "cosmossdk.io/x/feegrant/module"
@@ -154,6 +161,9 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 	"github.com/firmachain/firmachain/v05/app/keepers"
+
+	sigtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
+	txmodule "github.com/cosmos/cosmos-sdk/x/auth/tx/config"
 )
 
 const (
@@ -294,6 +304,8 @@ var (
 )
 
 func init() {
+	/*var err error
+	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(".app")*/
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)
@@ -316,7 +328,8 @@ type App struct {
 	AppKeepers keepers.AppKeepers
 
 	// Module Manager
-	mm *module.Manager
+	mm                 *module.Manager
+	BasicModuleManager module.BasicManager
 
 	// Simulation Manager
 	sm *module.SimulationManager
@@ -372,11 +385,47 @@ func New(
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
 
-	encodingConfig := MakeEncodingConfig()
+	/* encodingConfig := MakeEncodingConfig()
 	appCodec, legacyAmino := encodingConfig.Marshaler, encodingConfig.Amino
-	interfaceRegistry := encodingConfig.InterfaceRegistry
+	interfaceRegistry := encodingConfig.InterfaceRegistry */
 
-	bApp := baseapp.NewBaseApp(Name, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
+	interfaceRegistry, _ := types.NewInterfaceRegistryWithOptions(types.InterfaceRegistryOptions{
+		ProtoFiles: proto.HybridResolver,
+		SigningOptions: signing.Options{
+			AddressCodec: address.Bech32Codec{
+				Bech32Prefix: sdk.GetConfig().GetBech32AccountAddrPrefix(),
+			},
+			ValidatorAddressCodec: address.Bech32Codec{
+				Bech32Prefix: sdk.GetConfig().GetBech32ValidatorAddrPrefix(),
+			},
+		},
+	})
+	if err := interfaceRegistry.SigningContext().Validate(); err != nil {
+		panic(err)
+	}
+
+	appCodec := codec.NewProtoCodec(interfaceRegistry)
+	legacyAmino := codec.NewLegacyAmino()
+	txConfig := tx.NewTxConfig(appCodec, tx.DefaultSignModes)
+
+	enabledSignModes := append([]sigtypes.SignMode(nil), authtx.DefaultSignModes...)
+	enabledSignModes = append(enabledSignModes, sigtypes.SignMode_SIGN_MODE_TEXTUAL)
+	txConfigOpts := authtx.ConfigOptions{
+		EnabledSignModes:           enabledSignModes,
+		TextualCoinMetadataQueryFn: txmodule.NewBankKeeperCoinMetadataQueryFn(app.BankKeeper),
+	}
+	txConfig, err := authtx.NewTxConfigWithOptions(
+		appCodec,
+		txConfigOpts,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	std.RegisterLegacyAminoCodec(legacyAmino)
+	std.RegisterInterfaces(interfaceRegistry)
+
+	bApp := baseapp.NewBaseApp(Name, logger, db, txConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
@@ -386,11 +435,11 @@ func New(
 		authtypes.StoreKey,
 		authzkeeper.StoreKey,
 		banktypes.StoreKey,
-		capabilitytypes.StoreKey,
+		//capabilitytypes.StoreKey,
 		consensusparamtypes.StoreKey,
 		crisistypes.StoreKey,
 		distrtypes.StoreKey,
-		evidencetypes.StoreKey,
+		//evidencetypes.StoreKey,
 		feegrant.StoreKey,
 		govtypes.StoreKey,
 		minttypes.StoreKey,
@@ -778,7 +827,7 @@ func New(
 		distr.NewAppModule(appCodec, app.AppKeepers.DistrKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.AppKeepers.StakingKeeper, app.GetSubspace(distrtypes.ModuleName)),
 		evidence.NewAppModule(app.AppKeepers.EvidenceKeeper),
 		feegrantmodule.NewAppModule(appCodec, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.AppKeepers.FeeGrantKeeper, app.interfaceRegistry),
-		genutil.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.StakingKeeper, app, encodingConfig.TxConfig), //TODO: check again if app is correct
+		genutil.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.StakingKeeper, app, txConfig), //TODO: check again if app is correct
 		vesting.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper),
 		gov.NewAppModule(appCodec, &app.AppKeepers.GovKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.GetSubspace(govtypes.ModuleName)),
 		mint.NewAppModule(appCodec, app.AppKeepers.MintKeeper, app.AppKeepers.AccountKeeper, nil, app.GetSubspace(minttypes.ModuleName)),
@@ -964,7 +1013,7 @@ func New(
 		ante.HandlerOptions{
 			AccountKeeper:   app.AppKeepers.AccountKeeper,
 			BankKeeper:      app.AppKeepers.BankKeeper,
-			SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
+			SignModeHandler: txConfig.SignModeHandler(),
 			FeegrantKeeper:  app.AppKeepers.FeeGrantKeeper,
 			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 		},
