@@ -130,8 +130,8 @@ import (
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/cosmos-sdk/client/grpc/cmtservice"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
-	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 
 	runtimeservices "github.com/cosmos/cosmos-sdk/runtime/services"
 	"github.com/cosmos/cosmos-sdk/x/auth/posthandler"
@@ -464,7 +464,7 @@ func New(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 		runtime.EventService{},
 	)
-	bApp.SetParamStore(app.AppKeepers.ConsensusParamsKeeper)
+	bApp.SetParamStore(app.AppKeepers.ConsensusParamsKeeper.ParamsStore)
 	app.AppKeepers.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[authtypes.StoreKey]),
@@ -1172,7 +1172,7 @@ func (app *App) RegisterTxService(clientCtx client.Context) {
 
 // RegisterTendermintService implements the Application.RegisterTendermintService method.
 func (app *App) RegisterTendermintService(clientCtx client.Context) {
-	tmservice.RegisterTendermintService(clientCtx, app.BaseApp.GRPCQueryRouter(), app.interfaceRegistry, app.Query)
+	cmtservice.RegisterTendermintService(clientCtx, app.BaseApp.GRPCQueryRouter(), app.interfaceRegistry, app.Query)
 }
 
 func (app *App) RegisterNodeService(clientCtx client.Context, cfg config.Config) {

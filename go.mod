@@ -17,7 +17,7 @@ require (
 	github.com/cometbft/cometbft v0.38.12
 	//gopkg.in/yaml.v2 v2.4.0
 	//github.com/spf13/viper v1.18.2
-	github.com/cometbft/cometbft-db v0.11.0
+	github.com/cometbft/cometbft-db v0.11.0 // indirect
 	github.com/cosmos/cosmos-db v1.1.0
 	github.com/cosmos/cosmos-sdk v0.50.9
 	github.com/cosmos/gogoproto v1.7.0
@@ -40,11 +40,14 @@ require (
 	google.golang.org/grpc v1.67.1
 )
 
-require cosmossdk.io/core v0.11.1
+require (
+	cosmossdk.io/core v0.11.1
+	cosmossdk.io/math v1.4.0
+	github.com/spf13/viper v1.19.0
+)
 
 require (
 	cosmossdk.io/collections v0.4.0 // indirect
-	cosmossdk.io/math v1.4.0 // indirect
 	cosmossdk.io/x/tx v0.13.7 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
@@ -67,6 +70,8 @@ require (
 	github.com/cosmos/iavl v1.2.2 // indirect
 	github.com/cosmos/ics23/go v0.11.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.13.3 // indirect
+	github.com/creachadair/atomicfile v0.3.1 // indirect
+	github.com/creachadair/tomledit v0.0.24 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
@@ -133,7 +138,6 @@ require (
 	github.com/shamaton/msgpack/v2 v2.2.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.19.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/zondax/hid v0.9.2 // indirect
 	go.etcd.io/bbolt v1.4.0-alpha.0.0.20240404170359-43604f3112c5 // indirect
