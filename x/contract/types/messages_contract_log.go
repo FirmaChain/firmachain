@@ -40,6 +40,9 @@ func (msg *MsgAddContractLog) GetSignBytes() []byte {
 	return sdk.MustSortJSON(bz)
 }
 
+// SDK 0.50: ValidateBasic is no more required to fullfil the sdg.Msg interface implementation.
+// The msg's validation is recommended to be performed directly in the msg server and not in the cli command's RunE.
+// We still keep it to wrap the basic stateless checks and use it directly in the msg server.
 func (msg *MsgAddContractLog) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {

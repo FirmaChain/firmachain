@@ -11,6 +11,11 @@ import (
 )
 
 func (ms msgServer) CreateContractFile(goCtx context.Context, msg *types.MsgCreateContractFile) (*types.MsgCreateContractFileResponse, error) {
+
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value already exists

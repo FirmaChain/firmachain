@@ -11,6 +11,11 @@ import (
 )
 
 func (ms msgServer) Transfer(goCtx context.Context, msg *types.MsgTransfer) (*types.MsgTransferResponse, error) {
+
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	if !ms.keeper.HasNftItem(ctx, msg.NftId) {

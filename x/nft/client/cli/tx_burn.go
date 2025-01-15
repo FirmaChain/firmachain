@@ -31,9 +31,6 @@ func CmdBurn() *cobra.Command {
 			}
 
 			msg := types.NewMsgBurn(clientCtx.GetFromAddress().String(), argsNftId)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}

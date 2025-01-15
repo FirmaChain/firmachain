@@ -47,9 +47,6 @@ func CmdAddContractLog() *cobra.Command {
 			}
 
 			msg := types.NewMsgAddContractLog(clientCtx.GetFromAddress().String(), argsContractHash, argsTimeStamp, argsEventName, argsOwnerAddress, argsJsonString)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
