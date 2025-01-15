@@ -16,20 +16,17 @@ import (
 	"cosmossdk.io/x/evidence"
 	evidencekeeper "cosmossdk.io/x/evidence/keeper"
 	evidencetypes "cosmossdk.io/x/evidence/types"
-	"cosmossdk.io/x/tx/signing"
 	ctmos "github.com/cometbft/cometbft/libs/os"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/address"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	"github.com/cosmos/cosmos-sdk/std"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
@@ -53,8 +50,6 @@ import (
 	"github.com/cosmos/ibc-go/modules/capability"
 	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
-
-	"github.com/cosmos/gogoproto/proto"
 	"github.com/firmachain/firmachain/v05/app/openapiconsole"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
@@ -164,10 +159,7 @@ import (
 	ibcfeekeeper "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/keeper"
 	ibcfeetypes "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
-	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 	"github.com/firmachain/firmachain/v05/app/keepers"
-
-	sigtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
 )
 
 const (
@@ -241,45 +233,6 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 var (
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
-
-	// ModuleBasics defines the module BasicManager is in charge of setting up basic,
-	// non-dependant module elements, such as codec registration
-	// and genesis verification.
-	ModuleBasics = module.NewBasicManager(
-		// SDK
-		auth.AppModuleBasic{},
-		authzmodule.AppModuleBasic{},
-		bank.AppModuleBasic{},
-		capability.AppModuleBasic{},
-		consensusparams.AppModuleBasic{},
-		crisis.AppModuleBasic{},
-		distr.AppModuleBasic{},
-		evidence.AppModuleBasic{},
-		feegrantmodule.AppModuleBasic{},
-		genutil.AppModuleBasic{},
-		gov.NewAppModuleBasic(getGovProposalHandlers()),
-		mint.AppModuleBasic{},
-		params.AppModuleBasic{},
-		slashing.AppModuleBasic{},
-		staking.AppModuleBasic{},
-		upgrade.AppModuleBasic{},
-		vesting.AppModuleBasic{},
-		// IBC
-		ibc.AppModuleBasic{},
-		transfer.AppModuleBasic{},
-		ibcfee.AppModuleBasic{},
-		ibc_hooks.AppModuleBasic{},
-		packetforward.AppModuleBasic{},
-		ica.AppModuleBasic{},
-		ibctm.AppModuleBasic{},
-		icq.AppModuleBasic{},
-		// Wasm
-		wasm.AppModuleBasic{},
-		// Custom
-		contractmodule.AppModuleBasic{},
-		nftmodule.AppModuleBasic{},
-		tokenmodule.AppModuleBasic{},
-	)
 
 	// module account permissions
 	maccPerms = map[string][]string{
@@ -762,6 +715,11 @@ func New(
 	}
 	app.txConfig = txConfig
 
+	// NOTE: upgrade module is required to be prioritized
+	app.mm.SetOrderPreBlockers(
+		upgradetypes.ModuleName,
+	)
+
 	// ============ Routers ============
 	// ------------ Gov ------------
 	govRouter := govv1beta.NewRouter()
@@ -827,14 +785,14 @@ func New(
 		distr.NewAppModule(appCodec, app.AppKeepers.DistrKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.AppKeepers.StakingKeeper, app.GetSubspace(distrtypes.ModuleName)),
 		evidence.NewAppModule(app.AppKeepers.EvidenceKeeper),
 		feegrantmodule.NewAppModule(appCodec, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.AppKeepers.FeeGrantKeeper, app.interfaceRegistry),
-		genutil.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.StakingKeeper, app, app.txConfig), //TODO: check again if app is correct
+		genutil.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.StakingKeeper, app.BaseApp, app.txConfig), //TODO: check again if app is correct
 		vesting.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper),
 		gov.NewAppModule(appCodec, &app.AppKeepers.GovKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.GetSubspace(govtypes.ModuleName)),
 		mint.NewAppModule(appCodec, app.AppKeepers.MintKeeper, app.AppKeepers.AccountKeeper, nil, app.GetSubspace(minttypes.ModuleName)),
 		params.NewAppModule(app.AppKeepers.ParamsKeeper),
 		slashing.NewAppModule(appCodec, app.AppKeepers.SlashingKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.AppKeepers.StakingKeeper, app.GetSubspace(slashingtypes.ModuleName), app.interfaceRegistry),
 		staking.NewAppModule(appCodec, app.AppKeepers.StakingKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
-		upgrade.NewAppModule(app.AppKeepers.UpgradeKeeper, app.AppKeepers.AccountKeeper.AddressCodec()), //TODO: check again if app.AppKeepers.AccountKeeper.AddressCodec() is correct
+		upgrade.NewAppModule(app.AppKeepers.UpgradeKeeper, app.AppKeepers.AccountKeeper.AddressCodec()),
 		vesting.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper),
 		// IBC modules
 		ibc.NewAppModule(app.AppKeepers.IBCKeeper),
@@ -955,6 +913,7 @@ func New(
 	}
 
 	app.mm = module.NewManager(appModules...)
+	app.BasicModuleManager = newBasicManagerFromManager(app)
 	app.mm.SetOrderBeginBlockers(orderBeginBlockers...)
 	app.mm.SetOrderEndBlockers(orderEndBlockers...)
 	app.mm.SetOrderInitGenesis(orderInitGenesis...)
@@ -1007,6 +966,7 @@ func New(
 
 	// initialize BaseApp
 	app.SetInitChainer(app.InitChainer)
+	app.SetPreBlocker(app.PreBlocker)
 	app.SetBeginBlocker(app.BeginBlocker)
 
 	anteHandler, err := ante.NewAnteHandler(
@@ -1070,6 +1030,11 @@ func (app *App) Name() string { return app.BaseApp.Name() }
 // GetBaseApp returns the base app of the application
 func (app App) GetBaseApp() *baseapp.BaseApp { return app.BaseApp }
 
+// PreBlocker application updates every pre block
+func (app *App) PreBlocker(ctx sdk.Context, _ *abci.RequestFinalizeBlock) (*sdk.ResponsePreBlock, error) {
+	return app.mm.PreBlock(ctx)
+}
+
 // BeginBlocker application updates every begin block
 func (app *App) BeginBlocker(ctx sdk.Context) (sdk.BeginBlock, error) {
 	app.updateValidatorMinCommision(ctx)
@@ -1091,7 +1056,6 @@ func (app *App) updateValidatorMinCommision(ctx sdk.Context) {
 			v.Commission.Rate = minCommissionRate
 			v.Commission.UpdateTime = ctx.BlockHeader().Time
 
-			// TODO: check if ok
 			valBs, err := staking.ValidatorAddressCodec().StringToBytes(v.GetOperator())
 			if err != nil {
 				panic(err)
@@ -1139,6 +1103,25 @@ func (app *App) ModuleAccountAddrs() map[string]bool {
 	}
 
 	return modAccAddrs
+}
+
+// ModuleBasics defines the module BasicManager that is in charge of setting up basic,
+// non-dependant module elements, such as codec registration
+// and genesis verification.
+func newBasicManagerFromManager(app *App) module.BasicManager {
+	basicManager := module.NewBasicManagerFromManager(
+		app.mm,
+		map[string]module.AppModuleBasic{
+			genutiltypes.ModuleName: genutil.NewAppModuleBasic(genutiltypes.DefaultMessageValidator),
+			govtypes.ModuleName: gov.NewAppModuleBasic(
+				[]govclient.ProposalHandler{
+					paramsclient.ProposalHandler,
+				},
+			),
+		})
+	basicManager.RegisterLegacyAminoCodec(app.legacyAmino)
+	basicManager.RegisterInterfaces(app.interfaceRegistry)
+	return basicManager
 }
 
 // LegacyAmino returns SimApp's amino codec.
@@ -1207,7 +1190,7 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 	nodeservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// Register grpc-gateway routes for all modules.
-	ModuleBasics.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+	app.BasicModuleManager.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// register app's OpenAPI routes.
 	apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
