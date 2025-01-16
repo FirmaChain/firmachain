@@ -137,8 +137,6 @@ import (
 	"cosmossdk.io/x/circuit"
 	circuitkeeper "cosmossdk.io/x/circuit/keeper"
 	circuittypes "cosmossdk.io/x/circuit/types"
-	"cosmossdk.io/x/tx/signing"
-	"github.com/cosmos/cosmos-sdk/codec/address"
 	runtimeservices "github.com/cosmos/cosmos-sdk/runtime/services"
 	"github.com/cosmos/cosmos-sdk/std"
 	sigtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -148,7 +146,6 @@ import (
 	consensusparamkeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
 	govv1beta "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"github.com/cosmos/gogoproto/proto"
 	packetforward "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8/packetforward"
 	packetforwardkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8/packetforward/keeper"
 	packetforwardtypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8/packetforward/types"
@@ -171,7 +168,6 @@ const (
 	NodeDir              = ".firmachain"
 )
 
-// this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
 var (
 // If EnabledSpecificProposals is "", and this is "true", then enable all x/wasm proposals.
 // If EnabledSpecificProposals is "", and this is not "true", then disable all x/wasm proposals.
@@ -347,17 +343,7 @@ func New(
 ) *App {
 
 	legacyAmino := codec.NewLegacyAmino()
-	interfaceRegistry, err := types.NewInterfaceRegistryWithOptions(types.InterfaceRegistryOptions{
-		ProtoFiles: proto.HybridResolver,
-		SigningOptions: signing.Options{
-			AddressCodec: address.Bech32Codec{
-				Bech32Prefix: Bech32PrefixAccAddr,
-			},
-			ValidatorAddressCodec: address.Bech32Codec{
-				Bech32Prefix: Bech32PrefixValAddr,
-			},
-		},
-	})
+	interfaceRegistry, err := NewInterfaceRegistry()
 	if err != nil {
 		panic(err)
 	}
