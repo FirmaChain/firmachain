@@ -1,13 +1,18 @@
 package v05
 
 import (
+	"context"
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	//"cosmossdk.io/math"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/firmachain/firmachain/v05/app/keepers"
+
+	//appparamas "github.com/firmachain/firmachain/v05/app/params"
 
 	packetforwardtypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8/packetforward/types"
 	icqtypes "github.com/cosmos/ibc-apps/modules/async-icq/v8/types"
@@ -18,6 +23,7 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 
 	// SDK v47 modules
+	wasmv2 "github.com/CosmWasm/wasmd/x/wasm/migrations/v2"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -37,7 +43,8 @@ func CreateV0_5_0UpgradeHandler(
 	cfg module.Configurator,
 	keepers *keepers.AppKeepers,
 ) upgradetypes.UpgradeHandler {
-	return func(ctx sdk.Context, _ upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+	return func(c context.Context, _ upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
+		ctx := sdk.UnwrapSDKContext(c)
 		logger := ctx.Logger().With("upgrade", UpgradeName)
 
 		// === Params migration ===
@@ -74,7 +81,8 @@ func CreateV0_5_0UpgradeHandler(
 
 			// Wasm
 			case wasmtypes.ModuleName:
-				keyTable = wasmtypes.ParamKeyTable() //nolint:staticcheck
+				keyTable = wasmv2.ParamKeyTable() //nolint:staticcheck
+				continue
 
 			default:
 				continue
@@ -86,7 +94,10 @@ func CreateV0_5_0UpgradeHandler(
 		// Migrate Tendermint consensus parameters from x/params module to a deprecated x/consensus module.
 		// The old params module is required to still be imported in your app.go in order to handle this migration.
 		baseAppLegacySS := keepers.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(paramstypes.ConsensusParamsKeyTable())
-		baseapp.MigrateParams(ctx, baseAppLegacySS, &keepers.ConsensusParamsKeeper)
+		err := baseapp.MigrateParams(ctx, baseAppLegacySS, keepers.ConsensusParamsKeeper.ParamsStore)
+		if err != nil {
+			return nil, err
+		}
 
 		// === New params ===
 		// https://github.com/cosmos/ibc-go/blob/v7.1.0/docs/migrations/v7-to-v7_1.md
@@ -109,6 +120,16 @@ func CreateV0_5_0UpgradeHandler(
 		logger.Info(fmt.Sprintf("ibcfee module version %s set", fmt.Sprint(vm[ibcfeetypes.ModuleName])))
 		// IBC Hooks
 		logger.Info(fmt.Sprintf("ibchooks module version %s set", fmt.Sprint(vm[ibchookstypes.ModuleName])))
+		// Gov expedited proposal param
+		/*
+			TODO: check if we want to keep this
+			govParams, err := keepers.GovKeeper.Params.Get(ctx)
+			if err != nil {
+				return nil, err
+			}
+			govParams.ExpeditedMinDeposit = sdk.NewCoins(sdk.NewCoin(appparamas.BaseCoinUnit, math.NewInt(5000000000)))
+			govParams.MinInitialDepositRatio = "0.250000000000000000"
+		*/
 
 		// ==== Run migration ====
 		logger.Info(fmt.Sprintf("pre migrate version map: %v", vm))
@@ -120,15 +141,33 @@ func CreateV0_5_0UpgradeHandler(
 		// ==== Set Params ====
 		keepers.IBCKeeper.ClientKeeper.SetParams(ctx, newIBCCoreParams)
 		logger.Info(fmt.Sprintf("ibc core: ICQKeeper params set"))
+
 		keepers.ICAHostKeeper.SetParams(ctx, newIcaHostParams)
 		logger.Info(fmt.Sprintf("icahost: ICAHostKeeper params set"))
+
 		keepers.ICAControllerKeeper.SetParams(ctx, newIcaControllerParams)
 		logger.Info(fmt.Sprintf("icacontroller: ICAControllerKeeper params set"))
-		keepers.PacketForwardKeeper.SetParams(ctx, newPFMParams)
+
+		err = keepers.PacketForwardKeeper.SetParams(ctx, newPFMParams)
+		if err != nil {
+			return nil, err
+		}
 		logger.Info(fmt.Sprintf("packetforward: PacketForwardKeeper params set"))
-		keepers.ICQKeeper.SetParams(ctx, newICQParams)
+
+		err = keepers.ICQKeeper.SetParams(ctx, newICQParams)
+		if err != nil {
+			return nil, err
+		}
 		logger.Info(fmt.Sprintf("icq: ICQKeeper params set"))
 
+		/*
+			TODO: uncomment if govParams have to be modified
+			err = keepers.GovKeeper.Params.Set(ctx, govParams)
+			if err != nil {
+				return nil, err
+			}
+			logger.Info(fmt.Sprintf("icq: GovKeeper params set"))
+		*/
 		return versionMap, err
 	}
 }
