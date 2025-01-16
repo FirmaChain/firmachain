@@ -146,7 +146,7 @@ func NewRootCmd() *cobra.Command {
 		},
 	}
 
-	initRootCmd(rootCmd, tempApp.ModuleBasics, tempApp.AppCodec(), tempApp.InterfaceRegistry(), tempApp.GetTxConfig())
+	initRootCmd(rootCmd, tempApp.ModuleBasicManager(), tempApp.AppCodec(), tempApp.InterfaceRegistry(), tempApp.GetTxConfig())
 
 	if err := autoCliOpts(tempApp).EnhanceRootCommand(rootCmd); err != nil {
 		panic(err)
@@ -203,7 +203,7 @@ func initRootCmd(
 ) {
 
 	rootCmd.AddCommand(
-		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
+		genutilcli.InitCmd(basicManager, app.DefaultNodeHome),
 		// TODO: SDK has also this: NewTestnetCmd(basicManager, banktypes.GenesisBalancesIterator{}),
 		cmtcli.NewCompletionCmd(rootCmd, true),
 		debug.Cmd(),
@@ -323,7 +323,7 @@ func newApp(
 		loadLatest,
 		appOpts,
 		wasmOpts,
-		baseAppOptions...,
+		baseappOptions...,
 	)
 }
 

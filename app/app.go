@@ -289,8 +289,8 @@ type App struct {
 	AppKeepers keepers.AppKeepers
 
 	// Module Manager
-	mm                 *module.Manager
-	BasicModuleManager module.BasicManager
+	mm  *module.Manager
+	mbm module.BasicManager
 
 	// Simulation Manager
 	sm *module.SimulationManager
@@ -928,7 +928,7 @@ func New(
 	}
 
 	app.mm = module.NewManager(appModules...)
-	app.BasicModuleManager = newBasicManagerFromManager(app)
+	app.mbm = newBasicManagerFromManager(app)
 	app.mm.SetOrderBeginBlockers(orderBeginBlockers...)
 	app.mm.SetOrderEndBlockers(orderEndBlockers...)
 	app.mm.SetOrderInitGenesis(orderInitGenesis...)
@@ -1205,7 +1205,7 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 	nodeservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// Register grpc-gateway routes for all modules.
-	app.BasicModuleManager.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+	app.mbm.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// register app's OpenAPI routes.
 	apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
@@ -1276,4 +1276,16 @@ func (app *App) setPostHandler() {
 	}
 
 	app.SetPostHandler(postHandler)
+}
+
+func (app *App) ModuleManager() *module.Manager {
+	return app.mm
+}
+
+func (app *App) ModuleBasicManager() module.BasicManager {
+	return app.mbm
+}
+
+func (app *App) GetTxConfig() client.TxConfig {
+	return app.txConfig
 }
