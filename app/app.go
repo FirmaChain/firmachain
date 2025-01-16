@@ -134,6 +134,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/grpc/cmtservice"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 
+	"cosmossdk.io/x/circuit"
+	circuitkeeper "cosmossdk.io/x/circuit/keeper"
+	circuittypes "cosmossdk.io/x/circuit/types"
 	"cosmossdk.io/x/tx/signing"
 	"github.com/cosmos/cosmos-sdk/codec/address"
 	runtimeservices "github.com/cosmos/cosmos-sdk/runtime/services"
@@ -375,6 +378,7 @@ func New(
 		authzkeeper.StoreKey,
 		banktypes.StoreKey,
 		//capabilitytypes.StoreKey,
+		circuittypes.StoreKey,
 		consensusparamtypes.StoreKey,
 		crisistypes.StoreKey,
 		distrtypes.StoreKey,
@@ -564,6 +568,12 @@ func New(
 		appCodec,
 		app.BaseApp.MsgServiceRouter(),
 		app.AppKeepers.AccountKeeper,
+	)
+	app.AppKeepers.CircuitKeeper = circuitkeeper.NewKeeper(
+		appCodec,
+		runtime.NewKVStoreService(keys[circuittypes.StoreKey]),
+		govModAddress,
+		authcodec.NewBech32Codec(Bech32PrefixAccAddr),
 	)
 	// ------------ IBC ------------
 	app.AppKeepers.IBCKeeper = ibckeeper.NewKeeper(
@@ -779,6 +789,7 @@ func New(
 		auth.NewAppModule(appCodec, app.AppKeepers.AccountKeeper, nil, app.GetSubspace(authtypes.ModuleName)),
 		authzmodule.NewAppModule(appCodec, app.AppKeepers.AuthzKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.interfaceRegistry),
 		bank.NewAppModule(appCodec, app.AppKeepers.BankKeeper, app.AppKeepers.AccountKeeper, app.GetSubspace(banktypes.ModuleName)),
+		circuit.NewAppModule(appCodec, app.AppKeepers.CircuitKeeper),
 		capability.NewAppModule(appCodec, *app.AppKeepers.CapabilityKeeper, false),
 		consensusparams.NewAppModule(appCodec, app.AppKeepers.ConsensusParamsKeeper),
 		crisis.NewAppModule(app.AppKeepers.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)),
@@ -815,7 +826,9 @@ func New(
 	// CanWithdrawInvariant invariant.
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	orderBeginBlockers := []string{
+		// TODO: move upgrade in preblocker
 		upgradetypes.ModuleName,
+		circuittypes.ModuleName,
 		capabilitytypes.ModuleName,
 		minttypes.ModuleName,
 		distrtypes.ModuleName,
@@ -847,6 +860,7 @@ func New(
 
 	orderEndBlockers := []string{
 		crisistypes.ModuleName,
+		circuittypes.ModuleName,
 		govtypes.ModuleName,
 		stakingtypes.ModuleName,
 		capabilitytypes.ModuleName,
@@ -910,6 +924,7 @@ func New(
 		ibcfeetypes.ModuleName,
 		ibchookstypes.ModuleName,
 		icqtypes.ModuleName,
+		circuittypes.ModuleName,
 	}
 
 	app.mm = module.NewManager(appModules...)

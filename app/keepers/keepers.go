@@ -42,6 +42,8 @@ import (
 	ibc_hooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8"
 	ibchookskeeper "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/keeper"
 	ibcfeekeeper "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/keeper"
+
+	circuitkeeper "cosmossdk.io/x/circuit/keeper"
 )
 
 type AppKeepers struct {
@@ -54,6 +56,7 @@ type AppKeepers struct {
 	AccountKeeper         authkeeper.AccountKeeper
 	AuthzKeeper           authzkeeper.Keeper
 	BankKeeper            bankkeeper.Keeper
+	CircuitKeeper         circuitkeeper.Keeper
 	CapabilityKeeper      *capabilitykeeper.Keeper
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
 	CrisisKeeper          *crisiskeeper.Keeper

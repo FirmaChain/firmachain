@@ -2,6 +2,7 @@ package v05
 
 import (
 	store "cosmossdk.io/store/types"
+	circuittypes "cosmossdk.io/x/circuit/types"
 	packetforwardtypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8/packetforward/types"
 	ibchookstypes "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/types"
 	icacontrollertypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/types"
@@ -26,6 +27,7 @@ var Upgrade = upgrades.Upgrade{
 			packetforwardtypes.StoreKey,
 			icahosttypes.StoreKey,
 			icacontrollertypes.StoreKey,
+			circuittypes.StoreKey,
 		},
 		Deleted: []string{
 			legacyBurnModuleStoreKey,
