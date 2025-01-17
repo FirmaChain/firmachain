@@ -20,7 +20,7 @@ const (
 	ufctTokenName   = "ufct"
 )
 
-func (k Keeper) CheckCommonError(tokenID string, symbol string, name string, totalSupply uint64) error {
+func (k Keeper) CheckCommonError(tokenId string, symbol string, name string, totalSupply uint64) error {
 	if len(symbol) > maxSymbolLength {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input Symbol name lengh cannot exceed 20.")
 	}
@@ -29,13 +29,13 @@ func (k Keeper) CheckCommonError(tokenID string, symbol string, name string, tot
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "input Token name lengh cannot exceed 40.")
 	}
 
-	if tokenID == ufctTokenName {
+	if tokenId == ufctTokenName {
 		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "ufct is not supported.")
 	}
 
 	re := regexp.MustCompile("^[a-zA-Z0-9_-]*$")
-	if !re.MatchString(tokenID) {
-		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "only alphabet, underscore, numbers are allowed for tokenID.")
+	if !re.MatchString(tokenId) {
+		return errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "only alphabet, underscore, numbers are allowed for tokenId.")
 	}
 
 	if totalSupply > maxTokenValue {
@@ -54,12 +54,12 @@ func (k Keeper) CheckCommonError(tokenID string, symbol string, name string, tot
 // RemoveTokenData removes a tokenData from the store
 func (k Keeper) RemoveTokenData(
 	ctx sdk.Context,
-	tokenID string,
+	tokenId string,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataKeyPrefix))
 	store.Delete(types.TokenDataKey(
-		tokenID,
+		tokenId,
 	))
 }
 
@@ -67,7 +67,7 @@ func (k Keeper) RemoveTokenData(
 func (k Keeper) SetTokenData(ctx sdk.Context, tokenData types.TokenData) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataKeyPrefix))
 	b := k.cdc.MustMarshal(&tokenData)
-	store.Set(types.TokenDataKey(tokenData.TokenID), b)
+	store.Set(types.TokenDataKey(tokenData.TokenId), b)
 
 	k.SetTokenDataToAccount(ctx, tokenData)
 }
@@ -76,19 +76,19 @@ func (k Keeper) SetTokenDataToAccount(ctx sdk.Context, tokenData types.TokenData
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.OwnerOfTokenKey))
 	accountStore := prefix.NewStore(store, []byte(tokenData.Owner))
 
-	accountStore.Set([]byte(tokenData.TokenID), GetBytesFromUInt64(1))
+	accountStore.Set([]byte(tokenData.TokenId), GetBytesFromUInt64(1))
 }
 
 // GetTokenData returns a tokenData from its index
 func (k Keeper) GetTokenData(
 	ctx sdk.Context,
-	tokenID string,
+	tokenId string,
 
 ) (val types.TokenData, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TokenDataKeyPrefix))
 
 	b := store.Get(types.TokenDataKey(
-		tokenID,
+		tokenId,
 	))
 	if b == nil {
 		return val, false

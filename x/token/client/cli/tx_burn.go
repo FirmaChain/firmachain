@@ -19,7 +19,7 @@ func CmdBurn() *cobra.Command {
 		Short: "Broadcast message burn",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argTokenID := args[0]
+			argTokenId := args[0]
 			argAmount := args[1]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -34,7 +34,7 @@ func CmdBurn() *cobra.Command {
 
 			msg := types.NewMsgBurn(
 				clientCtx.GetFromAddress().String(),
-				argTokenID,
+				argTokenId,
 				argAmountValue,
 			)
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)

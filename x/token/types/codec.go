@@ -12,7 +12,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	legacy.RegisterAminoMsg(cdc, &MsgCreateToken{}, "token/CreateToken")
 	legacy.RegisterAminoMsg(cdc, &MsgMint{}, "token/Mint")
 	legacy.RegisterAminoMsg(cdc, &MsgBurn{}, "token/Burn")
-	legacy.RegisterAminoMsg(cdc, &MsgUpdateTokenURI{}, "token/UpdateTokenURI")
+	legacy.RegisterAminoMsg(cdc, &MsgUpdateTokenUri{}, "token/UpdateTokenUri")
 	// this line is used by starport scaffolding # 2
 }
 
@@ -22,7 +22,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreateToken{},
 		&MsgMint{},
 		&MsgBurn{},
-		&MsgUpdateTokenURI{},
+		&MsgUpdateTokenUri{},
 	)
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }

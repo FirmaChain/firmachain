@@ -19,7 +19,7 @@ func CmdMint() *cobra.Command {
 		Short: "Broadcast message mint",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argTokenID := args[0]
+			argTokenId := args[0]
 			argAmount := args[1]
 			argToAddress := args[2]
 
@@ -35,7 +35,7 @@ func CmdMint() *cobra.Command {
 
 			msg := types.NewMsgMint(
 				clientCtx.GetFromAddress().String(),
-				argTokenID,
+				argTokenId,
 				argAmountValue,
 				argToAddress,
 			)

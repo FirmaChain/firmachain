@@ -9,7 +9,7 @@ import (
 	"github.com/firmachain/firmachain/v05/x/token/types"
 )
 
-func (ms msgServer) UpdateTokenURI(goCtx context.Context, msg *types.MsgUpdateTokenURI) (*types.MsgUpdateTokenURIResponse, error) {
+func (ms msgServer) UpdateTokenUri(goCtx context.Context, msg *types.MsgUpdateTokenUri) (*types.MsgUpdateTokenUriResponse, error) {
 
 	if err := msg.ValidateBasic(); err != nil {
 		return nil, err
@@ -20,14 +20,14 @@ func (ms msgServer) UpdateTokenURI(goCtx context.Context, msg *types.MsgUpdateTo
 	// Check if the value exists
 	tokenData, isFound := ms.keeper.GetTokenData(
 		ctx,
-		msg.TokenID,
+		msg.TokenId,
 	)
 
 	if !isFound {
 		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
-	err := ms.keeper.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
+	err := ms.keeper.CheckCommonError(tokenData.TokenId, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
 
 	if err != nil {
 		return nil, err
@@ -38,16 +38,16 @@ func (ms msgServer) UpdateTokenURI(goCtx context.Context, msg *types.MsgUpdateTo
 		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	tokenData.TokenURI = msg.TokenURI
+	tokenData.TokenUri = msg.TokenUri
 
 	ms.keeper.SetTokenData(ctx, tokenData)
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		sdk.EventTypeMessage,
 		sdk.NewAttribute("Owner", msg.Owner),
-		sdk.NewAttribute("TokenID", msg.TokenID),
-		sdk.NewAttribute("TokenURI", tokenData.TokenURI),
+		sdk.NewAttribute("TokenId", msg.TokenId),
+		sdk.NewAttribute("TokenUri", tokenData.TokenUri),
 	))
 
-	return &types.MsgUpdateTokenURIResponse{}, nil
+	return &types.MsgUpdateTokenUriResponse{}, nil
 }

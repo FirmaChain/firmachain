@@ -22,7 +22,7 @@ func (gs GenesisState) Validate() error {
 	tokenDataIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.TokenDataList {
-		index := string(TokenDataKey(elem.TokenID))
+		index := string(TokenDataKey(elem.TokenId))
 		if _, ok := tokenDataIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for tokenData")
 		}

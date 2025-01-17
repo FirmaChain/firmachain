@@ -24,7 +24,7 @@ func CmdListNftItem() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryAllNftItemRequest{
+			params := &types.NftItemAllRequest{
 				Pagination: pageReq,
 			}
 
@@ -58,7 +58,7 @@ func CmdShowNftItem() *cobra.Command {
 				return err
 			}
 
-			params := &types.QueryGetNftItemRequest{
+			params := &types.NftItemRequest{
 				Id: id,
 			}
 

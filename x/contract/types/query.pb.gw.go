@@ -38,7 +38,7 @@ var (
 )
 
 func request_Query_IsContractOwner_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryIsContractOwnerRequest
+	var protoReq IsContractOwnerRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -54,7 +54,7 @@ func request_Query_IsContractOwner_0(ctx context.Context, marshaler runtime.Mars
 }
 
 func local_request_Query_IsContractOwner_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryIsContractOwnerRequest
+	var protoReq IsContractOwnerRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -70,7 +70,7 @@ func local_request_Query_IsContractOwner_0(ctx context.Context, marshaler runtim
 }
 
 func request_Query_ContractFile_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryGetContractFileRequest
+	var protoReq ContractFileRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -97,7 +97,7 @@ func request_Query_ContractFile_0(ctx context.Context, marshaler runtime.Marshal
 }
 
 func local_request_Query_ContractFile_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryGetContractFileRequest
+	var protoReq ContractFileRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -128,7 +128,7 @@ var (
 )
 
 func request_Query_ContractFileAll_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryAllContractFileRequest
+	var protoReq ContractFileAllRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -144,7 +144,7 @@ func request_Query_ContractFileAll_0(ctx context.Context, marshaler runtime.Mars
 }
 
 func local_request_Query_ContractFileAll_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryAllContractFileRequest
+	var protoReq ContractFileAllRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -160,7 +160,7 @@ func local_request_Query_ContractFileAll_0(ctx context.Context, marshaler runtim
 }
 
 func request_Query_GetContractListFromHash_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryGetContractListFromHashRequest
+	var protoReq GetContractListFromHashRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -187,7 +187,7 @@ func request_Query_GetContractListFromHash_0(ctx context.Context, marshaler runt
 }
 
 func local_request_Query_GetContractListFromHash_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryGetContractListFromHashRequest
+	var protoReq GetContractListFromHashRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -214,7 +214,7 @@ func local_request_Query_GetContractListFromHash_0(ctx context.Context, marshale
 }
 
 func request_Query_ContractLog_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryGetContractLogRequest
+	var protoReq ContractLogRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -241,7 +241,7 @@ func request_Query_ContractLog_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_Query_ContractLog_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryGetContractLogRequest
+	var protoReq ContractLogRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -272,7 +272,7 @@ var (
 )
 
 func request_Query_ContractLogAll_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryAllContractLogRequest
+	var protoReq ContractLogAllRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -288,7 +288,7 @@ func request_Query_ContractLogAll_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func local_request_Query_ContractLogAll_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq QueryAllContractLogRequest
+	var protoReq ContractLogAllRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {

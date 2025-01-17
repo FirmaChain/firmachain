@@ -12,7 +12,7 @@ import (
 	"cosmossdk.io/store/prefix"
 )
 
-func (k Keeper) BalanceOf(goCtx context.Context, req *types.QueryBalanceOfRequest) (*types.QueryBalanceOfResponse, error) {
+func (k Keeper) BalanceOf(goCtx context.Context, req *types.BalanceOfRequest) (*types.BalanceOfResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -28,9 +28,9 @@ func (k Keeper) BalanceOf(goCtx context.Context, req *types.QueryBalanceOfReques
 
 	// Count doesn't exist: no element
 	if byteTotal == nil {
-		return &types.QueryBalanceOfResponse{Total: uint64(0)}, nil
+		return &types.BalanceOfResponse{Total: uint64(0)}, nil
 	}
 
 	count := GetUInt64FromBytes(byteTotal)
-	return &types.QueryBalanceOfResponse{Total: uint64(count)}, nil
+	return &types.BalanceOfResponse{Total: uint64(count)}, nil
 }

@@ -24,7 +24,7 @@ func CmdListContractLog() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryAllContractLogRequest{
+			params := &types.ContractLogAllRequest{
 				Pagination: pageReq,
 			}
 
@@ -58,7 +58,7 @@ func CmdShowContractLog() *cobra.Command {
 				return err
 			}
 
-			params := &types.QueryGetContractLogRequest{
+			params := &types.ContractLogRequest{
 				Id: id,
 			}
 

@@ -13,7 +13,7 @@ import (
 	"cosmossdk.io/store/prefix"
 )
 
-func (k Keeper) NftIdListOfOwner(goCtx context.Context, req *types.QueryNftIdListOfOwnerRequest) (*types.QueryNftIdListOfOwnerResponse, error) {
+func (k Keeper) NftIdListOfOwner(goCtx context.Context, req *types.NftIdListOfOwnerRequest) (*types.NftIdListOfOwnerResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -40,7 +40,7 @@ func (k Keeper) NftIdListOfOwner(goCtx context.Context, req *types.QueryNftIdLis
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryNftIdListOfOwnerResponse{NftIdList: nftIdList, Pagination: pageRes}, nil
+	return &types.NftIdListOfOwnerResponse{NftIdList: nftIdList, Pagination: pageRes}, nil
 }
 
 func GetIDFromBytes(bz []byte) uint64 {

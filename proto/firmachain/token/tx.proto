@@ -4,6 +4,9 @@ package firmachain.token;
 import "firmachain/token/token_data.proto";
 
 option go_package = "github.com/firmachain/firmachain/v05/x/token/types";
+import "cosmos/msg/v1/msg.proto";
+import "amino/amino.proto";
+
 
 // Msg defines the Msg service.
 service Msg {
@@ -16,8 +19,8 @@ service Msg {
   // Burn
   rpc Burn(MsgBurn) returns (MsgBurnResponse);
   
-  // UpdateTokenURI
-  rpc UpdateTokenURI(MsgUpdateTokenURI) returns (MsgUpdateTokenURIResponse);
+  // UpdateTokenUri
+  rpc UpdateTokenUri(MsgUpdateTokenUri) returns (MsgUpdateTokenUriResponse);
 }
 
 // MsgCreateToken
@@ -68,9 +71,9 @@ message MsgBurn {
 message MsgBurnResponse {
 }
 
-// MsgUpdateTokenURI
-message MsgUpdateTokenURI {
-  option (amino.name) = "token/UpdateTokenURI";
+// MsgUpdateTokenUri
+message MsgUpdateTokenUri {
+  option (amino.name) = "token/UpdateTokenUri";
   option (cosmos.msg.v1.signer) = "owner";
 
   string owner = 1;
@@ -78,6 +81,6 @@ message MsgUpdateTokenURI {
   string token_uri = 3;
 }
 
-// MsgUpdateTokenURIResponse
-message MsgUpdateTokenURIResponse {
+// MsgUpdateTokenUriResponse
+message MsgUpdateTokenUriResponse {
 }

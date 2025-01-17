@@ -27,7 +27,7 @@ func CmdContractListFromHash() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetContractListFromHashRequest{
+			params := &types.GetContractListFromHashRequest{
 				Hash: string(reqContractHash),
 			}
 

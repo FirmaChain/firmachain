@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) NftItemAll(c context.Context, req *types.QueryAllNftItemRequest) (*types.QueryAllNftItemResponse, error) {
+func (k Keeper) NftItemAll(c context.Context, req *types.NftItemAllRequest) (*types.NftItemAllResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -37,10 +37,10 @@ func (k Keeper) NftItemAll(c context.Context, req *types.QueryAllNftItemRequest)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAllNftItemResponse{NftItem: nftItems, Pagination: pageRes}, nil
+	return &types.NftItemAllResponse{NftItem: nftItems, Pagination: pageRes}, nil
 }
 
-func (k Keeper) NftItem(c context.Context, req *types.QueryGetNftItemRequest) (*types.QueryGetNftItemResponse, error) {
+func (k Keeper) NftItem(c context.Context, req *types.NftItemRequest) (*types.NftItemResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -55,5 +55,5 @@ func (k Keeper) NftItem(c context.Context, req *types.QueryGetNftItemRequest) (*
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemDataKey))
 	k.cdc.MustUnmarshal(store.Get(GetBytesFromUInt64(req.Id)), &nftItem)
 
-	return &types.QueryGetNftItemResponse{NftItem: &nftItem}, nil
+	return &types.NftItemResponse{NftItem: &nftItem}, nil
 }

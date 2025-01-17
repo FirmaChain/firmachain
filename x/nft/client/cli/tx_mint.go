@@ -15,18 +15,18 @@ var _ = strconv.Itoa(0)
 
 func CmdMint() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "mint [tokenURI]",
+		Use:   "mint [tokenUri]",
 		Short: "Broadcast message mint",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsTokenURI := string(args[0])
+			argsTokenUri := string(args[0])
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgMint(clientCtx.GetFromAddress().String(), string(argsTokenURI))
+			msg := types.NewMsgMint(clientCtx.GetFromAddress().String(), string(argsTokenUri))
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}

@@ -12,7 +12,7 @@ option go_package = "github.com/firmachain/firmachain/v05/x/token/types";
 service Query {
     // Queries a tokenData by index.
 	rpc TokenData(TokenDataRequest) returns (TokenDataResponse) {
-		option (google.api.http).get = "/firmachain/firmachain/token/tokenData/{tokenID}";
+		option (google.api.http).get = "/firmachain/firmachain/token/tokenData/{token_id}";
 	}
 
 	// Queries a list of tokenData items.

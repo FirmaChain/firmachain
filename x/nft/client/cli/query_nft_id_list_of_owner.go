@@ -32,7 +32,7 @@ func CmdNftIdListOfOwner() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryNftIdListOfOwnerRequest{
+			params := &types.NftIdListOfOwnerRequest{
 
 				OwnerAddress: string(reqOwnerAddress),
 				Pagination:   pageReq,

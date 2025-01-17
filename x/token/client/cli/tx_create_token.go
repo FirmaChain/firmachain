@@ -22,7 +22,7 @@ func CmdCreateToken() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argName := args[0]
 			argSymbol := args[1]
-			argTokenURI := args[2]
+			argTokenUri := args[2]
 			argTotalSupply := args[3]
 			argDecimal := args[4]
 			argMintable, err := cast.ToBoolE(args[5])
@@ -53,7 +53,7 @@ func CmdCreateToken() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				argName,
 				argSymbol,
-				argTokenURI,
+				argTokenUri,
 				argTotalSupplyValue,
 				argDecimalValue,
 				argMintable,

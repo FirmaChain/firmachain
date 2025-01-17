@@ -8,10 +8,10 @@ import (
 
 var _ sdk.Msg = &MsgBurn{}
 
-func NewMsgBurn(owner string, tokenID string, amount uint64) *MsgBurn {
+func NewMsgBurn(owner string, tokenId string, amount uint64) *MsgBurn {
 	return &MsgBurn{
 		Owner:   owner,
-		TokenID: tokenID,
+		TokenId: tokenId,
 		Amount:  amount,
 	}
 }

@@ -8,10 +8,10 @@ import (
 
 var _ sdk.Msg = &MsgMint{}
 
-func NewMsgMint(owner string, tokenURI string) *MsgMint {
+func NewMsgMint(owner string, tokenUri string) *MsgMint {
 	return &MsgMint{
 		Owner:    owner,
-		TokenURI: tokenURI,
+		TokenUri: tokenUri,
 	}
 }
 

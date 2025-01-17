@@ -8,12 +8,12 @@ import (
 
 var _ sdk.Msg = &MsgCreateToken{}
 
-func NewMsgCreateToken(owner string, name string, symbol string, tokenURI string, totalSupply uint64, decimal uint64, mintable bool, burnable bool) *MsgCreateToken {
+func NewMsgCreateToken(owner string, name string, symbol string, tokenUri string, totalSupply uint64, decimal uint64, mintable bool, burnable bool) *MsgCreateToken {
 	return &MsgCreateToken{
 		Owner:       owner,
 		Name:        name,
 		Symbol:      symbol,
-		TokenURI:    tokenURI,
+		TokenUri:    tokenUri,
 		TotalSupply: totalSupply,
 		Decimal:     decimal,
 		Mintable:    mintable,

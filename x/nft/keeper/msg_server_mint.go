@@ -18,7 +18,7 @@ func (ms msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgM
 
 	var nftItem = types.NftItem{
 		Owner:    msg.Owner,
-		TokenURI: msg.TokenURI,
+		TokenUri: msg.TokenUri,
 	}
 
 	id := ms.keeper.AppendNftItem(

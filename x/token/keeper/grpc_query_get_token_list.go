@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) GetTokenList(goCtx context.Context, req *types.QueryGetTokenListRequest) (*types.QueryGetTokenListResponse, error) {
+func (k Keeper) GetTokenList(goCtx context.Context, req *types.GetTokenListRequest) (*types.GetTokenListResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -32,5 +32,5 @@ func (k Keeper) GetTokenList(goCtx context.Context, req *types.QueryGetTokenList
 		tokenDataArray = append(tokenDataArray, tokenId)
 	}
 
-	return &types.QueryGetTokenListResponse{TokenID: tokenDataArray}, nil
+	return &types.GetTokenListResponse{TokenId: tokenDataArray}, nil
 }

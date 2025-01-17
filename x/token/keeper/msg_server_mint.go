@@ -22,7 +22,7 @@ func (ms msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgM
 	// Check if the value exists
 	tokenData, isFound := ms.keeper.GetTokenData(
 		ctx,
-		msg.TokenID,
+		msg.TokenId,
 	)
 
 	if !isFound {
@@ -33,7 +33,7 @@ func (ms msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgM
 		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "mint is not allowed.")
 	}
 
-	err := ms.keeper.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
+	err := ms.keeper.CheckCommonError(tokenData.TokenId, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
 
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (ms msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgM
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, errStr)
 	}
 
-	newCoin := sdk.NewInt64Coin(msg.TokenID, int64(msg.Amount))
+	newCoin := sdk.NewInt64Coin(msg.TokenId, int64(msg.Amount))
 	err = ms.keeper.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
 
 	if err != nil {
@@ -79,7 +79,7 @@ func (ms msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgM
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		sdk.EventTypeMessage,
 		sdk.NewAttribute("Owner", msg.Owner),
-		sdk.NewAttribute("TokenID", msg.TokenID),
+		sdk.NewAttribute("TokenId", msg.TokenId),
 		sdk.NewAttribute("MintAmount", strconv.FormatUint(msg.Amount, 10)),
 		sdk.NewAttribute("TotalSupply", strconv.FormatUint(tokenData.TotalSupply, 10)),
 	))

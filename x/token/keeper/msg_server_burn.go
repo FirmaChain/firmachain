@@ -21,7 +21,7 @@ func (ms msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgB
 	// Check if the value exists
 	tokenData, isFound := ms.keeper.GetTokenData(
 		ctx,
-		msg.TokenID,
+		msg.TokenId,
 	)
 
 	if !isFound {
@@ -32,7 +32,7 @@ func (ms msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgB
 		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "burn is not allowed.")
 	}
 
-	err := ms.keeper.CheckCommonError(tokenData.TokenID, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
+	err := ms.keeper.CheckCommonError(tokenData.TokenId, tokenData.Symbol, tokenData.Name, tokenData.TotalSupply)
 
 	if err != nil {
 		return nil, err
@@ -49,13 +49,13 @@ func (ms msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgB
 		return nil, err
 	}
 
-	balance := ms.keeper.bankKeeper.GetBalance(ctx, ownerAccAddress, msg.TokenID).Amount
+	balance := ms.keeper.bankKeeper.GetBalance(ctx, ownerAccAddress, msg.TokenId).Amount
 
 	if balance.Uint64() < msg.Amount {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "account balance is not enough to burn")
 	}
 
-	newCoin := sdk.NewInt64Coin(msg.TokenID, int64(msg.Amount))
+	newCoin := sdk.NewInt64Coin(msg.TokenId, int64(msg.Amount))
 
 	err = ms.keeper.bankKeeper.SendCoinsFromAccountToModule(
 		ctx,
@@ -82,7 +82,7 @@ func (ms msgServer) Burn(goCtx context.Context, msg *types.MsgBurn) (*types.MsgB
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		sdk.EventTypeMessage,
 		sdk.NewAttribute("Owner", msg.Owner),
-		sdk.NewAttribute("TokenID", msg.TokenID),
+		sdk.NewAttribute("TokenId", msg.TokenId),
 		sdk.NewAttribute("BurnAmount", strconv.FormatUint(msg.Amount, 10)),
 		sdk.NewAttribute("TotalSupply", strconv.FormatUint(tokenData.TotalSupply, 10)),
 	))

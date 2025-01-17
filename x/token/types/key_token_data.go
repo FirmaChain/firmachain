@@ -11,12 +11,12 @@ const (
 
 // TokenDataKey returns the store key to retrieve a TokenData from the index fields
 func TokenDataKey(
-	tokenID string,
+	tokenId string,
 ) []byte {
 	var key []byte
 
-	tokenIDBytes := []byte(tokenID)
-	key = append(key, tokenIDBytes...)
+	tokenIdBytes := []byte(tokenId)
+	key = append(key, tokenIdBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

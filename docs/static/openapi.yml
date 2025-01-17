@@ -12314,7 +12314,7 @@ paths:
                     id:
                       type: string
                       format: uint64
-                    tokenURI:
+                    tokenUri:
                       type: string
               pagination:
                 type: object
@@ -12438,7 +12438,7 @@ paths:
                   id:
                     type: string
                     format: uint64
-                  tokenURI:
+                  tokenUri:
                     type: string
         default:
           description: An unexpected error response.
@@ -12519,7 +12519,7 @@ paths:
           schema:
             type: object
             properties:
-              tokenID:
+              tokenId:
                 type: array
                 items:
                   type: string
@@ -12563,13 +12563,13 @@ paths:
                 items:
                   type: object
                   properties:
-                    tokenID:
+                    tokenId:
                       type: string
                     name:
                       type: string
                     symbol:
                       type: string
-                    tokenURI:
+                    tokenUri:
                       type: string
                     totalSupply:
                       type: string
@@ -12693,7 +12693,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/firmachain/firmachain/token/tokenData/{tokenID}':
+  '/firmachain/firmachain/token/tokenData/{tokenId}':
     get:
       summary: Queries a tokenData by index.
       operationId: FirmachainFirmachainTokenTokenData
@@ -12706,13 +12706,13 @@ paths:
               tokenData:
                 type: object
                 properties:
-                  tokenID:
+                  tokenId:
                     type: string
                   name:
                     type: string
                   symbol:
                     type: string
-                  tokenURI:
+                  tokenUri:
                     type: string
                   totalSupply:
                     type: string
@@ -12751,7 +12751,7 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: tokenID
+        - name: tokenId
           in: path
           required: true
           type: string
@@ -20879,7 +20879,7 @@ definitions:
       id:
         type: string
         format: uint64
-      tokenURI:
+      tokenUri:
         type: string
   firmachain.firmachain.nft.QueryAllNftItemResponse:
     type: object
@@ -20894,7 +20894,7 @@ definitions:
             id:
               type: string
               format: uint64
-            tokenURI:
+            tokenUri:
               type: string
       pagination:
         type: object
@@ -20938,7 +20938,7 @@ definitions:
           id:
             type: string
             format: uint64
-          tokenURI:
+          tokenUri:
             type: string
   firmachain.firmachain.nft.QueryTokenOfOwnerByIndexResponse:
     type: object
@@ -20952,7 +20952,7 @@ definitions:
     type: object
   firmachain.firmachain.token.MsgMintResponse:
     type: object
-  firmachain.firmachain.token.MsgUpdateTokenURIResponse:
+  firmachain.firmachain.token.MsgUpdateTokenUriResponse:
     type: object
   firmachain.firmachain.token.QueryAllTokenDataResponse:
     type: object
@@ -20962,13 +20962,13 @@ definitions:
         items:
           type: object
           properties:
-            tokenID:
+            tokenId:
               type: string
             name:
               type: string
             symbol:
               type: string
-            tokenURI:
+            tokenUri:
               type: string
             totalSupply:
               type: string
@@ -21019,13 +21019,13 @@ definitions:
       tokenData:
         type: object
         properties:
-          tokenID:
+          tokenId:
             type: string
           name:
             type: string
           symbol:
             type: string
-          tokenURI:
+          tokenUri:
             type: string
           totalSupply:
             type: string
@@ -21048,20 +21048,20 @@ definitions:
   firmachain.firmachain.token.QueryGetTokenListResponse:
     type: object
     properties:
-      tokenID:
+      tokenId:
         type: array
         items:
           type: string
   firmachain.firmachain.token.TokenData:
     type: object
     properties:
-      tokenID:
+      tokenId:
         type: string
       name:
         type: string
       symbol:
         type: string
-      tokenURI:
+      tokenUri:
         type: string
       totalSupply:
         type: string
