@@ -76,8 +76,8 @@ type AppKeepers struct {
 	IBCFeeKeeper        ibcfeekeeper.Keeper
 	IBCHooksKeeper      *ibchookskeeper.Keeper
 	PacketForwardKeeper *packetforwardkeeper.Keeper
-	ICAHostKeeper       icahostkeeper.Keeper
-	ICAControllerKeeper icacontrollerkeeper.Keeper
+	ICAHostKeeper       *icahostkeeper.Keeper
+	ICAControllerKeeper *icacontrollerkeeper.Keeper
 	ICQKeeper           icqkeeper.Keeper
 
 	// Wasm Keepers

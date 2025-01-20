@@ -409,9 +409,10 @@ func New(
 	}
 	homePath := cast.ToString(appOpts.Get(flags.FlagHome))
 
+	// ============ Keepers ============
+
 	govModAddress := authtypes.NewModuleAddress(govtypes.ModuleName).String()
 
-	// ============ Keepers ============
 	// TODO: Move keepers in app/keepers/keepers.go
 	app.AppKeepers.CapabilityKeeper = capabilitykeeper.NewKeeper(
 		appCodec,
@@ -607,7 +608,7 @@ func New(
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
 		app.AppKeepers.Ics20WasmHooks,
 	)
-	app.AppKeepers.ICAHostKeeper = icahostkeeper.NewKeeper(
+	icaHostKeeper := icahostkeeper.NewKeeper(
 		appCodec,
 		keys[icahosttypes.StoreKey],
 		app.GetSubspace(icahosttypes.SubModuleName),
@@ -616,12 +617,16 @@ func New(
 		app.AppKeepers.IBCKeeper.PortKeeper,
 		app.AppKeepers.AccountKeeper,
 		scopedICAHostKeeper,
-		app.MsgServiceRouter(),
+		app.BaseApp.MsgServiceRouter(),
 		govModAddress,
 	)
-	app.AppKeepers.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
-		appCodec, app.AppKeepers.GetKeys()[icacontrollertypes.StoreKey],
+	icaHostKeeper.WithQueryRouter(bApp.GRPCQueryRouter())
+	app.AppKeepers.ICAHostKeeper = &icaHostKeeper
+	icaControllerKeeper := icacontrollerkeeper.NewKeeper(
+		appCodec,
+		app.AppKeepers.GetKeys()[icacontrollertypes.StoreKey],
 		app.GetSubspace(icacontrollertypes.SubModuleName),
+		// TODO: IBCFeeKeeper -> icaControllerStack
 		app.AppKeepers.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
 		app.AppKeepers.IBCKeeper.PortKeeper,
@@ -629,6 +634,7 @@ func New(
 		bApp.MsgServiceRouter(),
 		govModAddress,
 	)
+	app.AppKeepers.ICAControllerKeeper = &icaControllerKeeper
 	app.AppKeepers.ICQKeeper = icqkeeper.NewKeeper(
 		appCodec,
 		app.AppKeepers.GetKeys()[icqtypes.StoreKey],
@@ -671,7 +677,7 @@ func New(
 		app.AppKeepers.IBCKeeper.PortKeeper,
 		scopedWasmKeeper,
 		app.AppKeepers.TransferKeeper,
-		app.MsgServiceRouter(),
+		app.BaseApp.MsgServiceRouter(),
 		app.GRPCQueryRouter(),
 		wasmDir,
 		wasmConfig,
@@ -711,11 +717,6 @@ func New(
 	}
 	app.txConfig = txConfig
 
-	// NOTE: upgrade module is required to be prioritized
-	app.mm.SetOrderPreBlockers(
-		upgradetypes.ModuleName,
-	)
-
 	// ============ Routers ============
 	// ------------ Gov ------------
 	govRouter := govv1beta.NewRouter()
@@ -745,12 +746,12 @@ func New(
 	)
 	// initialize ICA module with mock module as the authentication module on the controller side
 	var icaControllerStack porttypes.IBCModule
-	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, app.AppKeepers.ICAControllerKeeper)
+	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, *app.AppKeepers.ICAControllerKeeper)
 	icaControllerStack = ibcfee.NewIBCMiddleware(icaControllerStack, app.AppKeepers.IBCFeeKeeper)
 	// RecvPacket, message that originates from core IBC and goes down to app, the flow is:
 	// channel.RecvPacket -> fee.OnRecvPacket -> icaHost.OnRecvPacket
 	var icaHostStack porttypes.IBCModule
-	icaHostStack = icahost.NewIBCModule(app.AppKeepers.ICAHostKeeper)
+	icaHostStack = icahost.NewIBCModule(*app.AppKeepers.ICAHostKeeper)
 	icaHostStack = ibcfee.NewIBCMiddleware(icaHostStack, app.AppKeepers.IBCFeeKeeper)
 	// Create fee enabled wasm ibc Stack
 	var wasmStack porttypes.IBCModule
@@ -797,14 +798,18 @@ func New(
 		ibcfee.NewAppModule(app.AppKeepers.IBCFeeKeeper),
 		ibc_hooks.NewAppModule(app.AppKeepers.AccountKeeper),
 		packetforward.NewAppModule(app.AppKeepers.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
-		ica.NewAppModule(&app.AppKeepers.ICAControllerKeeper, &app.AppKeepers.ICAHostKeeper),
+		ica.NewAppModule(app.AppKeepers.ICAControllerKeeper, app.AppKeepers.ICAHostKeeper),
 		icq.NewAppModule(app.AppKeepers.ICQKeeper, app.GetSubspace(icqtypes.ModuleName)),
 		// Wasm modules
-		wasm.NewAppModule(appCodec, &app.AppKeepers.WasmKeeper, app.AppKeepers.StakingKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
+		wasm.NewAppModule(appCodec, &app.AppKeepers.WasmKeeper, app.AppKeepers.StakingKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.BaseApp.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		// Custom modules
 		contractmodule.NewAppModule(appCodec, app.AppKeepers.ContractKeeper),
 		nftmodule.NewAppModule(appCodec, app.AppKeepers.NftKeeper),
 		tokenmodule.NewAppModule(appCodec, app.AppKeepers.TokenKeeper),
+	}
+
+	orderPreBlockers := []string{
+		upgradetypes.ModuleName,
 	}
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -812,8 +817,6 @@ func New(
 	// CanWithdrawInvariant invariant.
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	orderBeginBlockers := []string{
-		// TODO: move upgrade in preblocker
-		upgradetypes.ModuleName,
 		circuittypes.ModuleName,
 		capabilitytypes.ModuleName,
 		minttypes.ModuleName,
@@ -915,14 +918,20 @@ func New(
 
 	app.mm = module.NewManager(appModules...)
 	app.mbm = newBasicManagerFromManager(app)
+	app.mm.SetOrderPreBlockers(orderPreBlockers...)
 	app.mm.SetOrderBeginBlockers(orderBeginBlockers...)
 	app.mm.SetOrderEndBlockers(orderEndBlockers...)
 	app.mm.SetOrderInitGenesis(orderInitGenesis...)
 
 	app.mm.RegisterInvariants(app.AppKeepers.CrisisKeeper)
 
-	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
-	app.mm.RegisterServices(app.configurator)
+	app.configurator = module.NewConfigurator(app.appCodec, app.BaseApp.MsgServiceRouter(), app.GRPCQueryRouter())
+	err = app.mm.RegisterServices(
+		app.configurator,
+	)
+	if err != nil {
+		panic(err)
+	}
 
 	// create the simulation manager and define the order of the modules for deterministic simulations
 	app.sm = module.NewSimulationManager(
@@ -938,7 +947,7 @@ func New(
 		slashing.NewAppModule(appCodec, app.AppKeepers.SlashingKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.AppKeepers.StakingKeeper, app.GetSubspace(stakingtypes.ModuleName), app.interfaceRegistry),
 		params.NewAppModule(app.AppKeepers.ParamsKeeper),
 		evidence.NewAppModule(app.AppKeepers.EvidenceKeeper),
-		wasm.NewAppModule(appCodec, &app.AppKeepers.WasmKeeper, app.AppKeepers.StakingKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
+		wasm.NewAppModule(appCodec, &app.AppKeepers.WasmKeeper, app.AppKeepers.StakingKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.BaseApp.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		ibc.NewAppModule(app.AppKeepers.IBCKeeper),
 		transfer.NewAppModule(app.AppKeepers.TransferKeeper),
 		ibcfee.NewAppModule(app.AppKeepers.IBCFeeKeeper),

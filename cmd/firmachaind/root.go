@@ -44,12 +44,13 @@ import (
 	pruning "github.com/cosmos/cosmos-sdk/client/pruning"
 	snapshot "github.com/cosmos/cosmos-sdk/client/snapshot"
 	runtimeservices "github.com/cosmos/cosmos-sdk/runtime/services"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	module "github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authcodec "github.com/cosmos/cosmos-sdk/x/auth/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtxconfig "github.com/cosmos/cosmos-sdk/x/auth/tx/config"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 var emptyWasmOpts []wasmkeeper.Option
@@ -67,6 +68,12 @@ var tempDir = func() string {
 // NewRootCmd creates a new root command for firmachaind. It is called once in the
 // main function.
 func NewRootCmd() *cobra.Command {
+	cfg := sdk.GetConfig()
+	cfg.SetBech32PrefixForAccount(app.Bech32PrefixAccAddr, app.Bech32PrefixAccPub)
+	cfg.SetBech32PrefixForValidator(app.Bech32PrefixValAddr, app.Bech32PrefixValPub)
+	cfg.SetBech32PrefixForConsensusNode(app.Bech32PrefixConsAddr, app.Bech32PrefixConsPub)
+	cfg.Seal()
+
 	encodingConfig := app.MakeEncodingConfig()
 
 	// we "pre"-instantiate the application for getting the injected/configured encoding configuration
@@ -148,7 +155,7 @@ func NewRootCmd() *cobra.Command {
 
 	initRootCmd(rootCmd, tempApp.ModuleBasicManager(), tempApp.AppCodec(), tempApp.InterfaceRegistry(), tempApp.GetTxConfig())
 
-	if err := autoCliOpts(tempApp).EnhanceRootCommand(rootCmd); err != nil {
+	if err := autoCliOpts(initClientCtx, tempApp).EnhanceRootCommand(rootCmd); err != nil {
 		panic(err)
 	}
 
@@ -384,7 +391,7 @@ func GetWasmOpts(appOpts servertypes.AppOptions) []wasmkeeper.Option {
 	return wasmOpts
 }
 
-func autoCliOpts(tempApp *app.App) autocli.AppOptions {
+func autoCliOpts(initClientCtx client.Context, tempApp *app.App) autocli.AppOptions {
 	modules := make(map[string]appmodule.AppModule, 0)
 	for _, m := range tempApp.ModuleManager().Modules {
 		if moduleWithName, ok := m.(module.HasName); ok {
@@ -398,8 +405,9 @@ func autoCliOpts(tempApp *app.App) autocli.AppOptions {
 	return autocli.AppOptions{
 		Modules:               modules,
 		ModuleOptions:         runtimeservices.ExtractAutoCLIOptions(tempApp.ModuleManager().Modules),
-		AddressCodec:          authcodec.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix()),
-		ValidatorAddressCodec: authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ValidatorAddrPrefix()),
-		ConsensusAddressCodec: authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
+		AddressCodec:          authcodec.NewBech32Codec(app.Bech32PrefixAccAddr),
+		ValidatorAddressCodec: authcodec.NewBech32Codec(app.Bech32PrefixValAddr),
+		ConsensusAddressCodec: authcodec.NewBech32Codec(app.Bech32PrefixConsAddr),
+		ClientCtx:             initClientCtx,
 	}
 }
