@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) ContractLogAll(c context.Context, req *types.ContractLogAllRequest) (*types.ContractLogAllResponse, error) {
+func (k Keeper) ContractLogAll(c context.Context, req *types.QueryAllContractLogRequest) (*types.QueryAllContractLogResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -37,10 +37,10 @@ func (k Keeper) ContractLogAll(c context.Context, req *types.ContractLogAllReque
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.ContractLogAllResponse{ContractLog: contractLogs, Pagination: pageRes}, nil
+	return &types.QueryAllContractLogResponse{ContractLog: contractLogs, Pagination: pageRes}, nil
 }
 
-func (k Keeper) ContractLog(c context.Context, req *types.ContractLogRequest) (*types.ContractLogResponse, error) {
+func (k Keeper) ContractLog(c context.Context, req *types.QueryGetContractLogRequest) (*types.QueryGetContractLogResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -55,5 +55,5 @@ func (k Keeper) ContractLog(c context.Context, req *types.ContractLogRequest) (*
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractLogDataKey))
 	k.cdc.MustUnmarshal(store.Get(GetBytesFromUInt64(req.Id)), &contractLog)
 
-	return &types.ContractLogResponse{ContractLog: &contractLog}, nil
+	return &types.QueryGetContractLogResponse{ContractLog: &contractLog}, nil
 }

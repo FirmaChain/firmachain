@@ -7,9 +7,9 @@ option go_package = "github.com/firmachain/firmachain/v05/x/contract/types";
 message ContractLog {
   string creator = 1;
   uint64 id = 2;
-  string contract_hash = 3; 
-  uint64 time_stamp = 4; 
-  string event_name = 5; 
-  string owner_address = 6; 
-  string json_string = 7;
+  string contractHash = 3; 
+  uint64 timeStamp = 4; 
+  string eventName = 5; 
+  string ownerAddress = 6; 
+  string jsonString = 7;
 }

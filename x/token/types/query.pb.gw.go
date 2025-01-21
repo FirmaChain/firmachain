@@ -34,7 +34,7 @@ var _ = descriptor.ForMessage
 var _ = metadata.Join
 
 func request_Query_TokenData_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq TokenDataRequest
+	var protoReq QueryGetTokenDataRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -44,15 +44,15 @@ func request_Query_TokenData_0(ctx context.Context, marshaler runtime.Marshaler,
 		_   = err
 	)
 
-	val, ok = pathParams["token_id"]
+	val, ok = pathParams["tokenID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "token_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "tokenID")
 	}
 
-	protoReq.TokenId, err = runtime.String(val)
+	protoReq.TokenID, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "token_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "tokenID", err)
 	}
 
 	msg, err := client.TokenData(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -61,7 +61,7 @@ func request_Query_TokenData_0(ctx context.Context, marshaler runtime.Marshaler,
 }
 
 func local_request_Query_TokenData_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq TokenDataRequest
+	var protoReq QueryGetTokenDataRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -71,15 +71,15 @@ func local_request_Query_TokenData_0(ctx context.Context, marshaler runtime.Mars
 		_   = err
 	)
 
-	val, ok = pathParams["token_id"]
+	val, ok = pathParams["tokenID"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "token_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "tokenID")
 	}
 
-	protoReq.TokenId, err = runtime.String(val)
+	protoReq.TokenID, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "token_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "tokenID", err)
 	}
 
 	msg, err := server.TokenData(ctx, &protoReq)
@@ -92,7 +92,7 @@ var (
 )
 
 func request_Query_TokenDataAll_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq TokenDataAllRequest
+	var protoReq QueryAllTokenDataRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -108,7 +108,7 @@ func request_Query_TokenDataAll_0(ctx context.Context, marshaler runtime.Marshal
 }
 
 func local_request_Query_TokenDataAll_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq TokenDataAllRequest
+	var protoReq QueryAllTokenDataRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -128,7 +128,7 @@ var (
 )
 
 func request_Query_GetTokenList_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetTokenListRequest
+	var protoReq QueryGetTokenListRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -144,7 +144,7 @@ func request_Query_GetTokenList_0(ctx context.Context, marshaler runtime.Marshal
 }
 
 func local_request_Query_GetTokenList_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetTokenListRequest
+	var protoReq QueryGetTokenListRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -339,7 +339,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_TokenData_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"firmachain", "token", "tokenData", "token_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_TokenData_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"firmachain", "token", "tokenData", "tokenID"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_TokenDataAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 0, 2, 1, 2, 2}, []string{"firmachain", "token", "tokenData"}, "", runtime.AssumeColonVerbOpt(false)))
 

@@ -13,24 +13,24 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdUpdateTokenUri() *cobra.Command {
+func CmdUpdateTokenURI() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-token-uri [token-id] [token-uri]",
-		Short: "Broadcast message updateTokenUri",
+		Short: "Broadcast message updateTokenURI",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argTokenId := args[0]
-			argTokenUri := args[1]
+			argTokenID := args[0]
+			argTokenURI := args[1]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgUpdateTokenUri(
+			msg := types.NewMsgUpdateTokenURI(
 				clientCtx.GetFromAddress().String(),
-				argTokenId,
-				argTokenUri,
+				argTokenID,
+				argTokenURI,
 			)
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

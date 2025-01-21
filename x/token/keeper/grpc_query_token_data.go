@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) TokenDataAll(c context.Context, req *types.TokenDataAllRequest) (*types.TokenDataAllResponse, error) {
+func (k Keeper) TokenDataAll(c context.Context, req *types.QueryAllTokenDataRequest) (*types.QueryAllTokenDataResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -36,10 +36,10 @@ func (k Keeper) TokenDataAll(c context.Context, req *types.TokenDataAllRequest) 
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.TokenDataAllResponse{TokenData: tokenDatas, Pagination: pageRes}, nil
+	return &types.QueryAllTokenDataResponse{TokenData: tokenDatas, Pagination: pageRes}, nil
 }
 
-func (k Keeper) TokenData(c context.Context, req *types.TokenDataRequest) (*types.TokenDataResponse, error) {
+func (k Keeper) TokenData(c context.Context, req *types.QueryGetTokenDataRequest) (*types.QueryGetTokenDataResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -47,11 +47,11 @@ func (k Keeper) TokenData(c context.Context, req *types.TokenDataRequest) (*type
 
 	val, found := k.GetTokenData(
 		ctx,
-		req.TokenId,
+		req.TokenID,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
-	return &types.TokenDataResponse{TokenData: val}, nil
+	return &types.QueryGetTokenDataResponse{TokenData: val}, nil
 }

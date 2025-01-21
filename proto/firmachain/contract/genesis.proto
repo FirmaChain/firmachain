@@ -8,7 +8,7 @@ option go_package = "github.com/firmachain/firmachain/v05/x/contract/types";
 
 // GenesisState defines the contract module's genesis state.
 message GenesisState {
-	repeated ContractFile contract_file_list = 3;
-	repeated ContractLog contract_log_list = 1; 
-	uint64 contract_log_count = 2; 
+	repeated ContractFile contractFileList = 3;
+	repeated ContractLog contractLogList = 1; 
+	uint64 contractLogCount = 2; 
 }

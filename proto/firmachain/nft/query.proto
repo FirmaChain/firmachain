@@ -11,66 +11,66 @@ option go_package = "github.com/firmachain/firmachain/v05/x/nft/types";
 service Query {
 
 	// Queries a list of NftListOfOwner items.
-	rpc NftIdListOfOwner(NftIdListOfOwnerRequest) returns (NftIdListOfOwnerResponse) {
+	rpc NftIdListOfOwner(QueryNftIdListOfOwnerRequest) returns (QueryNftIdListOfOwnerResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/nft/nftIdListOfOwner";
 	}
 
 	// Queries a list of balanceOf items.
-	rpc BalanceOf(BalanceOfRequest) returns (BalanceOfResponse) {
+	rpc BalanceOf(QueryBalanceOfRequest) returns (QueryBalanceOfResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/nft/balanceOf";
 	}
 
 	// Queries a nftItem by id.
-	rpc NftItem(NftItemRequest) returns (NftItemResponse) {
+	rpc NftItem(QueryGetNftItemRequest) returns (QueryGetNftItemResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/nft/nftItem/{id}";
 	}
 
 	// Queries a list of nftItem items.
-	rpc NftItemAll(NftItemAllRequest) returns (NftItemAllResponse) {
+	rpc NftItemAll(QueryAllNftItemRequest) returns (QueryAllNftItemResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/nft/nftItem";
 	}
 
 }
 
-// NftIdListOfOwnerRequest
-message NftIdListOfOwnerRequest {
-  string owner_address = 1;
+// QueryNftIdListOfOwnerRequest
+message QueryNftIdListOfOwnerRequest {
+  string ownerAddress = 1;
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// NftIdListOfOwnerResponse
-message NftIdListOfOwnerResponse {
-  repeated uint64 nft_id_list = 1;
+// QueryNftIdListOfOwnerResponse
+message QueryNftIdListOfOwnerResponse {
+  repeated uint64 nftIdList = 1;
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// BalanceOfRequest
-message BalanceOfRequest {
-  string owner_address = 1;
+// QueryBalanceOfRequest
+message QueryBalanceOfRequest {
+  string ownerAddress = 1;
 }
 
-// BalanceOfResponse
-message BalanceOfResponse {
+// QueryBalanceOfResponse
+message QueryBalanceOfResponse {
   uint64 total = 1;
 }
 
-// NftItemRequest
-message NftItemRequest {
+// QueryGetNftItemRequest
+message QueryGetNftItemRequest {
 	uint64 id = 1;
 }
 
-// NftItemResponse
-message NftItemResponse {
-	NftItem nft_item = 1;
+// QueryGetNftItemResponse
+message QueryGetNftItemResponse {
+	NftItem nftItem = 1;
 }
 
-// NftItemAllRequest
-message NftItemAllRequest {
+// QueryAllNftItemRequest
+message QueryAllNftItemRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-// NftItemAllResponse
-message NftItemAllResponse {
-	repeated NftItem nft_item = 1;
+// QueryAllNftItemResponse
+message QueryAllNftItemResponse {
+	repeated NftItem nftItem = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

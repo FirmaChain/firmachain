@@ -27,7 +27,7 @@ func CmdGetTokenList() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.GetTokenListRequest{
+			params := &types.QueryGetTokenListRequest{
 
 				OwnerAddress: reqOwnerAddress,
 			}

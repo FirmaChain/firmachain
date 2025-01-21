@@ -6,8 +6,8 @@ option go_package = "github.com/firmachain/firmachain/v05/x/contract/types";
 // Contract file representation
 message ContractFile {
   string creator = 1;
-  string file_hash = 2;
-  uint64 time_stamp = 3; 
-  repeated string owner_list = 4; 
-  string meta_data_json_string = 5; 
+  string fileHash = 2;
+  uint64 timeStamp = 3; 
+  repeated string ownerList = 4; 
+  string metaDataJsonString = 5; 
 }

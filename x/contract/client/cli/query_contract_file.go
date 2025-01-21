@@ -23,7 +23,7 @@ func CmdListContractFile() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.ContractFileAllRequest{
+			params := &types.QueryAllContractFileRequest{
 				Pagination: pageReq,
 			}
 
@@ -52,7 +52,7 @@ func CmdShowContractFile() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.ContractFileRequest{
+			params := &types.QueryGetContractFileRequest{
 				Index: args[0],
 			}
 

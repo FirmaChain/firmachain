@@ -8,5 +8,5 @@ option go_package = "github.com/firmachain/firmachain/v05/x/token/types";
 
 // GenesisState defines the token module's genesis state.
 message GenesisState {
-    repeated TokenData token_data_list = 1 [(gogoproto.nullable) = false];
+    repeated TokenData tokenDataList = 1 [(gogoproto.nullable) = false];
 }

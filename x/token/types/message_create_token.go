@@ -13,7 +13,7 @@ func NewMsgCreateToken(owner string, name string, symbol string, tokenUri string
 		Owner:       owner,
 		Name:        name,
 		Symbol:      symbol,
-		TokenUri:    tokenUri,
+		TokenURI:    tokenUri,
 		TotalSupply: totalSupply,
 		Decimal:     decimal,
 		Mintable:    mintable,

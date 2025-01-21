@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) ContractFileAll(c context.Context, req *types.ContractFileAllRequest) (*types.ContractFileAllResponse, error) {
+func (k Keeper) ContractFileAll(c context.Context, req *types.QueryAllContractFileRequest) (*types.QueryAllContractFileResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -36,10 +36,10 @@ func (k Keeper) ContractFileAll(c context.Context, req *types.ContractFileAllReq
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &types.ContractFileAllResponse{ContractFile: contractFiles, Pagination: pageRes}, nil
+	return &types.QueryAllContractFileResponse{ContractFile: contractFiles, Pagination: pageRes}, nil
 }
 
-func (k Keeper) ContractFile(c context.Context, req *types.ContractFileRequest) (*types.ContractFileResponse, error) {
+func (k Keeper) ContractFile(c context.Context, req *types.QueryGetContractFileRequest) (*types.QueryGetContractFileResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -50,5 +50,5 @@ func (k Keeper) ContractFile(c context.Context, req *types.ContractFileRequest) 
 		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
-	return &types.ContractFileResponse{ContractFile: &val}, nil
+	return &types.QueryGetContractFileResponse{ContractFile: &val}, nil
 }

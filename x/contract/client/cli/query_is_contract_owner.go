@@ -28,7 +28,7 @@ func CmdIsContractOwner() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.IsContractOwnerRequest{
+			params := &types.QueryIsContractOwnerRequest{
 
 				FileHash:     string(reqFileHash),
 				OwnerAddress: string(reqOwnerAddress),

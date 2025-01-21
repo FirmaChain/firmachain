@@ -38,7 +38,7 @@ var (
 )
 
 func request_Query_NftIdListOfOwner_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NftIdListOfOwnerRequest
+	var protoReq QueryNftIdListOfOwnerRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -54,7 +54,7 @@ func request_Query_NftIdListOfOwner_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_Query_NftIdListOfOwner_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NftIdListOfOwnerRequest
+	var protoReq QueryNftIdListOfOwnerRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -74,7 +74,7 @@ var (
 )
 
 func request_Query_BalanceOf_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq BalanceOfRequest
+	var protoReq QueryBalanceOfRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -90,7 +90,7 @@ func request_Query_BalanceOf_0(ctx context.Context, marshaler runtime.Marshaler,
 }
 
 func local_request_Query_BalanceOf_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq BalanceOfRequest
+	var protoReq QueryBalanceOfRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -106,7 +106,7 @@ func local_request_Query_BalanceOf_0(ctx context.Context, marshaler runtime.Mars
 }
 
 func request_Query_NftItem_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NftItemRequest
+	var protoReq QueryGetNftItemRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -133,7 +133,7 @@ func request_Query_NftItem_0(ctx context.Context, marshaler runtime.Marshaler, c
 }
 
 func local_request_Query_NftItem_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NftItemRequest
+	var protoReq QueryGetNftItemRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -164,7 +164,7 @@ var (
 )
 
 func request_Query_NftItemAll_0(ctx context.Context, marshaler runtime.Marshaler, client QueryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NftItemAllRequest
+	var protoReq QueryAllNftItemRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
@@ -180,7 +180,7 @@ func request_Query_NftItemAll_0(ctx context.Context, marshaler runtime.Marshaler
 }
 
 func local_request_Query_NftItemAll_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NftItemAllRequest
+	var protoReq QueryAllNftItemRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {

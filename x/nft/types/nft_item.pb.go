@@ -28,7 +28,7 @@ type NftItem struct {
 	Owner string `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
 	// Id
 	Id uint64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	// TokenUri
+	// TokenURI
 	TokenUri string `protobuf:"bytes,3,opt,name=token_uri,json=tokenUri,proto3" json:"token_uri,omitempty"`
 }
 

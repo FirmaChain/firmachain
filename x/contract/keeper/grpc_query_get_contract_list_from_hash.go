@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) GetContractListFromHash(goCtx context.Context, req *types.GetContractListFromHashRequest) (*types.GetContractListFromHashResponse, error) {
+func (k Keeper) GetContractListFromHash(goCtx context.Context, req *types.QueryGetContractListFromHashRequest) (*types.QueryGetContractListFromHashResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -31,5 +31,5 @@ func (k Keeper) GetContractListFromHash(goCtx context.Context, req *types.GetCon
 		idList = append(idList, id)
 	}
 
-	return &types.GetContractListFromHashResponse{IdList: idList}, nil
+	return &types.QueryGetContractListFromHashResponse{IdList: idList}, nil
 }

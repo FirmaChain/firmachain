@@ -12,95 +12,95 @@ option go_package = "github.com/firmachain/firmachain/v05/x/contract/types";
 service Query {
 
 	// Queries a list of isContractOwner items.
-	rpc IsContractOwner(IsContractOwnerRequest) returns (IsContractOwnerResponse) {
+	rpc IsContractOwner(QueryIsContractOwnerRequest) returns (QueryIsContractOwnerResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/contract/isContractOwner";
 	}
 
 	// Queries a contractFile by index.
-	rpc ContractFile(ContractFileRequest) returns (ContractFileResponse) {
+	rpc ContractFile(QueryGetContractFileRequest) returns (QueryGetContractFileResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/contract/contractFile/{index}";
 	}
 
 	// Queries a list of contractFile items.
-	rpc ContractFileAll(ContractFileAllRequest) returns (ContractFileAllResponse) {
+	rpc ContractFileAll(QueryAllContractFileRequest) returns (QueryAllContractFileResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/contract/contractFile";
 	}
 
 	// Queries a contractLog by hash
-	rpc GetContractListFromHash(GetContractListFromHashRequest) returns (GetContractListFromHashResponse) {
+	rpc GetContractListFromHash(QueryGetContractListFromHashRequest) returns (QueryGetContractListFromHashResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/contract/ContractListFromHash/{hash}";
 	}
 
 	// Queries a contractLog by id.
-	rpc ContractLog(ContractLogRequest) returns (ContractLogResponse) {
+	rpc ContractLog(QueryGetContractLogRequest) returns (QueryGetContractLogResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/contract/contractLog/{id}";
 	}
 
 	// Queries a list of contractLog items.
-	rpc ContractLogAll(ContractLogAllRequest) returns (ContractLogAllResponse) {
+	rpc ContractLogAll(QueryAllContractLogRequest) returns (QueryAllContractLogResponse) {
 		option (google.api.http).get = "/firmachain/firmachain/contract/contractLog";
 	}
 
 }
 
-// IsContractOwnerRequest
-message IsContractOwnerRequest {
-  string file_hash = 1;
-  string owner_address = 2;
+// QueryIsContractOwnerRequest
+message QueryIsContractOwnerRequest {
+  string fileHash = 1;
+  string ownerAddress = 2;
 }
 
-// IsContractOwnerResponse
-message IsContractOwnerResponse {
+// QueryIsContractOwnerResponse
+message QueryIsContractOwnerResponse {
   bool result = 1;
 }
 
-// ContractFileRequest
-message ContractFileRequest {
+// QueryGetContractFileRequest
+message QueryGetContractFileRequest {
 	string index = 1;
 }
 
-// ContractFileResponse
-message ContractFileResponse {
-	ContractFile contract_file = 1;
+// QueryGetContractFileResponse
+message QueryGetContractFileResponse {
+	ContractFile contractFile = 1;
 }
 
-// ContractFileAllRequest
-message ContractFileAllRequest {
+// QueryAllContractFileRequest
+message QueryAllContractFileRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-// ContractFileAllResponse
-message ContractFileAllResponse {
-	repeated ContractFile contract_file = 1;
+// QueryAllContractFileResponse
+message QueryAllContractFileResponse {
+	repeated ContractFile contractFile = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
-// ContractLogRequest
-message ContractLogRequest {
+// QueryGetContractLogRequest
+message QueryGetContractLogRequest {
 	uint64 id = 1;
 }
 
-// GetContractListFromHashRequest
-message GetContractListFromHashRequest {
+// QueryGetContractListFromHashRequest
+message QueryGetContractListFromHashRequest {
 	string hash = 1;
 }
 
-// ContractLogResponse
-message ContractLogResponse {
-	ContractLog contract_log = 1;
+// QueryGetContractLogResponse
+message QueryGetContractLogResponse {
+	ContractLog contractLog = 1;
 }
 
-// GetContractListFromHashResponse
-message GetContractListFromHashResponse {
-	repeated uint64 id_list = 1;
+// QueryGetContractListFromHashResponse
+message QueryGetContractListFromHashResponse {
+	repeated uint64 idList = 1;
 }
 
-// ContractLogAllRequest
-message ContractLogAllRequest {
+// QueryAllContractLogRequest
+message QueryAllContractLogRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-// ContractLogAllResponse
-message ContractLogAllResponse {
-	repeated ContractLog contract_log = 1;
+// QueryAllContractLogResponse
+message QueryAllContractLogResponse {
+	repeated ContractLog contractLog = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

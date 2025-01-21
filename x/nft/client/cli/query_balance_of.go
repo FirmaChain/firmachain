@@ -27,7 +27,7 @@ func CmdBalanceOf() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.BalanceOfRequest{
+			params := &types.QueryBalanceOfRequest{
 
 				OwnerAddress: string(reqOwnerAddress),
 			}

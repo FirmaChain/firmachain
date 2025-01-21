@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) IsContractOwner(goCtx context.Context, req *types.IsContractOwnerRequest) (*types.IsContractOwnerResponse, error) {
+func (k Keeper) IsContractOwner(goCtx context.Context, req *types.QueryIsContractOwnerRequest) (*types.QueryIsContractOwnerResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -23,7 +23,7 @@ func (k Keeper) IsContractOwner(goCtx context.Context, req *types.IsContractOwne
 
 	result := contains(val.OwnerList, req.OwnerAddress)
 
-	return &types.IsContractOwnerResponse{Result: result}, nil
+	return &types.QueryIsContractOwnerResponse{Result: result}, nil
 }
 
 func contains(s []string, substr string) bool {

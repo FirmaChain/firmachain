@@ -24,7 +24,7 @@ func CmdListTokenData() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.TokenDataAllRequest{
+			params := &types.QueryAllTokenDataRequest{
 				Pagination: pageReq,
 			}
 
@@ -53,10 +53,10 @@ func CmdShowTokenData() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argTokenId := args[0]
+			argTokenID := args[0]
 
-			params := &types.TokenDataRequest{
-				TokenId: argTokenId,
+			params := &types.QueryGetTokenDataRequest{
+				TokenID: argTokenID,
 			}
 
 			res, err := queryClient.TokenData(context.Background(), params)

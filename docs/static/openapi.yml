@@ -12476,7 +12476,7 @@ paths:
           schema:
             type: object
             properties:
-              tokenId:
+              tokenID:
                 type: string
                 format: uint64
         default:
@@ -12519,7 +12519,7 @@ paths:
           schema:
             type: object
             properties:
-              tokenId:
+              tokenID:
                 type: array
                 items:
                   type: string
@@ -12563,7 +12563,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    tokenId:
+                    tokenID:
                       type: string
                     name:
                       type: string
@@ -12693,7 +12693,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/firmachain/firmachain/token/tokenData/{tokenId}':
+  '/firmachain/firmachain/token/tokenData/{tokenID}':
     get:
       summary: Queries a tokenData by index.
       operationId: FirmachainFirmachainTokenTokenData
@@ -12706,7 +12706,7 @@ paths:
               tokenData:
                 type: object
                 properties:
-                  tokenId:
+                  tokenID:
                     type: string
                   name:
                     type: string
@@ -12751,7 +12751,7 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: tokenId
+        - name: tokenID
           in: path
           required: true
           type: string
@@ -20943,7 +20943,7 @@ definitions:
   firmachain.firmachain.nft.QueryTokenOfOwnerByIndexResponse:
     type: object
     properties:
-      tokenId:
+      tokenID:
         type: string
         format: uint64
   firmachain.firmachain.token.MsgBurnResponse:
@@ -20952,7 +20952,7 @@ definitions:
     type: object
   firmachain.firmachain.token.MsgMintResponse:
     type: object
-  firmachain.firmachain.token.MsgUpdateTokenUriResponse:
+  firmachain.firmachain.token.MsgUpdateTokenURIResponse:
     type: object
   firmachain.firmachain.token.QueryAllTokenDataResponse:
     type: object
@@ -20962,7 +20962,7 @@ definitions:
         items:
           type: object
           properties:
-            tokenId:
+            tokenID:
               type: string
             name:
               type: string
@@ -21019,7 +21019,7 @@ definitions:
       tokenData:
         type: object
         properties:
-          tokenId:
+          tokenID:
             type: string
           name:
             type: string
@@ -21048,14 +21048,14 @@ definitions:
   firmachain.firmachain.token.QueryGetTokenListResponse:
     type: object
     properties:
-      tokenId:
+      tokenID:
         type: array
         items:
           type: string
   firmachain.firmachain.token.TokenData:
     type: object
     properties:
-      tokenId:
+      tokenID:
         type: string
       name:
         type: string

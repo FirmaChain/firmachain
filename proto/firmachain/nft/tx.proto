@@ -26,8 +26,8 @@ message MsgTransfer {
   option (cosmos.msg.v1.signer) = "owner";
 
   string owner = 1;
-  uint64 nft_id = 2;
-  string to_address = 3;
+  uint64 nftId = 2;
+  string toAddress = 3;
 }
 
 // MsgTransferResponse
@@ -40,7 +40,7 @@ message MsgBurn {
   option (cosmos.msg.v1.signer) = "owner";
 
   string owner = 1;
-  uint64 nft_id = 2;
+  uint64 nftId = 2;
 }
 
 // MsgBurnResponse
@@ -54,10 +54,10 @@ message MsgMint {
   option (cosmos.msg.v1.signer) = "owner";
 
   string owner = 1;
-  string token_uri = 2;
+  string tokenURI = 2;
 }
 
 // MsgMintResponse
 message MsgMintResponse {
-  uint64 nft_id = 1;
+  uint64 nftId = 1;
 }

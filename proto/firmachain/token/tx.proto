@@ -19,8 +19,8 @@ service Msg {
   // Burn
   rpc Burn(MsgBurn) returns (MsgBurnResponse);
   
-  // UpdateTokenUri
-  rpc UpdateTokenUri(MsgUpdateTokenUri) returns (MsgUpdateTokenUriResponse);
+  // UpdateTokenURI
+  rpc UpdateTokenURI(MsgUpdateTokenURI) returns (MsgUpdateTokenURIResponse);
 }
 
 // MsgCreateToken
@@ -31,8 +31,8 @@ message MsgCreateToken {
   string owner = 1;
   string name = 2;
   string symbol = 3;
-  string token_uri = 4;
-  uint64 total_supply = 5;
+  string tokenURI = 4;
+  uint64 totalSupply = 5;
   uint64 decimal = 6;
   bool mintable = 7;
   bool burnable = 8;
@@ -48,9 +48,9 @@ message MsgMint {
   option (cosmos.msg.v1.signer) = "owner";
 
   string owner = 1;
-  string token_id = 2;
+  string tokenID = 2;
   uint64 amount = 3;
-  string to_address = 4;
+  string toAddress = 4;
 }
 
 // MsgMintResponse
@@ -63,7 +63,7 @@ message MsgBurn {
   option (cosmos.msg.v1.signer) = "owner";
 
   string owner = 1;
-  string token_id = 2;
+  string tokenID = 2;
   uint64 amount = 3;
 }
 
@@ -71,16 +71,16 @@ message MsgBurn {
 message MsgBurnResponse {
 }
 
-// MsgUpdateTokenUri
-message MsgUpdateTokenUri {
-  option (amino.name) = "token/UpdateTokenUri";
+// MsgUpdateTokenURI
+message MsgUpdateTokenURI {
+  option (amino.name) = "token/UpdateTokenURI";
   option (cosmos.msg.v1.signer) = "owner";
 
   string owner = 1;
-  string token_id = 2;
-  string token_uri = 3;
+  string tokenID = 2;
+  string tokenURI = 3;
 }
 
-// MsgUpdateTokenUriResponse
-message MsgUpdateTokenUriResponse {
+// MsgUpdateTokenURIResponse
+message MsgUpdateTokenURIResponse {
 }

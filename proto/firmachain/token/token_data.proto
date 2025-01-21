@@ -7,16 +7,16 @@ option go_package = "github.com/firmachain/firmachain/v05/x/token/types";
 
 // Token data representation
 message TokenData {
-  string token_id = 1; 
+  string tokenID = 1; 
   string name = 2; 
   string symbol = 3; 
-  string token_uri = 4; 
-  uint64 total_supply = 5; 
+  string tokenURI = 4; 
+  uint64 totalSupply = 5; 
   uint64 decimal = 6; 
   bool mintable = 7; 
   bool burnable = 8; 
-  uint64 mint_sequence = 9; 
-  uint64 burn_sequence = 10; 
+  uint64 mintSequence = 9; 
+  uint64 burnSequence = 10; 
   string owner = 11;
 }
 

@@ -7,6 +7,6 @@ option go_package = "github.com/firmachain/firmachain/v05/x/nft/types";
 
 // GenesisState defines the nft module's genesis state.
 message GenesisState {
-	repeated NftItem nft_item_list = 1;
-	uint64 nft_item_count = 2;
+	repeated NftItem nftItemList = 1;
+	uint64 nftItemCount = 2;
 }

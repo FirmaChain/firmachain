@@ -9,6 +9,6 @@ message NftItem {
   string owner = 1;
   // Id
   uint64 id = 2;
-  // TokenUri
+  // TokenURI
   string token_uri = 3; 
 }

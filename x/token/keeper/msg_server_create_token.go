@@ -19,15 +19,15 @@ func (ms msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// ex) GAMETOKEN -> ugametoken
-	tokenId := "u" + strings.ToLower(msg.Symbol)
+	tokenID := "u" + strings.ToLower(msg.Symbol)
 
-	err := ms.keeper.CheckCommonError(tokenId, msg.Symbol, msg.Name, msg.TotalSupply)
+	err := ms.keeper.CheckCommonError(tokenID, msg.Symbol, msg.Name, msg.TotalSupply)
 
 	if err != nil {
 		return nil, err
 	}
 
-	_, isFound := ms.keeper.GetTokenData(ctx, tokenId)
+	_, isFound := ms.keeper.GetTokenData(ctx, tokenID)
 
 	if isFound {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
@@ -44,10 +44,10 @@ func (ms msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken
 
 	var tokenData = types.TokenData{
 		Owner:        msg.Owner,
-		TokenId:      tokenId,
+		TokenID:      tokenID,
 		Name:         msg.Name,
 		Symbol:       msg.Symbol,
-		TokenUri:     msg.TokenUri,
+		TokenURI:     msg.TokenURI,
 		TotalSupply:  msg.TotalSupply,
 		Decimal:      msg.Decimal,
 		Mintable:     msg.Mintable,
@@ -60,7 +60,7 @@ func (ms msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken
 
 	// bank module
 	// mint
-	newCoin := sdk.NewInt64Coin(tokenId, int64(msg.TotalSupply))
+	newCoin := sdk.NewInt64Coin(tokenID, int64(msg.TotalSupply))
 	err = ms.keeper.bankKeeper.MintCoins(ctx, types.ModuleName, sdk.NewCoins(newCoin))
 
 	if err != nil {
@@ -79,11 +79,11 @@ func (ms msgServer) CreateToken(goCtx context.Context, msg *types.MsgCreateToken
 		return nil, err
 	}
 
-	// write tokenId info to transaction event log
+	// write tokenID info to transaction event log
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		sdk.EventTypeMessage,
 		sdk.NewAttribute("Owner", msg.Owner),
-		sdk.NewAttribute("TokenId", tokenId),
+		sdk.NewAttribute("TokenID", tokenID),
 		sdk.NewAttribute("TokenName", msg.Name),
 		sdk.NewAttribute("TokenSymbol", msg.Symbol),
 	))
