@@ -61,7 +61,7 @@ message QueryGetNftItemRequest {
 
 // QueryGetNftItemResponse
 message QueryGetNftItemResponse {
-	NftItem nftItem = 1;
+	NftItem NftItem = 1;
 }
 
 // QueryAllNftItemRequest
@@ -71,6 +71,6 @@ message QueryAllNftItemRequest {
 
 // QueryAllNftItemResponse
 message QueryAllNftItemResponse {
-	repeated NftItem nftItem = 1;
+	repeated NftItem NftItem = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

@@ -71,7 +71,7 @@ message QueryAllContractFileRequest {
 
 // QueryAllContractFileResponse
 message QueryAllContractFileResponse {
-	repeated ContractFile contractFile = 1;
+	repeated ContractFile ContractFile = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 // QueryGetContractLogRequest
@@ -86,7 +86,7 @@ message QueryGetContractListFromHashRequest {
 
 // QueryGetContractLogResponse
 message QueryGetContractLogResponse {
-	ContractLog contractLog = 1;
+	ContractLog ContractLog = 1;
 }
 
 // QueryGetContractListFromHashResponse
@@ -101,6 +101,6 @@ message QueryAllContractLogRequest {
 
 // QueryAllContractLogResponse
 message QueryAllContractLogResponse {
-	repeated ContractLog contractLog = 1;
+	repeated ContractLog ContractLog = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
