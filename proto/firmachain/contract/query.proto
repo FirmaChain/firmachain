@@ -61,7 +61,7 @@ message QueryGetContractFileRequest {
 
 // QueryGetContractFileResponse
 message QueryGetContractFileResponse {
-	ContractFile contractFile = 1;
+	ContractFile ContractFile = 1;
 }
 
 // QueryAllContractFileRequest
