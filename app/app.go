@@ -960,6 +960,7 @@ func New(
 
 	// ============ Initialization ============
 	app.setupUpgradeHandlers(app.configurator)
+	app.setupUpgradeStoreLoaders()
 
 	// SDK v47 - since we do not use dep inject, this gives us access to newer gRPC services.
 	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
@@ -978,6 +979,7 @@ func New(
 	app.SetInitChainer(app.InitChainer)
 	app.SetPreBlocker(app.PreBlocker)
 	app.SetBeginBlocker(app.BeginBlocker)
+	app.SetEndBlocker(app.EndBlocker)
 
 	anteHandler, err := ante.NewAnteHandler(
 		ante.HandlerOptions{
@@ -1013,8 +1015,6 @@ func New(
 	// likely to be a state-machine breaking change, which needs a coordinated
 	// upgrade.
 	app.setPostHandler()
-
-	app.SetEndBlocker(app.EndBlocker)
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
@@ -1124,9 +1124,7 @@ func newBasicManagerFromManager(app *App) module.BasicManager {
 		map[string]module.AppModuleBasic{
 			genutiltypes.ModuleName: genutil.NewAppModuleBasic(genutiltypes.DefaultMessageValidator),
 			govtypes.ModuleName: gov.NewAppModuleBasic(
-				[]govclient.ProposalHandler{
-					paramsclient.ProposalHandler,
-				},
+				getGovProposalHandlers(),
 			),
 		})
 	basicManager.RegisterLegacyAminoCodec(app.legacyAmino)
