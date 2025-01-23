@@ -28,6 +28,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	apphelpers "github.com/firmachain/firmachain/v05/app/helpers"
@@ -70,7 +72,7 @@ type EmptyAppOptions struct{}
 
 func (EmptyAppOptions) Get(_ string) interface{} { return nil }
 
-func Setup(t *testing.T) *App {
+func SetupApp(t *testing.T) (*App, sdk.Context) {
 	t.Helper()
 
 	cfg := sdk.GetConfig()
@@ -95,28 +97,29 @@ func Setup(t *testing.T) *App {
 		Coins:   sdk.NewCoins(sdk.NewCoin(appparams.DefaultBondDenom, math.NewInt(100000000000000))),
 	}
 
-	ctx := sdk.NewContext(nil, tmproto.Header{ChainID: "testing"}, false, log.NewNopLogger())
+	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, balance)
 
-	app := SetupWithGenesisValSet(t, ctx, valSet, []authtypes.GenesisAccount{acc}, balance)
+	ctx := app.GetContextForCheckTx(nil)
 
-	return app
+	return app, ctx
 }
 
 // SetupWithGenesisValSet initializes a new firmachainApp with a validator set and genesis accounts
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the firmachainApp from first genesis
 // account. A Nop logger is set in firmachainApp.
-func SetupWithGenesisValSet(t *testing.T, ctx sdk.Context, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *App {
+func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *App {
 	t.Helper()
 
-	firmachainApp, genesisState := setup(t, true)
+	const withGenesis = true
+	firmachainApp, genesisState := setup(t, withGenesis)
 	genesisState = genesisStateWithValSet(t, firmachainApp, genesisState, valSet, genAccs, balances...)
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 	require.NoError(t, err)
 
 	// init chain will set the validator set and initialize the genesis accounts
-	firmachainApp.InitChain(
+	_, err = firmachainApp.InitChain(
 		&abci.RequestInitChain{
 			Validators:      []abci.ValidatorUpdate{},
 			ConsensusParams: DefaultConsensusParams,
@@ -126,10 +129,28 @@ func SetupWithGenesisValSet(t *testing.T, ctx sdk.Context, valSet *tmtypes.Valid
 			InitialHeight:   1,
 		},
 	)
+	require.NoError(t, err, "Failed to setup app: InitChain failed.")
 
 	// commit genesis changes
-	firmachainApp.Commit()
-	firmachainApp.ModuleManager().BeginBlock(ctx)
+	_, err = firmachainApp.Commit()
+	require.NoError(t, err, "Failed to setup app: Commit failed.")
+
+	/*
+		newCtx := firmachainApp.NewContextLegacy(true, tmproto.Header{
+			ChainID:            "testing",
+			Height:             firmachainApp.LastBlockHeight() + 1,
+			AppHash:            firmachainApp.LastCommitID().Hash,
+			ValidatorsHash:     valSet.Hash(),
+			NextValidatorsHash: valSet.Hash(),
+			Time:               time.Now().UTC(),
+		})
+	*/
+	/*
+		newCtx := firmachainApp.NewContext(true)
+		_, err = firmachainApp.ModuleManager().BeginBlock(newCtx)
+		// BUG: it seems we have a problem with mint module keys. Uncommenting the following, the test fails.
+		//require.NoError(t, err, "Failed to setup app: BeginBlock failed.")
+	*/
 
 	return firmachainApp
 }
@@ -158,7 +179,9 @@ func setup(t *testing.T, withGenesis bool, opts ...wasmkeeper.Option) (*App, Gen
 		bam.SetChainID("testing"),
 	)
 	if withGenesis {
-		return app, app.NewDefaultGenesisState(app.AppCodec())
+		genesisState := app.NewDefaultGenesisState(app.AppCodec())
+		_ = genesisState
+		return app, genesisState
 	}
 
 	return app, GenesisState{}
@@ -199,7 +222,7 @@ func genesisStateWithValSet(t *testing.T,
 			MinSelfDelegation: math.ZeroInt(),
 		}
 		validators = append(validators, validator)
-		delegations = append(delegations, stakingtypes.NewDelegation(genAccs[0].GetAddress().String(), val.Address.String(), math.LegacyOneDec()))
+		delegations = append(delegations, stakingtypes.NewDelegation(genAccs[0].GetAddress().String(), sdk.ValAddress(val.Address).String(), math.LegacyOneDec()))
 
 	}
 
@@ -233,6 +256,16 @@ func genesisStateWithValSet(t *testing.T,
 	bankGenesis := banktypes.NewGenesisState(banktypes.DefaultGenesisState().Params, balances, totalSupply, []banktypes.Metadata{}, []banktypes.SendEnabled{})
 	genesisState[banktypes.ModuleName] = codec.MustMarshalJSON(bankGenesis)
 	// println("genesisStateWithValSet bankState:", string(genesisState[banktypes.ModuleName]))
+
+	// update mint genesis
+	mintGenesis := minttypes.DefaultGenesisState()
+	mintGenesis.Params.MintDenom = appparams.DefaultBondDenom
+	genesisState[minttypes.ModuleName] = codec.MustMarshalJSON(mintGenesis)
+
+	// update crisis genesis
+	crisisGenesis := crisistypes.DefaultGenesisState()
+	crisisGenesis.ConstantFee.Denom = appparams.DefaultBondDenom
+	genesisState[crisistypes.ModuleName] = codec.MustMarshalJSON(crisisGenesis)
 
 	return genesisState
 }

@@ -36,6 +36,8 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+
+	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 )
 
 func CreateV0_5_0UpgradeHandler(
@@ -102,8 +104,12 @@ func CreateV0_5_0UpgradeHandler(
 		// === New params ===
 		// https://github.com/cosmos/ibc-go/blob/v7.1.0/docs/migrations/v7-to-v7_1.md
 		// explicitly update the IBC 02-client params, adding the localhost client type
-		newIBCCoreParams := keepers.IBCKeeper.ClientKeeper.GetParams(ctx)
-		newIBCCoreParams.AllowedClients = append(newIBCCoreParams.AllowedClients, ibcexported.Localhost)
+		var newIBCCoreParams clienttypes.Params
+		newIBCCoreParams.AllowedClients = append(newIBCCoreParams.AllowedClients,
+			ibcexported.Solomachine,
+			ibcexported.Tendermint,
+			ibcexported.Localhost,
+		)
 		// ICA Host
 		newIcaHostParams := icahosttypes.Params{
 			HostEnabled: true,
@@ -134,6 +140,9 @@ func CreateV0_5_0UpgradeHandler(
 		// ==== Run migration ====
 		logger.Info(fmt.Sprintf("pre migrate version map: %v", vm))
 		versionMap, err := mm.RunMigrations(ctx, cfg, vm)
+		if err != nil {
+			return nil, err
+		}
 		logger.Info(fmt.Sprintf("post migrate version map: %v", versionMap))
 
 		// New modules run AFTER the migrations, so to set the correct params after the default.

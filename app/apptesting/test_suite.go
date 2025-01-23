@@ -1,37 +1,42 @@
 package apptesting
 
 import (
-	"fmt"
+	//"fmt"
+	"os"
 	"time"
 
 	"github.com/stretchr/testify/suite"
 
 	"cosmossdk.io/log"
 	"github.com/cometbft/cometbft/crypto/ed25519"
-	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	cosmosdb "github.com/cosmos/cosmos-db"
+
+	//tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
+	//cosmosdb "github.com/cosmos/cosmos-db"
 
 	"cosmossdk.io/math"
 
-	"cosmossdk.io/store"
-	"cosmossdk.io/store/metrics"
-	"cosmossdk.io/store/rootmulti"
+	//"cosmossdk.io/store"
+	//"cosmossdk.io/store/metrics"
+	//"cosmossdk.io/store/rootmulti"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+
+	//"github.com/cosmos/cosmos-sdk/client"
+	//"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	banktestutil "github.com/cosmos/cosmos-sdk/x/bank/testutil"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	//"github.com/cosmos/cosmos-sdk/types/tx/signing"
+	//authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
+	//banktestutil "github.com/cosmos/cosmos-sdk/x/bank/testutil"
+	//distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	//minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	//slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakinghelper "github.com/cosmos/cosmos-sdk/x/staking/testutil"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	//stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/firmachain/firmachain/v05/app"
-	appparams "github.com/firmachain/firmachain/v05/app/params"
+	//appparams "github.com/firmachain/firmachain/v05/app/params"
+
+	header "cosmossdk.io/core/header"
 )
 
 type KeeperTestHelper struct {
@@ -41,6 +46,8 @@ type KeeperTestHelper struct {
 	Ctx         sdk.Context
 	QueryHelper *baseapp.QueryServiceTestHelper
 	TestAccs    []sdk.AccAddress
+
+	Logger log.Logger
 
 	StakingHelper *stakinghelper.Helper
 }
@@ -53,8 +60,10 @@ var (
 // Setup sets up basic environment for suite (App, Ctx, and test accounts)
 func (s *KeeperTestHelper) Setup() {
 	t := s.T()
-	s.App = app.Setup(t)
-	s.Ctx = s.App.BaseApp.NewContextLegacy(false, tmtypes.Header{Height: 1, ChainID: "juno-1", Time: time.Now().UTC()})
+	s.Logger = log.NewLogger(os.Stderr)
+	s.App, s.Ctx = app.SetupApp(t)
+	s.Ctx = s.Ctx.WithBlockTime(s.Ctx.BlockTime().Add(time.Second)).WithBlockHeight(1)
+	//s.Ctx = s.App.BaseApp.NewContextLegacy(true, tmtypes.Header{Height: 1, ChainID: "firma-1", Time: time.Now().UTC()}).WithHeaderInfo(header.Info{Height: 1, Time: s.Ctx.BlockTime()}).WithBlockHeight(1)
 	s.QueryHelper = &baseapp.QueryServiceTestHelper{
 		GRPCQueryRouter: s.App.GRPCQueryRouter(),
 		Ctx:             s.Ctx,
@@ -62,13 +71,14 @@ func (s *KeeperTestHelper) Setup() {
 	s.TestAccs = CreateRandomAccounts(3)
 
 	s.StakingHelper = stakinghelper.NewHelper(s.Suite.T(), s.Ctx, s.App.AppKeepers.StakingKeeper)
-	s.StakingHelper.Denom = "ujuno"
+	s.StakingHelper.Denom = "ufct"
 }
 
+/*
 func (s *KeeperTestHelper) SetupTestForInitGenesis() {
 	t := s.T()
 	// Setting to True, leads to init genesis not running
-	s.App = app.Setup(t)
+	s.App, _ = app.SetupApp(t)
 	s.Ctx = s.App.BaseApp.NewContextLegacy(true, tmtypes.Header{
 		ChainID: "testing",
 	})
@@ -226,19 +236,30 @@ func (s *KeeperTestHelper) BuildTx(
 
 	return txBuilder.GetTx()
 }
+*/
 
 func (s *KeeperTestHelper) ConfirmUpgradeSucceeded(upgradeName string, upgradeHeight int64) {
 	s.Ctx = s.Ctx.WithBlockHeight(upgradeHeight - 1)
 	plan := upgradetypes.Plan{Name: upgradeName, Height: upgradeHeight}
 	err := s.App.AppKeepers.UpgradeKeeper.ScheduleUpgrade(s.Ctx, plan)
 	s.Require().NoError(err)
-	_, err = s.App.AppKeepers.UpgradeKeeper.GetUpgradePlan(s.Ctx)
+	planGot, err := s.App.AppKeepers.UpgradeKeeper.GetUpgradePlan(s.Ctx)
+	_ = planGot
 	s.Require().NoError(err)
 
 	s.Ctx = s.Ctx.WithBlockHeight(upgradeHeight)
-	s.Require().NotPanics(func() {
-		s.App.BeginBlocker(s.Ctx)
-	})
+
+	s.Ctx = s.Ctx.WithHeaderInfo(header.Info{Height: upgradeHeight, Time: s.Ctx.BlockTime().Add(time.Second)}).WithBlockHeight(upgradeHeight)
+	/*
+		s.Require().NotPanics(func() {
+			res, err := s.App.PreBlocker(s.Ctx, nil)
+			_ = res
+			s.Require().NoError(err)
+		})
+	*/
+	res, err := s.App.PreBlocker(s.Ctx, nil)
+	_ = res
+	s.Require().NoError(err)
 }
 
 // CreateRandomAccounts is a function return a list of randomly generated AccAddresses
@@ -252,9 +273,11 @@ func CreateRandomAccounts(numAccts int) []sdk.AccAddress {
 	return testAddrs
 }
 
+/*
 func GenerateTestAddrs() (string, string) {
 	pk1 := ed25519.GenPrivKey().PubKey()
 	validAddr := sdk.AccAddress(pk1.Address()).String()
 	invalidAddr := sdk.AccAddress("invalid").String()
 	return validAddr, invalidAddr
 }
+*/
