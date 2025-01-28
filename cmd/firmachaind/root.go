@@ -36,6 +36,7 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/firmachain/firmachain/v05/app"
+	appparams "github.com/firmachain/firmachain/v05/app/params"
 
 	"cosmossdk.io/client/v2/autocli"
 	"cosmossdk.io/core/appmodule"
@@ -69,9 +70,9 @@ var tempDir = func() string {
 // main function.
 func NewRootCmd() *cobra.Command {
 	cfg := sdk.GetConfig()
-	cfg.SetBech32PrefixForAccount(app.Bech32PrefixAccAddr, app.Bech32PrefixAccPub)
-	cfg.SetBech32PrefixForValidator(app.Bech32PrefixValAddr, app.Bech32PrefixValPub)
-	cfg.SetBech32PrefixForConsensusNode(app.Bech32PrefixConsAddr, app.Bech32PrefixConsPub)
+	cfg.SetBech32PrefixForAccount(appparams.Bech32PrefixAccAddr, appparams.Bech32PrefixAccPub)
+	cfg.SetBech32PrefixForValidator(appparams.Bech32PrefixValAddr, appparams.Bech32PrefixValPub)
+	cfg.SetBech32PrefixForConsensusNode(appparams.Bech32PrefixConsAddr, appparams.Bech32PrefixConsPub)
 	cfg.Seal()
 
 	encodingConfig := app.MakeEncodingConfig()
@@ -101,7 +102,7 @@ func NewRootCmd() *cobra.Command {
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
 		WithAccountRetriever(authtypes.AccountRetriever{}).
-		WithBroadcastMode(flags.FlagBroadcastMode).
+		WithBroadcastMode(flags.BroadcastSync).
 		WithHomeDir(app.DefaultNodeHome).
 		WithViper("") // TODO: prefix for env variables?
 
@@ -405,9 +406,9 @@ func autoCliOpts(initClientCtx client.Context, tempApp *app.App) autocli.AppOpti
 	return autocli.AppOptions{
 		Modules:               modules,
 		ModuleOptions:         runtimeservices.ExtractAutoCLIOptions(tempApp.ModuleManager().Modules),
-		AddressCodec:          authcodec.NewBech32Codec(app.Bech32PrefixAccAddr),
-		ValidatorAddressCodec: authcodec.NewBech32Codec(app.Bech32PrefixValAddr),
-		ConsensusAddressCodec: authcodec.NewBech32Codec(app.Bech32PrefixConsAddr),
+		AddressCodec:          authcodec.NewBech32Codec(sdk.GetConfig().GetBech32AccountAddrPrefix()),
+		ValidatorAddressCodec: authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ValidatorAddrPrefix()),
+		ConsensusAddressCodec: authcodec.NewBech32Codec(sdk.GetConfig().GetBech32ConsensusAddrPrefix()),
 		ClientCtx:             initClientCtx,
 	}
 }

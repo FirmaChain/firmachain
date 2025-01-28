@@ -53,6 +53,12 @@ func preUpgradeChecks(s *UpgradeTestSuite) {
 	_ = balances_0
 	s.Logger.Debug(fmt.Sprintf("balances_0 %v", balances_0))
 	s.Require().NoError(err)
+
+	initialVersionMap := s.App.AppKeepers.UpgradeKeeper.GetInitVersionMap()
+	for k, v := range initialVersionMap {
+		s.Logger.Debug(fmt.Sprintf("initialVersionMap: %s %d\n", k, v))
+	}
+
 }
 
 func postUpgradeChecks(_ *UpgradeTestSuite) {

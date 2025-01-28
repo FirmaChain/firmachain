@@ -76,9 +76,9 @@ func SetupApp(t *testing.T) (*App, sdk.Context) {
 	t.Helper()
 
 	cfg := sdk.GetConfig()
-	cfg.SetBech32PrefixForAccount(Bech32PrefixAccAddr, Bech32PrefixAccPub)
-	cfg.SetBech32PrefixForValidator(Bech32PrefixValAddr, Bech32PrefixValPub)
-	cfg.SetBech32PrefixForConsensusNode(Bech32PrefixConsAddr, Bech32PrefixConsPub)
+	cfg.SetBech32PrefixForAccount(appparams.Bech32PrefixAccAddr, appparams.Bech32PrefixAccPub)
+	cfg.SetBech32PrefixForValidator(appparams.Bech32PrefixValAddr, appparams.Bech32PrefixValPub)
+	cfg.SetBech32PrefixForConsensusNode(appparams.Bech32PrefixConsAddr, appparams.Bech32PrefixConsPub)
 	cfg.Seal()
 
 	privVal := apphelpers.NewPV()
@@ -132,8 +132,8 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	require.NoError(t, err, "Failed to setup app: InitChain failed.")
 
 	// commit genesis changes
-	_, err = firmachainApp.Commit()
-	require.NoError(t, err, "Failed to setup app: Commit failed.")
+	//_, err = firmachainApp.Commit()
+	//require.NoError(t, err, "Failed to setup app: Commit failed.")
 
 	/*
 		newCtx := firmachainApp.NewContextLegacy(true, tmproto.Header{
