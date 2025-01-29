@@ -1,4 +1,4 @@
-package app
+package apptesting
 
 import (
 	"encoding/json"
@@ -32,6 +32,7 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
+	"github.com/firmachain/firmachain/v05/app"
 	apphelpers "github.com/firmachain/firmachain/v05/app/helpers"
 	appparams "github.com/firmachain/firmachain/v05/app/params"
 )
@@ -72,14 +73,10 @@ type EmptyAppOptions struct{}
 
 func (EmptyAppOptions) Get(_ string) interface{} { return nil }
 
-func SetupApp(t *testing.T) (*App, sdk.Context) {
+func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 	t.Helper()
 
-	cfg := sdk.GetConfig()
-	cfg.SetBech32PrefixForAccount(appparams.Bech32PrefixAccAddr, appparams.Bech32PrefixAccPub)
-	cfg.SetBech32PrefixForValidator(appparams.Bech32PrefixValAddr, appparams.Bech32PrefixValPub)
-	cfg.SetBech32PrefixForConsensusNode(appparams.Bech32PrefixConsAddr, appparams.Bech32PrefixConsPub)
-	cfg.Seal()
+	appparams.SetSdkConfigAndSeal()
 
 	privVal := apphelpers.NewPV()
 	pubKey, err := privVal.GetPubKey()
@@ -89,26 +86,49 @@ func SetupApp(t *testing.T) (*App, sdk.Context) {
 	validator := tmtypes.NewValidator(pubKey, 1)
 	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
 
-	// generate genesis account
+	// Genesis ------------------------------------------------------------------
+	testAddrsWithKeys := make([]AddressWithKeys, 3)
+	genesisAccounts := make([]authtypes.GenesisAccount, 0, 4)
+	genesisBalances := make([]banktypes.Balance, 0, 4)
+	// generate the validator genesis accounts
 	senderPrivKey := secp256k1.GenPrivKey()
 	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
 	balance := banktypes.Balance{
 		Address: acc.GetAddress().String(),
 		Coins:   sdk.NewCoins(sdk.NewCoin(appparams.DefaultBondDenom, math.NewInt(100000000000000))),
 	}
+	genesisAccounts = append(genesisAccounts, acc)
+	genesisBalances = append(genesisBalances, balance)
 
-	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, balance)
+	// generate three other genesis accounts
+	for i := 0; i < 3; i++ {
+		priv := secp256k1.GenPrivKey()
+		pub := priv.PubKey()
+		testAddrsWithKeys[i].PrivKey = priv
+		testAddrsWithKeys[i].PubKey = pub
+		testAddrsWithKeys[i].Address = sdk.AccAddress(pub.Address())
+		acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
+		balance = banktypes.Balance{
+			Address: acc.GetAddress().String(),
+			Coins:   sdk.NewCoins(sdk.NewCoin(appparams.DefaultBondDenom, math.NewInt(100000000000000))),
+		}
+		genesisAccounts = append(genesisAccounts, acc)
+		genesisBalances = append(genesisBalances, balance)
+	}
+
+	// FIXME: fix the total supply.
+	app := SetupWithGenesisValSet(t, valSet, genesisAccounts, genesisBalances...)
 
 	ctx := app.GetContextForCheckTx(nil)
 
-	return app, ctx
+	return app, ctx, testAddrsWithKeys
 }
 
 // SetupWithGenesisValSet initializes a new firmachainApp with a validator set and genesis accounts
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the firmachainApp from first genesis
 // account. A Nop logger is set in firmachainApp.
-func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *App {
+func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *app.App {
 	t.Helper()
 
 	const withGenesis = true
@@ -155,7 +175,7 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	return firmachainApp
 }
 
-func setup(t *testing.T, withGenesis bool, opts ...wasmkeeper.Option) (*App, GenesisState) {
+func setup(t *testing.T, withGenesis bool, opts ...wasmkeeper.Option) (*app.App, app.GenesisState) {
 	db := dbm.NewMemDB()
 	nodeHome := t.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
@@ -169,7 +189,7 @@ func setup(t *testing.T, withGenesis bool, opts ...wasmkeeper.Option) (*App, Gen
 	appOptions := make(simtestutil.AppOptionsMap, 0)
 	appOptions[flags.FlagHome] = nodeHome // ensure unique folder
 
-	app := New(
+	app := app.New(
 		log.NewNopLogger(),
 		db,
 		nil,
@@ -184,14 +204,14 @@ func setup(t *testing.T, withGenesis bool, opts ...wasmkeeper.Option) (*App, Gen
 		return app, genesisState
 	}
 
-	return app, GenesisState{}
+	return app, nil
 }
 
 func genesisStateWithValSet(t *testing.T,
-	app *App, genesisState GenesisState,
+	app *app.App, genesisState app.GenesisState,
 	valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount,
 	balances ...banktypes.Balance,
-) GenesisState {
+) app.GenesisState {
 	codec := app.AppCodec()
 
 	// set genesis accounts
@@ -282,7 +302,7 @@ func RandomAccountAddress() sdk.AccAddress {
 	return addr
 }
 
-func ExecuteRawCustom(t *testing.T, ctx sdk.Context, app *App, contract sdk.AccAddress, sender sdk.AccAddress, msg json.RawMessage, funds sdk.Coin) error {
+func ExecuteRawCustom(t *testing.T, ctx sdk.Context, app *app.App, contract sdk.AccAddress, sender sdk.AccAddress, msg json.RawMessage, funds sdk.Coin) error {
 	t.Helper()
 	oracleBz, err := json.Marshal(msg)
 	require.NoError(t, err)

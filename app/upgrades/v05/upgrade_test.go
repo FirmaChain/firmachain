@@ -49,7 +49,7 @@ func preUpgradeChecks(s *UpgradeTestSuite) {
 	s.Logger.Debug(fmt.Sprintf("totalSupply %v", totalSupply))
 	s.Require().NoError(err)
 
-	balances_0, err := s.App.AppKeepers.BankKeeper.AllBalances(s.Ctx, banktypes.NewQueryAllBalancesRequest(s.TestAccs[0], nil, false))
+	balances_0, err := s.App.AppKeepers.BankKeeper.AllBalances(s.Ctx, banktypes.NewQueryAllBalancesRequest(s.TestAccs[0].Address, nil, false))
 	_ = balances_0
 	s.Logger.Debug(fmt.Sprintf("balances_0 %v", balances_0))
 	s.Require().NoError(err)

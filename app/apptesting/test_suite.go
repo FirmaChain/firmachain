@@ -8,12 +8,13 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"cosmossdk.io/log"
-	"github.com/cometbft/cometbft/crypto/ed25519"
+
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	//tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	//cosmosdb "github.com/cosmos/cosmos-db"
 
-	"cosmossdk.io/math"
+	//"cosmossdk.io/math"
 
 	//"cosmossdk.io/store"
 	//"cosmossdk.io/store/metrics"
@@ -22,8 +23,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 
 	//"github.com/cosmos/cosmos-sdk/client"
-	//"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	//"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	//authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	//banktestutil "github.com/cosmos/cosmos-sdk/x/bank/testutil"
@@ -34,10 +36,17 @@ import (
 	//stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/firmachain/firmachain/v05/app"
+
 	//appparams "github.com/firmachain/firmachain/v05/app/params"
 
 	header "cosmossdk.io/core/header"
 )
+
+type AddressWithKeys struct {
+	PrivKey *secp256k1.PrivKey
+	PubKey  cryptotypes.PubKey
+	Address sdk.AccAddress
+}
 
 type KeeperTestHelper struct {
 	suite.Suite
@@ -45,30 +54,31 @@ type KeeperTestHelper struct {
 	App         *app.App
 	Ctx         sdk.Context
 	QueryHelper *baseapp.QueryServiceTestHelper
-	TestAccs    []sdk.AccAddress
+	TestAccs    []AddressWithKeys
 
 	Logger log.Logger
 
 	StakingHelper *stakinghelper.Helper
 }
 
+/*
 var (
 	SecondaryDenom  = "uion"
 	SecondaryAmount = math.NewInt(100000000)
 )
+*/
 
 // Setup sets up basic environment for suite (App, Ctx, and test accounts)
 func (s *KeeperTestHelper) Setup() {
 	t := s.T()
 	s.Logger = log.NewLogger(os.Stderr)
-	s.App, s.Ctx = app.SetupApp(t)
+	s.App, s.Ctx, s.TestAccs = SetupApp(t)
 	s.Ctx = s.Ctx.WithBlockTime(s.Ctx.BlockTime().Add(time.Second)).WithBlockHeight(1)
 	//s.Ctx = s.App.BaseApp.NewContextLegacy(true, tmtypes.Header{Height: 1, ChainID: "firma-1", Time: time.Now().UTC()}).WithHeaderInfo(header.Info{Height: 1, Time: s.Ctx.BlockTime()}).WithBlockHeight(1)
 	s.QueryHelper = &baseapp.QueryServiceTestHelper{
 		GRPCQueryRouter: s.App.GRPCQueryRouter(),
 		Ctx:             s.Ctx,
 	}
-	s.TestAccs = CreateRandomAccounts(3)
 
 	s.StakingHelper = stakinghelper.NewHelper(s.Suite.T(), s.Ctx, s.App.AppKeepers.StakingKeeper)
 	s.StakingHelper.Denom = "ufct"
@@ -263,14 +273,17 @@ func (s *KeeperTestHelper) ConfirmUpgradeSucceeded(upgradeName string, upgradeHe
 }
 
 // CreateRandomAccounts is a function return a list of randomly generated AccAddresses
-func CreateRandomAccounts(numAccts int) []sdk.AccAddress {
-	testAddrs := make([]sdk.AccAddress, numAccts)
+func CreateRandomAccounts(numAccts int) []AddressWithKeys {
+	testAddrsWithKeys := make([]AddressWithKeys, numAccts)
 	for i := 0; i < numAccts; i++ {
-		pk := ed25519.GenPrivKey().PubKey()
-		testAddrs[i] = sdk.AccAddress(pk.Address())
+		priv := secp256k1.GenPrivKey()
+		pub := priv.PubKey()
+		testAddrsWithKeys[i].PrivKey = priv
+		testAddrsWithKeys[i].PubKey = pub
+		testAddrsWithKeys[i].Address = sdk.AccAddress(pub.Address())
 	}
 
-	return testAddrs
+	return testAddrsWithKeys
 }
 
 /*
