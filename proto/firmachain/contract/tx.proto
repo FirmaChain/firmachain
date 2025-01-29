@@ -10,6 +10,8 @@ option go_package = "github.com/firmachain/firmachain/v05/x/contract/types";
 
 // Msg defines the Msg service.
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+  
   // CreateContractFile
   rpc CreateContractFile(MsgCreateContractFile) returns (MsgCreateContractFileResponse);
 
