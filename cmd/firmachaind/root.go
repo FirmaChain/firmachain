@@ -75,8 +75,6 @@ func NewRootCmd() *cobra.Command {
 	cfg.SetBech32PrefixForConsensusNode(appparams.Bech32PrefixConsAddr, appparams.Bech32PrefixConsPub)
 	cfg.Seal()
 
-	encodingConfig := app.MakeEncodingConfig()
-
 	// we "pre"-instantiate the application for getting the injected/configured encoding configuration
 	initAppOptions := viper.New()
 	tempDir := tempDir()
@@ -96,10 +94,10 @@ func NewRootCmd() *cobra.Command {
 	}()
 
 	initClientCtx := client.Context{}.
-		WithCodec(encodingConfig.Marshaler).
-		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
-		WithTxConfig(encodingConfig.TxConfig).
-		WithLegacyAmino(encodingConfig.Amino).
+		WithCodec(tempApp.AppCodec()).
+		WithInterfaceRegistry(tempApp.InterfaceRegistry()).
+		WithTxConfig(tempApp.GetTxConfig()).
+		WithLegacyAmino(tempApp.LegacyAmino()).
 		WithInput(os.Stdin).
 		WithAccountRetriever(authtypes.AccountRetriever{}).
 		WithBroadcastMode(flags.BroadcastSync).
