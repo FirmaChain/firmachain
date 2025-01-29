@@ -48,4 +48,10 @@ var (
 	Bech32PrefixConsPub = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixConsensus + sdk.PrefixPublic
 )
 
-// Bech32Prefix: sdk.GetConfig().GetBech32AccountAddrPrefix()
+func SetSdkConfigAndSeal() {
+	cfg := sdk.GetConfig()
+	cfg.SetBech32PrefixForAccount(Bech32PrefixAccAddr, Bech32PrefixAccPub)
+	cfg.SetBech32PrefixForValidator(Bech32PrefixValAddr, Bech32PrefixValPub)
+	cfg.SetBech32PrefixForConsensusNode(Bech32PrefixConsAddr, Bech32PrefixConsPub)
+	cfg.Seal()
+}

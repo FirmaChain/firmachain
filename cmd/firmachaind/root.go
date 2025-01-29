@@ -69,11 +69,8 @@ var tempDir = func() string {
 // NewRootCmd creates a new root command for firmachaind. It is called once in the
 // main function.
 func NewRootCmd() *cobra.Command {
-	cfg := sdk.GetConfig()
-	cfg.SetBech32PrefixForAccount(appparams.Bech32PrefixAccAddr, appparams.Bech32PrefixAccPub)
-	cfg.SetBech32PrefixForValidator(appparams.Bech32PrefixValAddr, appparams.Bech32PrefixValPub)
-	cfg.SetBech32PrefixForConsensusNode(appparams.Bech32PrefixConsAddr, appparams.Bech32PrefixConsPub)
-	cfg.Seal()
+	// Set prefixes
+	appparams.SetSdkConfigAndSeal()
 
 	// we "pre"-instantiate the application for getting the injected/configured encoding configuration
 	initAppOptions := viper.New()
