@@ -41,37 +41,6 @@ const (
 	SimAppChainID = "testing"
 )
 
-// EmptyBaseAppOptions is a stub implementing AppOptions
-type EmptyBaseAppOptions struct{}
-
-// Get implements AppOptions
-func (ao EmptyBaseAppOptions) Get(_ string) interface{} {
-	return nil
-}
-
-// DefaultConsensusParams defines the default Tendermint consensus params used
-// in firmachainApp testing.
-var DefaultConsensusParams = &tmproto.ConsensusParams{
-	Block: &tmproto.BlockParams{
-		MaxBytes: 200000,
-		MaxGas:   2000000,
-	},
-	Evidence: &tmproto.EvidenceParams{
-		MaxAgeNumBlocks: 302400,
-		MaxAgeDuration:  504 * time.Hour, // 3 weeks is the max duration
-		MaxBytes:        10000,
-	},
-	Validator: &tmproto.ValidatorParams{
-		PubKeyTypes: []string{
-			tmtypes.ABCIPubKeyTypeEd25519,
-		},
-	},
-}
-
-type EmptyAppOptions struct{}
-
-func (EmptyAppOptions) Get(_ string) interface{} { return nil }
-
 func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 	t.Helper()
 
@@ -149,9 +118,11 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	)
 	require.NoError(t, err, "Failed to setup app: InitChain failed.")
 
-	// commit genesis changes
-	//_, err = firmachainApp.Commit()
-	//require.NoError(t, err, "Failed to setup app: Commit failed.")
+	/*
+		// commit genesis changes
+		_, err = firmachainApp.Commit()
+		require.NoError(t, err, "Failed to setup app: Commit failed.")
+	*/
 
 	/*
 		newCtx := firmachainApp.NewContextLegacy(true, tmproto.Header{
@@ -171,6 +142,37 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	*/
 
 	return firmachainApp
+}
+
+// DefaultConsensusParams defines the default Tendermint consensus params used
+// in firmachainApp testing.
+var DefaultConsensusParams = &tmproto.ConsensusParams{
+	Block: &tmproto.BlockParams{
+		MaxBytes: 200000,
+		MaxGas:   2000000,
+	},
+	Evidence: &tmproto.EvidenceParams{
+		MaxAgeNumBlocks: 302400,
+		MaxAgeDuration:  504 * time.Hour, // 3 weeks is the max duration
+		MaxBytes:        10000,
+	},
+	Validator: &tmproto.ValidatorParams{
+		PubKeyTypes: []string{
+			tmtypes.ABCIPubKeyTypeEd25519,
+		},
+	},
+}
+
+type EmptyAppOptions struct{}
+
+func (EmptyAppOptions) Get(_ string) interface{} { return nil }
+
+// EmptyBaseAppOptions is a stub implementing AppOptions
+type EmptyBaseAppOptions struct{}
+
+// Get implements AppOptions
+func (ao EmptyBaseAppOptions) Get(_ string) interface{} {
+	return nil
 }
 
 func setup(t *testing.T, withGenesis bool, opts ...wasmkeeper.Option) (*app.App, app.GenesisState) {

@@ -10,6 +10,9 @@ import (
 	"cosmossdk.io/log"
 	"cosmossdk.io/math"
 
+	coreheader "cosmossdk.io/core/header"
+	abci "github.com/cometbft/cometbft/abci/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -60,21 +63,65 @@ type TestSuite struct {
 	StakingHelper *stakinghelper.Helper
 }
 
+// ========================================================================
+// 								  SETUP
+// ========================================================================
+
 // Setup sets up basic environment for suite (App, Ctx, and test accounts)
 func (s *TestSuite) Setup() {
 	t := s.T()
 	s.Logger = log.NewLogger(os.Stderr)
 	s.App, s.Ctx, s.TestAccs = SetupApp(t)
-	s.Ctx = s.Ctx.WithBlockTime(s.Ctx.BlockTime().Add(time.Second)).WithBlockHeight(1)
-	//s.Ctx = s.App.BaseApp.NewContextLegacy(true, tmtypes.Header{Height: 1, ChainID: "firma-1", Time: time.Now().UTC()}).WithHeaderInfo(header.Info{Height: 1, Time: s.Ctx.BlockTime()}).WithBlockHeight(1)
+	s.Commit()
+
+	s.SetupHelpers()
+
+	// FIXME: begin block make the app panic
+	// New block to test if everything goes smoothly.
+	//s.MakeBlock()
+}
+
+// Setup helpers sets the suit helpers
+func (s *TestSuite) SetupHelpers() {
 	s.QueryHelper = &baseapp.QueryServiceTestHelper{
 		GRPCQueryRouter: s.App.GRPCQueryRouter(),
 		Ctx:             s.Ctx,
 	}
-
 	s.StakingHelper = stakinghelper.NewHelper(s.Suite.T(), s.Ctx, s.App.AppKeepers.StakingKeeper)
 	s.StakingHelper.Denom = "ufct"
 }
+
+// FinalizeBlock prepares the block to be committed: it runs begin-blockers, then delivers txs, then end-blockers.
+func (s *TestSuite) FinalizeBlock() {
+	_, err := s.App.FinalizeBlock(&abci.RequestFinalizeBlock{Height: s.Ctx.BlockHeight(), Time: s.Ctx.BlockTime()})
+	s.NoError(err)
+}
+
+// Commit commits the store changes
+func (s *TestSuite) Commit() {
+	_, err := s.App.Commit()
+	s.NoError(err)
+
+	// Update the suite context
+	newBlockTime := s.Ctx.BlockTime().Add(time.Second)
+	header := s.Ctx.BlockHeader()
+	header.Time = newBlockTime
+	header.Height++
+	s.Ctx = s.App.BaseApp.NewUncachedContext(false, header).WithHeaderInfo(coreheader.Info{
+		Height: header.Height,
+		Time:   header.Time,
+	})
+}
+
+// MakeBlock creates the block, commits it and updates the suite context.
+func (s *TestSuite) MakeBlock() {
+	s.FinalizeBlock()
+	s.Commit()
+}
+
+// ========================================================================
+// 								  UPGRADE
+// ========================================================================
 
 func (s *TestSuite) ConfirmUpgradeSucceeded(upgradeName string, upgradeHeight int64) {
 	s.Ctx = s.Ctx.WithBlockHeight(upgradeHeight - 1)
@@ -99,6 +146,10 @@ func (s *TestSuite) ConfirmUpgradeSucceeded(upgradeName string, upgradeHeight in
 	_ = res
 	s.Require().NoError(err)
 }
+
+// ========================================================================
+// 								TRANSACTIONS
+// ========================================================================
 
 func (s *TestSuite) SetTxSignature(builder client.TxBuilder, privKey *secp256k1.PrivKey, nonce uint64) {
 	pubKey := privKey.PubKey()
