@@ -107,7 +107,7 @@ func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 		testAddrsWithKeys[i].PrivKey = priv
 		testAddrsWithKeys[i].PubKey = pub
 		testAddrsWithKeys[i].Address = sdk.AccAddress(pub.Address())
-		acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
+		acc := authtypes.NewBaseAccount(pub.Address().Bytes(), pub, 0, 0)
 		balance = banktypes.Balance{
 			Address: acc.GetAddress().String(),
 			Coins:   sdk.NewCoins(sdk.NewCoin(appparams.DefaultBondDenom, math.NewInt(100000000000000))),
@@ -116,7 +116,6 @@ func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 		genesisBalances = append(genesisBalances, balance)
 	}
 
-	// FIXME: fix the total supply.
 	app := SetupWithGenesisValSet(t, valSet, genesisAccounts, genesisBalances...)
 
 	ctx := app.GetContextForCheckTx(nil)
