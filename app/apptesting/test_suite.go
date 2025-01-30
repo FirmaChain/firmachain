@@ -8,36 +8,26 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"cosmossdk.io/log"
+	"cosmossdk.io/math"
 
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	signingtypes "github.com/cosmos/cosmos-sdk/types/tx/signing"
+	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 
-	//tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
-	//cosmosdb "github.com/cosmos/cosmos-db"
-
-	//"cosmossdk.io/math"
-
-	//"cosmossdk.io/store"
-	//"cosmossdk.io/store/metrics"
-	//"cosmossdk.io/store/rootmulti"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 
-	//"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	//"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	//authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
-	//banktestutil "github.com/cosmos/cosmos-sdk/x/bank/testutil"
-	//distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	//minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	//slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakinghelper "github.com/cosmos/cosmos-sdk/x/staking/testutil"
-	//stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/firmachain/firmachain/v05/app"
-
-	//appparams "github.com/firmachain/firmachain/v05/app/params"
+	appparams "github.com/firmachain/firmachain/v05/app/params"
+	contracttypes "github.com/firmachain/firmachain/v05/x/contract/types"
+	nfttypes "github.com/firmachain/firmachain/v05/x/nft/types"
+	tokentypes "github.com/firmachain/firmachain/v05/x/token/types"
 
 	header "cosmossdk.io/core/header"
 )
@@ -48,7 +38,16 @@ type AddressWithKeys struct {
 	Address sdk.AccAddress
 }
 
-type KeeperTestHelper struct {
+type TxRequirements struct {
+	cfg           client.TxConfig
+	signerPrivKey *secp256k1.PrivKey
+	sequence      uint64
+	memo          string
+	gasLimit      uint64
+	feeAmount     sdk.Coins
+}
+
+type TestSuite struct {
 	suite.Suite
 
 	App         *app.App
@@ -61,15 +60,8 @@ type KeeperTestHelper struct {
 	StakingHelper *stakinghelper.Helper
 }
 
-/*
-var (
-	SecondaryDenom  = "uion"
-	SecondaryAmount = math.NewInt(100000000)
-)
-*/
-
 // Setup sets up basic environment for suite (App, Ctx, and test accounts)
-func (s *KeeperTestHelper) Setup() {
+func (s *TestSuite) Setup() {
 	t := s.T()
 	s.Logger = log.NewLogger(os.Stderr)
 	s.App, s.Ctx, s.TestAccs = SetupApp(t)
@@ -84,171 +76,7 @@ func (s *KeeperTestHelper) Setup() {
 	s.StakingHelper.Denom = "ufct"
 }
 
-/*
-func (s *KeeperTestHelper) SetupTestForInitGenesis() {
-	t := s.T()
-	// Setting to True, leads to init genesis not running
-	s.App, _ = app.SetupApp(t)
-	s.Ctx = s.App.BaseApp.NewContextLegacy(true, tmtypes.Header{
-		ChainID: "testing",
-	})
-}
-
-// CreateTestContext creates a test context.
-func (s *KeeperTestHelper) CreateTestContext() sdk.Context {
-	ctx, _ := s.CreateTestContextWithMultiStore()
-	return ctx
-}
-
-// CreateTestContextWithMultiStore creates a test context and returns it together with multi store.
-func (s *KeeperTestHelper) CreateTestContextWithMultiStore() (sdk.Context, store.CommitMultiStore) {
-	db := cosmosdb.NewMemDB()
-	logger := log.NewNopLogger()
-
-	ms := rootmulti.NewStore(db, logger, metrics.NewMetrics(nil))
-
-	return sdk.NewContext(ms, tmtypes.Header{}, false, logger), ms
-}
-
-// CreateTestContext creates a test context.
-func (s *KeeperTestHelper) Commit() {
-	oldHeight := s.Ctx.BlockHeight()
-	oldHeader := s.Ctx.BlockHeader()
-	s.App.Commit()
-	newHeader := tmtypes.Header{Height: oldHeight + 1, ChainID: "testing", Time: oldHeader.Time.Add(time.Second)}
-	s.Ctx = s.App.NewContextLegacy(false, newHeader)
-	s.App.ModuleManager().BeginBlock(s.Ctx)
-}
-
-// FundAcc funds target address with specified amount.
-func (s *KeeperTestHelper) FundAcc(acc sdk.AccAddress, amounts sdk.Coins) {
-	err := banktestutil.FundAccount(s.Ctx, s.App.AppKeepers.BankKeeper, acc, amounts)
-	s.Require().NoError(err)
-}
-
-// FundModuleAcc funds target modules with specified amount.
-func (s *KeeperTestHelper) FundModuleAcc(moduleName string, amounts sdk.Coins) {
-	err := banktestutil.FundModuleAccount(s.Ctx, s.App.AppKeepers.BankKeeper, moduleName, amounts)
-	s.Require().NoError(err)
-}
-
-func (s *KeeperTestHelper) MintCoins(coins sdk.Coins) {
-	err := s.App.AppKeepers.BankKeeper.MintCoins(s.Ctx, minttypes.ModuleName, coins)
-	s.Require().NoError(err)
-}
-
-// SetupValidator sets up a validator and returns the ValAddress.
-func (s *KeeperTestHelper) SetupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAddress {
-	valPriv := secp256k1.GenPrivKey()
-	valPub := valPriv.PubKey()
-	valAddr := sdk.ValAddress(valPub.Address())
-	stackingParams, err := s.App.AppKeepers.StakingKeeper.GetParams(s.Ctx)
-	s.Require().NoError(err)
-	bondDenom := stackingParams.BondDenom
-	selfBond := sdk.NewCoins(sdk.Coin{Amount: math.NewInt(100), Denom: bondDenom})
-
-	s.FundAcc(sdk.AccAddress(valAddr), selfBond)
-
-	msg := s.StakingHelper.CreateValidatorMsg(valAddr, valPub, selfBond[0].Amount)
-	res, err := s.StakingHelper.CreateValidatorWithMsg(s.Ctx, msg)
-	s.Require().NoError(err)
-	s.Require().NotNil(res)
-
-	val, err := s.App.AppKeepers.StakingKeeper.GetValidator(s.Ctx, valAddr)
-	s.Require().NoError(err)
-
-	val = val.UpdateStatus(bondStatus)
-	s.App.AppKeepers.StakingKeeper.SetValidator(s.Ctx, val)
-
-	consAddr, err := val.GetConsAddr()
-	s.Suite.Require().NoError(err)
-
-	signingInfo := slashingtypes.NewValidatorSigningInfo(
-		consAddr,
-		s.Ctx.BlockHeight(),
-		0,
-		time.Unix(0, 0),
-		false,
-		0,
-	)
-	s.App.AppKeepers.SlashingKeeper.SetValidatorSigningInfo(s.Ctx, consAddr, signingInfo)
-
-	return valAddr
-}
-
-// BeginNewBlock starts a new block.
-func (s *KeeperTestHelper) BeginNewBlock() {
-	var valAddr []byte
-
-	validators, err := s.App.AppKeepers.StakingKeeper.GetAllValidators(s.Ctx)
-	s.Require().NoError(err)
-	if len(validators) >= 1 {
-		valAddr, err = validators[0].GetConsAddr()
-		s.Require().NoError(err)
-	} else {
-		valAddrFancy := s.SetupValidator(stakingtypes.Bonded)
-		validator, _ := s.App.AppKeepers.StakingKeeper.GetValidator(s.Ctx, valAddrFancy)
-		valAddr2, _ := validator.GetConsAddr()
-		valAddr = valAddr2
-	}
-
-	s.BeginNewBlockWithProposer(valAddr)
-}
-
-// BeginNewBlockWithProposer begins a new block with a proposer.
-func (s *KeeperTestHelper) BeginNewBlockWithProposer(proposer sdk.ValAddress) {
-	newBlockTime := s.Ctx.BlockTime().Add(5 * time.Second)
-
-	newCtx := s.Ctx.WithBlockTime(newBlockTime).WithBlockHeight(s.Ctx.BlockHeight() + 1)
-	s.Ctx = newCtx
-	fmt.Println("beginning block ", s.Ctx.BlockHeight())
-	s.App.BeginBlocker(s.Ctx)
-}
-
-// EndBlock ends the block.
-func (s *KeeperTestHelper) EndBlock() {
-	s.App.EndBlocker(s.Ctx)
-}
-
-// AllocateRewardsToValidator allocates reward tokens to a distribution module then allocates rewards to the validator address.
-func (s *KeeperTestHelper) AllocateRewardsToValidator(valAddr sdk.ValAddress, rewardAmt math.Int) {
-	validator, err := s.App.AppKeepers.StakingKeeper.GetValidator(s.Ctx, valAddr)
-	s.Require().NoError(err)
-
-	// allocate reward tokens to distribution module
-	coins := sdk.Coins{sdk.NewCoin(appparams.DefaultBondDenom, rewardAmt)}
-	err = banktestutil.FundModuleAccount(s.Ctx, s.App.AppKeepers.BankKeeper, distrtypes.ModuleName, coins)
-	s.Require().NoError(err)
-
-	// allocate rewards to validator
-	s.Ctx = s.Ctx.WithBlockHeight(s.Ctx.BlockHeight() + 1)
-	decTokens := sdk.DecCoins{{Denom: appparams.DefaultBondDenom, Amount: math.LegacyNewDec(20000)}}
-	s.App.AppKeepers.DistrKeeper.AllocateTokensToValidator(s.Ctx, validator, decTokens)
-}
-
-// BuildTx builds a transaction.
-func (s *KeeperTestHelper) BuildTx(
-	txBuilder client.TxBuilder,
-	msgs []sdk.Msg,
-	sigV2 signing.SignatureV2,
-	memo string, txFee sdk.Coins,
-	gasLimit uint64,
-) authsigning.Tx {
-	err := txBuilder.SetMsgs(msgs[0])
-	s.Require().NoError(err)
-
-	err = txBuilder.SetSignatures(sigV2)
-	s.Require().NoError(err)
-
-	txBuilder.SetMemo(memo)
-	txBuilder.SetFeeAmount(txFee)
-	txBuilder.SetGasLimit(gasLimit)
-
-	return txBuilder.GetTx()
-}
-*/
-
-func (s *KeeperTestHelper) ConfirmUpgradeSucceeded(upgradeName string, upgradeHeight int64) {
+func (s *TestSuite) ConfirmUpgradeSucceeded(upgradeName string, upgradeHeight int64) {
 	s.Ctx = s.Ctx.WithBlockHeight(upgradeHeight - 1)
 	plan := upgradetypes.Plan{Name: upgradeName, Height: upgradeHeight}
 	err := s.App.AppKeepers.UpgradeKeeper.ScheduleUpgrade(s.Ctx, plan)
@@ -272,25 +100,254 @@ func (s *KeeperTestHelper) ConfirmUpgradeSucceeded(upgradeName string, upgradeHe
 	s.Require().NoError(err)
 }
 
-// CreateRandomAccounts is a function return a list of randomly generated AccAddresses
-func CreateRandomAccounts(numAccts int) []AddressWithKeys {
-	testAddrsWithKeys := make([]AddressWithKeys, numAccts)
-	for i := 0; i < numAccts; i++ {
-		priv := secp256k1.GenPrivKey()
-		pub := priv.PubKey()
-		testAddrsWithKeys[i].PrivKey = priv
-		testAddrsWithKeys[i].PubKey = pub
-		testAddrsWithKeys[i].Address = sdk.AccAddress(pub.Address())
+func (s *TestSuite) SetTxSignature(builder client.TxBuilder, privKey *secp256k1.PrivKey, nonce uint64) {
+	pubKey := privKey.PubKey()
+	err := builder.SetSignatures(
+		signingtypes.SignatureV2{
+			PubKey:   pubKey,
+			Sequence: nonce,
+			Data:     &signingtypes.SingleSignatureData{},
+		},
+	)
+	s.NoError(err)
+}
+
+func (s *TestSuite) MakeBondDenomFeeAmount(amount int64) sdk.Coins {
+	return sdk.NewCoins(sdk.NewCoin(appparams.DefaultBondDenom, math.NewInt(1000)))
+}
+
+func (s *TestSuite) MakeDummyTxRequirements() TxRequirements {
+	return TxRequirements{
+		cfg:           s.App.GetTxConfig(),
+		signerPrivKey: s.TestAccs[0].PrivKey,
+		sequence:      0,
+		memo:          "dummy memo",
+		gasLimit:      999999999,
+		feeAmount:     s.MakeBondDenomFeeAmount(9999),
 	}
-
-	return testAddrsWithKeys
 }
 
-/*
-func GenerateTestAddrs() (string, string) {
-	pk1 := ed25519.GenPrivKey().PubKey()
-	validAddr := sdk.AccAddress(pk1.Address()).String()
-	invalidAddr := sdk.AccAddress("invalid").String()
-	return validAddr, invalidAddr
+func (s *TestSuite) MakeAndSingTx(
+	cfg client.TxConfig,
+	msg sdk.Msg,
+	memo string,
+	gasLimit uint64,
+	feeAmount sdk.Coins,
+	signerPrivKey *secp256k1.PrivKey,
+	sequence uint64,
+) signing.Tx {
+	msgs := make([]sdk.Msg, 0, 1)
+	msgs = append(msgs, msg)
+	builder := cfg.NewTxBuilder()
+	builder.SetMsgs(msgs...)
+	builder.SetMemo(memo)
+	builder.SetGasLimit(gasLimit)
+	builder.SetFeeAmount(feeAmount)
+	s.SetTxSignature(builder, signerPrivKey, sequence)
+	return builder.GetTx()
 }
-*/
+
+// ==== Contract messages ====
+
+func (s *TestSuite) NewTxContractMsgCreateContractFile(
+	creatorAddr sdk.AccAddress,
+	fileHash string,
+	timeStamp uint64,
+	metadataJsonString string,
+	ownerList []sdk.AccAddress,
+	txR TxRequirements,
+) signing.Tx {
+	ownerListString := make([]string, 0, len(ownerList))
+	for _, owner := range ownerList {
+		ownerListString = append(ownerListString, owner.String())
+	}
+	msg := contracttypes.NewMsgCreateContractFile(
+		creatorAddr.String(),
+		fileHash,
+		timeStamp,
+		ownerListString,
+		metadataJsonString,
+	)
+	return s.MakeAndSingTx(txR.cfg, msg, txR.memo, txR.gasLimit, txR.feeAmount, txR.signerPrivKey, txR.sequence)
+}
+
+func (s *TestSuite) NewDummyTxContractMsgCreateContractFile() signing.Tx {
+	return s.NewTxContractMsgCreateContractFile(
+		s.TestAccs[0].Address,
+		"dummyfilehash",
+		1234,
+		"{}",
+		[]sdk.AccAddress{s.TestAccs[0].Address},
+		s.MakeDummyTxRequirements(),
+	)
+}
+
+func (s *TestSuite) NewTxContractMsgAddContractLog(
+	creatorAddr sdk.AccAddress,
+	contractHash string,
+	timeStamp uint64,
+	eventName string,
+	ownerAddr sdk.AccAddress,
+	jsonString string,
+	txR TxRequirements,
+) signing.Tx {
+	msg := contracttypes.NewMsgAddContractLog(creatorAddr.String(), contractHash, timeStamp, eventName, ownerAddr.String(), jsonString)
+	return s.MakeAndSingTx(txR.cfg, msg, txR.memo, txR.gasLimit, txR.feeAmount, txR.signerPrivKey, txR.sequence)
+}
+
+func (s *TestSuite) NewDummyTxContractMsgAddContractLog() signing.Tx {
+	return s.NewTxContractMsgAddContractLog(
+		s.TestAccs[0].Address,
+		"dummyfilehash",
+		1234,
+		"dummyevent",
+		s.TestAccs[0].Address,
+		"{}",
+		s.MakeDummyTxRequirements(),
+	)
+}
+
+// ==== Nft messages ====
+
+func (s *TestSuite) NewTxNftMsgBurn(
+	ownerAddr sdk.AccAddress,
+	nftId uint64,
+	txR TxRequirements,
+) signing.Tx {
+	msg := nfttypes.NewMsgBurn(ownerAddr.String(), nftId)
+	return s.MakeAndSingTx(txR.cfg, msg, txR.memo, txR.gasLimit, txR.feeAmount, txR.signerPrivKey, txR.sequence)
+}
+
+func (s *TestSuite) NewDummyTxNftMsgBurn() signing.Tx {
+	return s.NewTxNftMsgBurn(
+		s.TestAccs[0].Address,
+		1,
+		s.MakeDummyTxRequirements(),
+	)
+}
+
+func (s *TestSuite) NewTxNftMsgMint(
+	ownerAddr sdk.AccAddress,
+	tokenURI string,
+	txR TxRequirements,
+) signing.Tx {
+	msg := nfttypes.NewMsgMint(ownerAddr.String(), tokenURI)
+	return s.MakeAndSingTx(txR.cfg, msg, txR.memo, txR.gasLimit, txR.feeAmount, txR.signerPrivKey, txR.sequence)
+}
+
+func (s *TestSuite) NewDummyTxNftMsgMint() signing.Tx {
+	return s.NewTxNftMsgMint(
+		s.TestAccs[0].Address,
+		"dummy tokenURI",
+		s.MakeDummyTxRequirements(),
+	)
+}
+
+func (s *TestSuite) NewTxNftMsgTransfer(
+	ownerAddr sdk.AccAddress,
+	nftId uint64,
+	toAddr sdk.AccAddress,
+	txR TxRequirements,
+) signing.Tx {
+	msg := nfttypes.NewMsgTransfer(ownerAddr.String(), nftId, toAddr.String())
+	return s.MakeAndSingTx(txR.cfg, msg, txR.memo, txR.gasLimit, txR.feeAmount, txR.signerPrivKey, txR.sequence)
+}
+
+func (s *TestSuite) NewDummyTxNftMsgTransfer() signing.Tx {
+	return s.NewTxNftMsgTransfer(
+		s.TestAccs[0].Address,
+		1,
+		s.TestAccs[1].Address,
+		s.MakeDummyTxRequirements(),
+	)
+}
+
+// ==== Token messages ====
+
+func (s *TestSuite) NewTxTokenMsgBurn(
+	ownerAddr sdk.AccAddress,
+	tokenID string,
+	amount uint64,
+	txR TxRequirements,
+) signing.Tx {
+	msg := tokentypes.NewMsgBurn(ownerAddr.String(), tokenID, amount)
+	return s.MakeAndSingTx(txR.cfg, msg, txR.memo, txR.gasLimit, txR.feeAmount, txR.signerPrivKey, txR.sequence)
+}
+
+func (s *TestSuite) NewDummyTxTokenMsgBurn() signing.Tx {
+	return s.NewTxTokenMsgBurn(
+		s.TestAccs[0].Address,
+		"dummytokenID",
+		1234,
+		s.MakeDummyTxRequirements(),
+	)
+}
+
+func (s *TestSuite) NewTxTokenMsgCreateToken(
+	ownerAddr sdk.AccAddress,
+	name string,
+	symbol string,
+	tokenUri string,
+	totalSupply uint64,
+	decimal uint64,
+	mintable bool,
+	burnable bool,
+	txR TxRequirements,
+) signing.Tx {
+	msg := tokentypes.NewMsgCreateToken(ownerAddr.String(), name, symbol, tokenUri, totalSupply, decimal, mintable, burnable)
+	return s.MakeAndSingTx(txR.cfg, msg, txR.memo, txR.gasLimit, txR.feeAmount, txR.signerPrivKey, txR.sequence)
+}
+
+func (s *TestSuite) NewDummyTxTokenMsgCreateToken() signing.Tx {
+	return s.NewTxTokenMsgCreateToken(
+		s.TestAccs[0].Address,
+		"dummytokenID",
+		"dt1",
+		"dummytokenURI",
+		123456789,
+		6,
+		true,
+		true,
+		s.MakeDummyTxRequirements(),
+	)
+}
+
+func (s *TestSuite) NewTxTokenMsgMint(
+	ownerAddr sdk.AccAddress,
+	tokenID string,
+	amount uint64,
+	toAddr sdk.AccAddress,
+	txR TxRequirements,
+) signing.Tx {
+	msg := tokentypes.NewMsgMint(ownerAddr.String(), tokenID, amount, toAddr.String())
+	return s.MakeAndSingTx(txR.cfg, msg, txR.memo, txR.gasLimit, txR.feeAmount, txR.signerPrivKey, txR.sequence)
+}
+
+func (s *TestSuite) NewDummyTxTokenMsgMint() signing.Tx {
+	return s.NewTxTokenMsgMint(
+		s.TestAccs[0].Address,
+		"dummytokenID",
+		1234,
+		s.TestAccs[1].Address,
+		s.MakeDummyTxRequirements(),
+	)
+}
+
+func (s *TestSuite) NewTxTokenMsgUpdateTokenURI(
+	ownerAddr sdk.AccAddress,
+	tokenID string,
+	tokenURI string,
+	txR TxRequirements,
+) signing.Tx {
+	msg := tokentypes.NewMsgUpdateTokenURI(ownerAddr.String(), tokenID, tokenURI)
+	return s.MakeAndSingTx(txR.cfg, msg, txR.memo, txR.gasLimit, txR.feeAmount, txR.signerPrivKey, txR.sequence)
+}
+
+func (s *TestSuite) NewDummyTxTokenMsgUpdateTokenURI() signing.Tx {
+	return s.NewTxTokenMsgUpdateTokenURI(
+		s.TestAccs[0].Address,
+		"dummytokenID",
+		"newDummyTokenURI",
+		s.MakeDummyTxRequirements(),
+	)
+}

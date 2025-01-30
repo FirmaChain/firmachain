@@ -11,11 +11,10 @@ import (
 
 	"cosmossdk.io/log"
 	abci "github.com/cometbft/cometbft/abci/types"
-	"github.com/cometbft/cometbft/crypto"
-	"github.com/cometbft/cometbft/crypto/ed25519"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 	dbm "github.com/cosmos/cosmos-db"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
 	"cosmossdk.io/math"
 
@@ -289,29 +288,24 @@ func genesisStateWithValSet(t *testing.T,
 	return genesisState
 }
 
-func keyPubAddr() (crypto.PrivKey, crypto.PubKey, sdk.AccAddress) {
-	key := ed25519.GenPrivKey()
+// KeyTestPubAddr generates a new secp256k1 keypair.
+func KeyTestPubAddr() (cryptotypes.PrivKey, cryptotypes.PubKey, sdk.AccAddress) {
+	key := secp256k1.GenPrivKey()
 	pub := key.PubKey()
 	addr := sdk.AccAddress(pub.Address())
 	return key, pub, addr
 }
 
-func RandomAccountAddress() sdk.AccAddress {
-	_, _, addr := keyPubAddr()
-	return addr
-}
-
-func ExecuteRawCustom(t *testing.T, ctx sdk.Context, app *app.App, contract sdk.AccAddress, sender sdk.AccAddress, msg json.RawMessage, funds sdk.Coin) error {
-	t.Helper()
-	oracleBz, err := json.Marshal(msg)
-	require.NoError(t, err)
-	// no funds sent if amount is 0
-	var coins sdk.Coins
-	if !funds.Amount.IsNil() {
-		coins = sdk.Coins{funds}
+// CreateRandomAccounts is a function return a list of randomly generated AccAddresses
+func CreateRandomAccounts(numAccts int) []AddressWithKeys {
+	testAddrsWithKeys := make([]AddressWithKeys, numAccts)
+	for i := 0; i < numAccts; i++ {
+		priv := secp256k1.GenPrivKey()
+		pub := priv.PubKey()
+		testAddrsWithKeys[i].PrivKey = priv
+		testAddrsWithKeys[i].PubKey = pub
+		testAddrsWithKeys[i].Address = sdk.AccAddress(pub.Address())
 	}
 
-	contractKeeper := wasmkeeper.NewDefaultPermissionKeeper(app.AppKeepers.WasmKeeper)
-	_, err = contractKeeper.Execute(ctx, contract, sender, oracleBz, coins)
-	return err
+	return testAddrsWithKeys
 }

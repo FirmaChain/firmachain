@@ -13,7 +13,7 @@ import (
 )
 
 type UpgradeTestSuite struct {
-	apptesting.KeeperTestHelper
+	apptesting.TestSuite
 }
 
 func (s *UpgradeTestSuite) SetupTest() {
