@@ -2,6 +2,7 @@ package apptesting
 
 import (
 	//"fmt"
+	"fmt"
 	"os"
 	"time"
 
@@ -71,14 +72,32 @@ type TestSuite struct {
 func (s *TestSuite) Setup() {
 	t := s.T()
 	s.Logger = log.NewLogger(os.Stderr)
+
 	s.App, s.Ctx, s.TestAccs = SetupApp(t)
+	s.StoreAccessSanityCheck()
+
+	s.FinalizeBlock()
 	s.Commit()
 
+	// Check if after the commit we can still access the store.
+	s.StoreAccessSanityCheck()
+
+	// Setup the helpers.
 	s.SetupHelpers()
 
-	// FIXME: begin block make the app panic
 	// New block to test if everything goes smoothly.
-	//s.MakeBlock()
+	s.MakeBlock()
+
+	// Check if after the new block we can still access the store.
+	s.StoreAccessSanityCheck()
+}
+
+// Use this as a sanity check to detect if some misconfiguration in the setup code has
+// happened.
+func (s *TestSuite) StoreAccessSanityCheck() {
+	sts, err := s.App.AppKeepers.MintKeeper.StakingTokenSupply(s.Ctx)
+	s.Logger.Debug(fmt.Sprintf("Sanity check: staking token supply: %v", sts))
+	s.NoError(err)
 }
 
 // Setup helpers sets the suit helpers
@@ -90,6 +109,24 @@ func (s *TestSuite) SetupHelpers() {
 	s.StakingHelper = stakinghelper.NewHelper(s.Suite.T(), s.Ctx, s.App.AppKeepers.StakingKeeper)
 	s.StakingHelper.Denom = "ufct"
 }
+
+/*
+_, err = firmachainApp.FinalizeBlock(
+	&abci.RequestFinalizeBlock{
+		Time:   initialTime,
+		Height: initialHeight,
+	},
+)
+require.NoError(t, err, "Failed to setup app: FinalizeBlock failed.")
+
+
+// FinalizeBlock prepares the block to be committed: it runs begin-blockers, then delivers txs, then end-blockers.
+func (s *TestSuite) FinalizeBlockWithReq(req &abci.RequestFinalizeBlock) {
+	_, err := s.App.FinalizeBlock(&abci.RequestFinalizeBlock{Height: s.Ctx.BlockHeight(), Time: s.Ctx.BlockTime()})
+	s.NoError(err)
+}
+
+*/
 
 // FinalizeBlock prepares the block to be committed: it runs begin-blockers, then delivers txs, then end-blockers.
 func (s *TestSuite) FinalizeBlock() {

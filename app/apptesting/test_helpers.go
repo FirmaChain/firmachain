@@ -9,6 +9,7 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/stretchr/testify/require"
 
+	coreheader "cosmossdk.io/core/header"
 	"cosmossdk.io/log"
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -34,11 +35,6 @@ import (
 	"github.com/firmachain/firmachain/v05/app"
 	apphelpers "github.com/firmachain/firmachain/v05/app/helpers"
 	appparams "github.com/firmachain/firmachain/v05/app/params"
-)
-
-// SimAppChainID hardcoded chainID for simulation
-const (
-	SimAppChainID = "testing"
 )
 
 func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
@@ -84,9 +80,21 @@ func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 		genesisBalances = append(genesisBalances, balance)
 	}
 
-	app := SetupWithGenesisValSet(t, valSet, genesisAccounts, genesisBalances...)
+	chainId := "firmachain-1"
+	timenow := time.Now()
+	initialHeight := int64(1)
 
-	ctx := app.GetContextForCheckTx(nil)
+	app := SetupWithGenesisValSet(t, chainId, timenow, initialHeight, valSet, genesisAccounts, genesisBalances...)
+
+	ctx := app.BaseApp.NewContextLegacy(false, tmproto.Header{
+		ChainID: chainId,
+		Height:  initialHeight,
+		Time:    timenow,
+	}).WithHeaderInfo(coreheader.Info{
+		ChainID: chainId,
+		Height:  initialHeight,
+		Time:    timenow,
+	})
 
 	return app, ctx, testAddrsWithKeys
 }
@@ -95,11 +103,11 @@ func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the firmachainApp from first genesis
 // account. A Nop logger is set in firmachainApp.
-func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *app.App {
+func SetupWithGenesisValSet(t *testing.T, chainId string, initialTime time.Time, initialHeight int64, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *app.App {
 	t.Helper()
 
 	const withGenesis = true
-	firmachainApp, genesisState := setup(t, withGenesis)
+	firmachainApp, genesisState := setup(t, withGenesis, chainId)
 	genesisState = genesisStateWithValSet(t, firmachainApp, genesisState, valSet, genAccs, balances...)
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
@@ -111,35 +119,12 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 			Validators:      []abci.ValidatorUpdate{},
 			ConsensusParams: DefaultConsensusParams,
 			AppStateBytes:   stateBytes,
-			ChainId:         "testing",
-			Time:            time.Now().UTC(),
-			InitialHeight:   1,
+			ChainId:         chainId,
+			Time:            initialTime,
+			InitialHeight:   initialHeight,
 		},
 	)
 	require.NoError(t, err, "Failed to setup app: InitChain failed.")
-
-	/*
-		// commit genesis changes
-		_, err = firmachainApp.Commit()
-		require.NoError(t, err, "Failed to setup app: Commit failed.")
-	*/
-
-	/*
-		newCtx := firmachainApp.NewContextLegacy(true, tmproto.Header{
-			ChainID:            "testing",
-			Height:             firmachainApp.LastBlockHeight() + 1,
-			AppHash:            firmachainApp.LastCommitID().Hash,
-			ValidatorsHash:     valSet.Hash(),
-			NextValidatorsHash: valSet.Hash(),
-			Time:               time.Now().UTC(),
-		})
-	*/
-	/*
-		newCtx := firmachainApp.NewContext(true)
-		_, err = firmachainApp.ModuleManager().BeginBlock(newCtx)
-		// BUG: it seems we have a problem with mint module keys. Uncommenting the following, the test fails.
-		//require.NoError(t, err, "Failed to setup app: BeginBlock failed.")
-	*/
 
 	return firmachainApp
 }
@@ -175,7 +160,7 @@ func (ao EmptyBaseAppOptions) Get(_ string) interface{} {
 	return nil
 }
 
-func setup(t *testing.T, withGenesis bool, opts ...wasmkeeper.Option) (*app.App, app.GenesisState) {
+func setup(t *testing.T, withGenesis bool, chainId string, opts ...wasmkeeper.Option) (*app.App, app.GenesisState) {
 	db := dbm.NewMemDB()
 	nodeHome := t.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
@@ -196,7 +181,7 @@ func setup(t *testing.T, withGenesis bool, opts ...wasmkeeper.Option) (*app.App,
 		true,
 		EmptyAppOptions{},
 		opts,
-		bam.SetChainID("testing"),
+		bam.SetChainID(chainId),
 	)
 	if withGenesis {
 		genesisState := app.NewDefaultGenesisState(app.AppCodec())
