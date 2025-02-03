@@ -96,12 +96,14 @@ import (
 	"cosmossdk.io/log"
 	abci "github.com/cometbft/cometbft/abci/types"
 	dbm "github.com/cosmos/cosmos-db"
+	ibcconnectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
 
 	upgrades "github.com/firmachain/firmachain/v05/app/upgrades"
 	v04 "github.com/firmachain/firmachain/v05/app/upgrades/v04"
 	v05 "github.com/firmachain/firmachain/v05/app/upgrades/v05"
 	"github.com/firmachain/firmachain/v05/client/docs"
 
+	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 	contractmodule "github.com/firmachain/firmachain/v05/x/contract"
 	contractmodulekeeper "github.com/firmachain/firmachain/v05/x/contract/keeper"
 	contractmoduletypes "github.com/firmachain/firmachain/v05/x/contract/types"
@@ -1195,6 +1197,8 @@ func GetMaccPerms() map[string][]string {
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
+	keyTable := ibcclienttypes.ParamKeyTable()
+	keyTable.RegisterParamSet(&ibcconnectiontypes.Params{})
 	// SDK
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
@@ -1205,10 +1209,13 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
 	// IBC
-	paramsKeeper.Subspace(ibcexported.ModuleName)
-	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
-	paramsKeeper.Subspace(packetforwardtypes.ModuleName)
-	paramsKeeper.Subspace(icahosttypes.SubModuleName)
+	paramsKeeper.Subspace(ibcexported.ModuleName).WithKeyTable(keyTable)
+	paramsKeeper.Subspace(ibctransfertypes.ModuleName).WithKeyTable(ibctransfertypes.ParamKeyTable())
+	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
+	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
+	paramsKeeper.Subspace(ibchookstypes.ModuleName)
+	paramsKeeper.Subspace(icqtypes.ModuleName)
+	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	// Wasm
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	// Custom

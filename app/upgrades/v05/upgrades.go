@@ -77,14 +77,17 @@ func CreateV0_5_0UpgradeHandler(
 
 			// IBC
 			case ibctransfertypes.ModuleName:
-				keyTable = ibctransfertypes.ParamKeyTable()
+				keyTable = ibctransfertypes.ParamKeyTable() //nolint:staticcheck
 			case icahosttypes.SubModuleName:
-				keyTable = icahosttypes.ParamKeyTable()
+				keyTable = icahosttypes.ParamKeyTable() //nolint:staticcheck
+			case icacontrollertypes.SubModuleName:
+				keyTable = icacontrollertypes.ParamKeyTable() //nolint:staticcheck
+			case icqtypes.ModuleName:
+				keyTable = icqtypes.ParamKeyTable() //nolint:staticcheck
 
 			// Wasm
 			case wasmtypes.ModuleName:
 				keyTable = wasmv2.ParamKeyTable() //nolint:staticcheck
-				continue
 
 			default:
 				continue
@@ -138,6 +141,7 @@ func CreateV0_5_0UpgradeHandler(
 		*/
 
 		// ==== Run migration ====
+
 		logger.Info(fmt.Sprintf("pre migrate version map: %v", vm))
 		versionMap, err := mm.RunMigrations(ctx, cfg, vm)
 		if err != nil {
