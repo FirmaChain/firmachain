@@ -26,4 +26,4 @@ The title of the initiative being implemented.
 
 ---
 
-For more information, refer to the [FVAB Charter](../charter.md).
+For more information, refer to the [FVAB Charter](../../charter.md).
