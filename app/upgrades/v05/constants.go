@@ -30,15 +30,13 @@ var Upgrade = upgrades.Upgrade{
 			packetforwardtypes.StoreKey,
 			icacontrollertypes.StoreKey,
 			circuittypes.StoreKey,
-			consensusparamstypes.StoreKey,
-			//TODO: Why is crisis needed here?
-			crisistype.StoreKey,
 			icqtypes.StoreKey,
+			// required by sdk v0.47
+			crisistype.StoreKey,
+			consensusparamstypes.StoreKey,
 		},
 		Deleted: []string{
 			legacyBurnModuleStoreKey,
-			// TODO: capability?
-			// TODO: evidence?
 		},
 	},
 }

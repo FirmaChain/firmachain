@@ -139,7 +139,11 @@ func CreateV0_5_0UpgradeHandler(
 			govParams.ExpeditedMinDeposit = sdk.NewCoins(sdk.NewCoin(appparamas.BaseCoinUnit, math.NewInt(5000000000)))
 			govParams.MinInitialDepositRatio = "0.250000000000000000"
 		*/
-
+		/*
+			TODO: sdk v0.47: The Proposal proto has been updated with proposer field.
+				  call v4.AddProposerAddressToProposal to update all existing proposal and make them compatible.
+				  This migration is optional.
+		*/
 		// ==== Run migration ====
 
 		logger.Info(fmt.Sprintf("pre migrate version map: %v", vm))
