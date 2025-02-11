@@ -1,6 +1,7 @@
 PACKAGES=$(shell go list ./... | grep -v '/simulation')
 VERSION := $(shell echo $(shell git describe --tags --always) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
+BRANCH := $(shell git branch --show-current)
 
 include Makefile.ledger
 
@@ -27,6 +28,13 @@ all: install
 
 install: go.sum
 		go install -mod=readonly $(BUILD_FLAGS) ./cmd/firmachaind
+
+docker-img-from-current-branch:
+	docker build \
+		--build-arg GIT_VERSION=$(VERSION) \
+		--build-arg GIT_COMMIT=$(COMMIT) \
+		--build-arg GIT_BRANCH=$(BRANCH) \
+		-t firmachain .
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
