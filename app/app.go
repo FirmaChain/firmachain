@@ -97,6 +97,7 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	dbm "github.com/cosmos/cosmos-db"
 	ibcconnectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
+	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 
 	upgrades "github.com/firmachain/firmachain/v05/app/upgrades"
 	v04 "github.com/firmachain/firmachain/v05/app/upgrades/v04"
@@ -761,6 +762,7 @@ func New(
 		// IBC modules
 		ibc.NewAppModule(app.AppKeepers.IBCKeeper),
 		transfer.NewAppModule(app.AppKeepers.TransferKeeper),
+		ibctm.NewAppModule(),
 		ibcfee.NewAppModule(app.AppKeepers.IBCFeeKeeper),
 		ibc_hooks.NewAppModule(app.AppKeepers.AccountKeeper),
 		packetforward.NewAppModule(app.AppKeepers.PacketForwardKeeper, app.GetSubspace(packetforwardtypes.ModuleName)),
@@ -811,6 +813,7 @@ func New(
 		ibcfeetypes.ModuleName,
 		icqtypes.ModuleName,
 		ibchookstypes.ModuleName,
+		ibctm.ModuleName,
 	}
 
 	orderEndBlockers := []string{
@@ -843,6 +846,7 @@ func New(
 		ibcfeetypes.ModuleName,
 		icqtypes.ModuleName,
 		ibchookstypes.ModuleName,
+		ibctm.ModuleName,
 	}
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -880,6 +884,7 @@ func New(
 		ibchookstypes.ModuleName,
 		icqtypes.ModuleName,
 		circuittypes.ModuleName,
+		ibctm.ModuleName,
 	}
 
 	app.mm = module.NewManager(appModules...)
