@@ -11,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/firmachain/firmachain/v05/app/keepers"
 
-	packetforwardtypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8/packetforward/types"
 	icqtypes "github.com/cosmos/ibc-apps/modules/async-icq/v8/types"
 	ibchookstypes "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/types"
 	icacontrollertypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/types"
@@ -118,8 +117,6 @@ func CreateV0_5_0UpgradeHandler(
 		}
 		// ICA Controller
 		newIcaControllerParams := icacontrollertypes.Params{ControllerEnabled: true}
-		// IBC PFM
-		newPFMParams := packetforwardtypes.DefaultParams()
 		// ICQ
 		newICQParams := icqtypes.NewParams(true, nil)
 		// IBC Fee
@@ -147,12 +144,6 @@ func CreateV0_5_0UpgradeHandler(
 
 		keepers.ICAControllerKeeper.SetParams(ctx, newIcaControllerParams)
 		logger.Info("icacontroller: ICAControllerKeeper params set")
-
-		err = keepers.PacketForwardKeeper.SetParams(ctx, newPFMParams)
-		if err != nil {
-			return nil, err
-		}
-		logger.Info("packetforward: PacketForwardKeeper params set")
 
 		err = keepers.ICQKeeper.SetParams(ctx, newICQParams)
 		if err != nil {

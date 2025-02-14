@@ -514,7 +514,6 @@ func New(
 		app.AppKeepers.GetKeys()[packetforwardtypes.StoreKey],
 		app.AppKeepers.TransferKeeper,
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
-		app.AppKeepers.DistrKeeper,
 		app.AppKeepers.BankKeeper,
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
 		govModAddress,
@@ -666,7 +665,6 @@ func New(
 		app.AppKeepers.PacketForwardKeeper,
 		0,
 		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
-		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
 	)
 	// initialize ICA module with mock module as the authentication module on the controller side
 	var icaControllerStack ibcporttypes.IBCModule
@@ -1173,7 +1171,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
 	paramsKeeper.Subspace(ibchookstypes.ModuleName)
 	paramsKeeper.Subspace(icqtypes.ModuleName)
-	paramsKeeper.Subspace(packetforwardtypes.ModuleName).WithKeyTable(packetforwardtypes.ParamKeyTable())
 	// Wasm
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	// Custom
