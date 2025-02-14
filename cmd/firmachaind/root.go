@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"time"
 
 	"cosmossdk.io/log"
 	cmtcfg "github.com/cometbft/cometbft/config"
@@ -99,7 +98,7 @@ func NewRootCmd() *cobra.Command {
 		WithAccountRetriever(authtypes.AccountRetriever{}).
 		WithBroadcastMode(flags.BroadcastSync).
 		WithHomeDir(app.DefaultNodeHome).
-		WithViper("") // TODO: prefix for env variables?
+		WithViper("")
 
 	rootCmd := &cobra.Command{
 		Use:   version.AppName,
@@ -162,14 +161,6 @@ func NewRootCmd() *cobra.Command {
 // return cmtcfg.DefaultConfig if no custom configuration is required for the application.
 func initCometConfig() *cmtcfg.Config {
 	cfg := cmtcfg.DefaultConfig()
-
-	// these values put a higher strain on node memory
-	// cfg.P2P.MaxNumInboundPeers = 100
-	// cfg.P2P.MaxNumOutboundPeers = 40
-
-	// TODO: do we need this?
-	cfg.Consensus.TimeoutCommit = 3 * time.Second
-
 	return cfg
 }
 
@@ -207,7 +198,6 @@ func initRootCmd(
 
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(basicManager, app.DefaultNodeHome),
-		// TODO: SDK has also this: NewTestnetCmd(basicManager, banktypes.GenesisBalancesIterator{}),
 		cmtcli.NewCompletionCmd(rootCmd, true),
 		debug.Cmd(),
 		confixcmd.ConfigCommand(),
@@ -348,16 +338,6 @@ func appExport(
 	if !ok || homePath == "" {
 		return servertypes.ExportedApp{}, errors.New("application home not set")
 	}
-
-	// TODO: do we need to replicate these sdk steps? Osmosis does not.
-	// SDK:
-	// viperAppOpts, ok := appOpts.(*viper.Viper)
-	// if !ok {
-	//	return servertypes.ExportedApp{}, errors.New("appOpts is not viper.Viper")
-	// }
-	// // overwrite the FlagInvCheckPeriod
-	// viperAppOpts.Set(server.FlagInvCheckPeriod, 1)
-	// appOpts = viperAppOpts
 
 	var firmachainApp *app.App
 	loadLatest := height == -1

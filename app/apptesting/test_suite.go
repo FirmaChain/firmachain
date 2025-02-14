@@ -1,7 +1,6 @@
 package apptesting
 
 import (
-	//"fmt"
 	"fmt"
 	"os"
 	"time"
@@ -110,24 +109,6 @@ func (s *TestSuite) SetupHelpers() {
 	s.StakingHelper.Denom = "ufct"
 }
 
-/*
-_, err = firmachainApp.FinalizeBlock(
-	&abci.RequestFinalizeBlock{
-		Time:   initialTime,
-		Height: initialHeight,
-	},
-)
-require.NoError(t, err, "Failed to setup app: FinalizeBlock failed.")
-
-
-// FinalizeBlock prepares the block to be committed: it runs begin-blockers, then delivers txs, then end-blockers.
-func (s *TestSuite) FinalizeBlockWithReq(req &abci.RequestFinalizeBlock) {
-	_, err := s.App.FinalizeBlock(&abci.RequestFinalizeBlock{Height: s.Ctx.BlockHeight(), Time: s.Ctx.BlockTime()})
-	s.NoError(err)
-}
-
-*/
-
 // FinalizeBlock prepares the block to be committed: it runs begin-blockers, then delivers txs, then end-blockers.
 func (s *TestSuite) FinalizeBlock() {
 	_, err := s.App.FinalizeBlock(&abci.RequestFinalizeBlock{Height: s.Ctx.BlockHeight(), Time: s.Ctx.BlockTime()})
@@ -172,13 +153,7 @@ func (s *TestSuite) ConfirmUpgradeSucceeded(upgradeName string, upgradeHeight in
 	s.Ctx = s.Ctx.WithBlockHeight(upgradeHeight)
 
 	s.Ctx = s.Ctx.WithHeaderInfo(header.Info{Height: upgradeHeight, Time: s.Ctx.BlockTime().Add(time.Second)}).WithBlockHeight(upgradeHeight)
-	/*
-		s.Require().NotPanics(func() {
-			res, err := s.App.PreBlocker(s.Ctx, nil)
-			_ = res
-			s.Require().NoError(err)
-		})
-	*/
+
 	res, err := s.App.PreBlocker(s.Ctx, nil)
 	_ = res
 	s.Require().NoError(err)

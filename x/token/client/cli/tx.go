@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
+
 	"github.com/firmachain/firmachain/v05/x/token/types"
 )
 
@@ -29,7 +29,6 @@ func GetTxCmd() *cobra.Command {
 	cmd.AddCommand(CmdMint())
 	cmd.AddCommand(CmdBurn())
 	cmd.AddCommand(CmdUpdateTokenURI())
-	// this line is used by starport scaffolding # 1
 
 	return cmd
 }

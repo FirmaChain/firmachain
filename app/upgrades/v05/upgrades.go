@@ -6,13 +6,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	//"cosmossdk.io/math"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/firmachain/firmachain/v05/app/keepers"
-
-	//appparamas "github.com/firmachain/firmachain/v05/app/params"
 
 	packetforwardtypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v8/packetforward/types"
 	icqtypes "github.com/cosmos/ibc-apps/modules/async-icq/v8/types"
@@ -129,21 +126,7 @@ func CreateV0_5_0UpgradeHandler(
 		logger.Info(fmt.Sprintf("ibcfee module version %s set", fmt.Sprint(vm[ibcfeetypes.ModuleName])))
 		// IBC Hooks
 		logger.Info(fmt.Sprintf("ibchooks module version %s set", fmt.Sprint(vm[ibchookstypes.ModuleName])))
-		// Gov expedited proposal param
-		/*
-			TODO: check if we want to keep this
-			govParams, err := keepers.GovKeeper.Params.Get(ctx)
-			if err != nil {
-				return nil, err
-			}
-			govParams.ExpeditedMinDeposit = sdk.NewCoins(sdk.NewCoin(appparamas.BaseCoinUnit, math.NewInt(5000000000)))
-			govParams.MinInitialDepositRatio = "0.250000000000000000"
-		*/
-		/*
-			TODO: sdk v0.47: The Proposal proto has been updated with proposer field.
-				  call v4.AddProposerAddressToProposal to update all existing proposal and make them compatible.
-				  This migration is optional.
-		*/
+
 		// ==== Run migration ====
 
 		logger.Info(fmt.Sprintf("pre migrate version map: %v", vm))
@@ -157,34 +140,26 @@ func CreateV0_5_0UpgradeHandler(
 
 		// ==== Set Params ====
 		keepers.IBCKeeper.ClientKeeper.SetParams(ctx, newIBCCoreParams)
-		logger.Info(fmt.Sprintf("ibc core: ICQKeeper params set"))
+		logger.Info("ibc core: ICQKeeper params set")
 
 		keepers.ICAHostKeeper.SetParams(ctx, newIcaHostParams)
-		logger.Info(fmt.Sprintf("icahost: ICAHostKeeper params set"))
+		logger.Info("icahost: ICAHostKeeper params set")
 
 		keepers.ICAControllerKeeper.SetParams(ctx, newIcaControllerParams)
-		logger.Info(fmt.Sprintf("icacontroller: ICAControllerKeeper params set"))
+		logger.Info("icacontroller: ICAControllerKeeper params set")
 
 		err = keepers.PacketForwardKeeper.SetParams(ctx, newPFMParams)
 		if err != nil {
 			return nil, err
 		}
-		logger.Info(fmt.Sprintf("packetforward: PacketForwardKeeper params set"))
+		logger.Info("packetforward: PacketForwardKeeper params set")
 
 		err = keepers.ICQKeeper.SetParams(ctx, newICQParams)
 		if err != nil {
 			return nil, err
 		}
-		logger.Info(fmt.Sprintf("icq: ICQKeeper params set"))
+		logger.Info("icq: ICQKeeper params set")
 
-		/*
-			TODO: uncomment if govParams have to be modified
-			err = keepers.GovKeeper.Params.Set(ctx, govParams)
-			if err != nil {
-				return nil, err
-			}
-			logger.Info(fmt.Sprintf("icq: GovKeeper params set"))
-		*/
 		return versionMap, err
 	}
 }

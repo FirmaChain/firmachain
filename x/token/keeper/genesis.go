@@ -12,7 +12,6 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 	for _, elem := range genState.TokenDataList {
 		k.SetTokenData(ctx, elem)
 	}
-	// this line is used by starport scaffolding # genesis/module/init
 }
 
 // ExportGenesis returns the capability module's exported genesis.
@@ -20,7 +19,6 @@ func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	genesis := types.DefaultGenesis()
 
 	genesis.TokenDataList = k.GetAllTokenData(ctx)
-	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis
 }

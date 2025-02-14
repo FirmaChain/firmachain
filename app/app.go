@@ -56,7 +56,6 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 
-	//clienthelpers "cosmossdk.io/client/v2/helpers"
 	"cosmossdk.io/x/feegrant"
 	feegrantkeeper "cosmossdk.io/x/feegrant/keeper"
 	feegrantmodule "cosmossdk.io/x/feegrant/module"
@@ -168,30 +167,9 @@ var (
 	Upgrades = []upgrades.Upgrade{v04.Upgrade, v05.Upgrade}
 )
 
-// GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
-// produce a list of enabled proposals to pass into wasmd app.
-/*func GetEnabledProposals() []wasmtypes.ProposalType {
-	if EnableSpecificProposals == "" {
-		if ProposalsEnabled == "true" {
-			return wasmtypes.EnableAllProposals
-		}
-		return wasmtypes.DisableAllProposals
-	}
-	chunks := strings.Split(EnableSpecificProposals, ",")
-	proposals, err := wasmtypes.ConvertToProposals(chunks)
-	if err != nil {
-		panic(err)
-	}
-	return proposals
-}*/
-
 func getGovProposalHandlers() []govclient.ProposalHandler {
 	return []govclient.ProposalHandler{
 		paramsclient.ProposalHandler,
-		//upgradeclient.LegacyProposalHandler,
-		//upgradeclient.LegacyCancelProposalHandler,
-		//ibcclientclient.UpdateClientProposalHandler,
-		//ibcclientclient.UpgradeProposalHandler,
 	}
 }
 
@@ -226,8 +204,6 @@ var (
 )
 
 func init() {
-	/*var err error
-	DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory(".app")*/
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)
@@ -298,11 +274,6 @@ func New(
 	db dbm.DB,
 	traceStore io.Writer,
 	loadLatest bool,
-	/* skipUpgradeHeights map[int64]bool,
-	homePath string,
-	invCheckPeriod uint,
-	encodingConfig encparams.EncodingConfig,
-	enabledProposals []wasmtypes.ProposalType,*/
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasmkeeper.Option,
 	baseAppOptions ...func(*baseapp.BaseApp),
@@ -483,9 +454,7 @@ func New(
 		govModAddress,
 	)
 	app.AppKeepers.GovKeeper = *govKeeper.SetHooks(
-		govtypes.NewMultiGovHooks(
-		// register governance hooks
-		),
+		govtypes.NewMultiGovHooks(),
 	)
 	app.AppKeepers.EvidenceKeeper = *evidencekeeper.NewKeeper(
 		app.appCodec,
@@ -543,8 +512,7 @@ func New(
 	app.AppKeepers.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
 		app.appCodec,
 		app.AppKeepers.GetKeys()[packetforwardtypes.StoreKey],
-		//app.GetSubspace(packetforwardtypes.ModuleName),
-		app.AppKeepers.TransferKeeper, // Will be zero-value here. Reference is set later on with SetTransferKeeper.
+		app.AppKeepers.TransferKeeper,
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
 		app.AppKeepers.DistrKeeper,
 		app.AppKeepers.BankKeeper,
@@ -555,7 +523,6 @@ func New(
 		app.appCodec,
 		keys[ibctransfertypes.StoreKey],
 		app.GetSubspace(ibctransfertypes.ModuleName),
-		// The ICS4Wrapper is replaced by the PacketForwardKeeper instead of the channel so that sending can be overridden by the middleware
 		app.AppKeepers.PacketForwardKeeper,
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
 		app.AppKeepers.IBCKeeper.PortKeeper,
@@ -593,8 +560,7 @@ func New(
 		app.appCodec,
 		app.AppKeepers.GetKeys()[icacontrollertypes.StoreKey],
 		app.GetSubspace(icacontrollertypes.SubModuleName),
-		// TODO: IBCFeeKeeper -> icaControllerStack
-		app.AppKeepers.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
+		app.AppKeepers.IBCFeeKeeper,
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
 		app.AppKeepers.IBCKeeper.PortKeeper,
 		scopedICAControllerKeeper,
@@ -605,8 +571,7 @@ func New(
 	app.AppKeepers.ICQKeeper = icqkeeper.NewKeeper(
 		app.appCodec,
 		app.AppKeepers.GetKeys()[icqtypes.StoreKey],
-		//app.GetSubspace(icqtypes.ModuleName),
-		app.AppKeepers.IBCKeeper.ChannelKeeper, // may be replaced with middleware
+		app.AppKeepers.IBCKeeper.ChannelKeeper,
 		app.AppKeepers.IBCKeeper.ChannelKeeper,
 		app.AppKeepers.IBCKeeper.PortKeeper,
 		scopedICQKeeper,
@@ -689,14 +654,6 @@ func New(
 	govRouter := govv1beta.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govv1beta.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.AppKeepers.ParamsKeeper))
-	//AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.AppKeepers.UpgradeKeeper)).
-	//AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.AppKeepers.IBCKeeper.ClientKeeper))
-	// DEPRECATED: DO NOT USE
-	//
-	//if len(enabledProposals) != 0 {
-	//	govRouter.AddRoute(wasmtypes.RouterKey, wasm.NewWasmProposalHandler(app.AppKeepers.WasmKeeper, enabledProposals))
-	//}
-	// Set legacy router for backwards compatibility with gov v1beta1
 	app.AppKeepers.GovKeeper.SetLegacyRouter(govRouter)
 
 	// ------------ Ibc ------------
@@ -715,8 +672,6 @@ func New(
 	var icaControllerStack ibcporttypes.IBCModule
 	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, *app.AppKeepers.ICAControllerKeeper)
 	icaControllerStack = ibcfee.NewIBCMiddleware(icaControllerStack, app.AppKeepers.IBCFeeKeeper)
-	// RecvPacket, message that originates from core IBC and goes down to app, the flow is:
-	// channel.RecvPacket -> fee.OnRecvPacket -> icaHost.OnRecvPacket
 	var icaHostStack ibcporttypes.IBCModule
 	icaHostStack = icahost.NewIBCModule(*app.AppKeepers.ICAHostKeeper)
 	icaHostStack = ibcfee.NewIBCMiddleware(icaHostStack, app.AppKeepers.IBCFeeKeeper)
@@ -750,7 +705,7 @@ func New(
 		distr.NewAppModule(app.appCodec, app.AppKeepers.DistrKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.AppKeepers.StakingKeeper, app.GetSubspace(distrtypes.ModuleName)),
 		evidence.NewAppModule(app.AppKeepers.EvidenceKeeper),
 		feegrantmodule.NewAppModule(app.appCodec, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.AppKeepers.FeeGrantKeeper, app.interfaceRegistry),
-		genutil.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.StakingKeeper, app.BaseApp, app.txConfig), //TODO: check again if app is correct
+		genutil.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.StakingKeeper, app.BaseApp, app.txConfig),
 		vesting.NewAppModule(app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper),
 		gov.NewAppModule(app.appCodec, &app.AppKeepers.GovKeeper, app.AppKeepers.AccountKeeper, app.AppKeepers.BankKeeper, app.GetSubspace(govtypes.ModuleName)),
 		mint.NewAppModule(app.appCodec, app.AppKeepers.MintKeeper, app.AppKeepers.AccountKeeper, nil, app.GetSubspace(minttypes.ModuleName)),
@@ -889,7 +844,6 @@ func New(
 
 	app.mm = module.NewManager(appModules...)
 	app.mbm = newBasicManagerFromManager(app)
-	//app.mbm.RegisterLegacyAminoCodec(app.legacyAmino)
 	app.mbm.RegisterInterfaces(app.interfaceRegistry)
 	app.mm.SetOrderPreBlockers(orderPreBlockers...)
 	app.mm.SetOrderBeginBlockers(orderBeginBlockers...)
@@ -1029,7 +983,7 @@ func (app *App) updateValidatorMinCommision(ctx sdk.Context) {
 
 	validators, err := staking.GetAllValidators(ctx)
 	if err != nil {
-		panic(err) //TODO: handle
+		panic(err)
 	}
 	minCommissionRate := math.LegacyMustNewDecFromStr("0.05")
 
