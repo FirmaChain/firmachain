@@ -10,10 +10,11 @@ For a bug that is non-sensitive and/or operational in nature rather than a criti
 
 If you're here because you're trying to figure out how to notify us of a security issue, alert the core engineers:
 
-| Name  | Email  |
-|-----|------|
-| Niil | niil[at]kintsugi.tech  |
-| Luca | luca[at]kintsugi.tech  |
+| Name   | Email  |
+|--------|--------|
+| Yongku | cto[at]firmachain.org  |
+| Niil   | niil[at]kintsugi.tech  |
+| Luca   | luca[at]kintsugi.tech  |
 
 Please avoid opening public issues on GitHub that contain information about a potential security vulnerability as this makes it difficult to reduce the impact and harm of valid security issues.
 
