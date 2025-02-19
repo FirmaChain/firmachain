@@ -165,6 +165,9 @@ import (
 
 	msgservice "github.com/cosmos/cosmos-sdk/types/msgservice"
 	proto "github.com/cosmos/gogoproto/proto"
+
+	tmos "github.com/cometbft/cometbft/libs/os"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 var (
@@ -966,6 +969,11 @@ func New(
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
 			ctmos.Exit(err.Error())
+		}
+
+		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
+		if err := app.AppKeepers.WasmKeeper.InitializePinnedCodes(ctx); err != nil {
+			tmos.Exit(fmt.Sprintf("app.AppKeepers.WasmKeeper failed initialize pinned codes %s", err))
 		}
 
 		// Initialize and seal the capability keeper so all persistent capabilities
