@@ -692,6 +692,7 @@ func _Msg_UpdateTokenURI_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+var Msg_serviceDesc = _Msg_serviceDesc
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "firmachain.token.Msg",
 	HandlerType: (*MsgServer)(nil),

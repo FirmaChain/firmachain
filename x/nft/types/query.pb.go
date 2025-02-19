@@ -637,6 +637,7 @@ func _Query_NftItemAll_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+var Query_serviceDesc = _Query_serviceDesc
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "firmachain.nft.Query",
 	HandlerType: (*QueryServer)(nil),

@@ -1,6 +1,6 @@
 module github.com/firmachain/firmachain/v05
 
-go 1.23.5
+go 1.23.4
 
 require (
 	cosmossdk.io/api v0.7.6

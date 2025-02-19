@@ -899,6 +899,7 @@ func _Query_ContractLogAll_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+var Query_serviceDesc = _Query_serviceDesc
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "firmachain.contract.Query",
 	HandlerType: (*QueryServer)(nil),
