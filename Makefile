@@ -61,68 +61,11 @@ proto-gen:
 ###############################################################################
 
 SWAGGER_DIR=./swagger-proto
-THIRD_PARTY_DIR=$(SWAGGER_DIR)/third_party
-
-swagger-download-proto-deps:
-	mkdir -p "$(THIRD_PARTY_DIR)/cosmos_tmp" && \
-	cd "$(THIRD_PARTY_DIR)/cosmos_tmp" && \
-	git init && \
-	git remote add origin "https://github.com/cosmos/cosmos-sdk.git" && \
-	git pull origin main && \
-	rm -f ./proto/buf.* && \
-	mv ./proto/* ..
-	rm -rf "$(THIRD_PARTY_DIR)/cosmos_tmp"
-
-	mkdir -p "$(THIRD_PARTY_DIR)/comet_tmp" && \
-	cd "$(THIRD_PARTY_DIR)/comet_tmp" && \
-	git init && \
-	git remote add origin "https://github.com/cometbft/cometbft.git" && \
-	git pull origin main && \
-	rm -f ./proto/buf.* && \
-	mv ./proto/* ..
-	rm -rf "$(THIRD_PARTY_DIR)/comet_tmp"
-
-	mkdir -p "$(THIRD_PARTY_DIR)/ibc_tmp" && \
-	cd "$(THIRD_PARTY_DIR)/ibc_tmp" && \
-	git init && \
-	git remote add origin "https://github.com/cosmos/ibc-go.git" && \
-	git pull origin main && \
-	rm -f ./proto/buf.* && \
-	mv ./proto/* ..
-	rm -rf "$(THIRD_PARTY_DIR)/ibc_tmp"
-
-	mkdir -p "$(THIRD_PARTY_DIR)/cosmos_proto_tmp" && \
-	cd "$(THIRD_PARTY_DIR)/cosmos_proto_tmp" && \
-	git init && \
-	git remote add origin "https://github.com/cosmos/cosmos-proto.git" && \
-	git pull origin main && \
-	rm -f ./proto/buf.* && \
-	mv ./proto/* ..
-	rm -rf "$(THIRD_PARTY_DIR)/cosmos_proto_tmp"
-
-	mkdir -p "$(THIRD_PARTY_DIR)/gogoproto" && \
-	curl -SSL https://raw.githubusercontent.com/cosmos/gogoproto/main/gogoproto/gogo.proto > "$(THIRD_PARTY_DIR)/gogoproto/gogo.proto"
-
-	mkdir -p "$(THIRD_PARTY_DIR)/google/api" && \
-	curl -sSL https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/annotations.proto > "$(THIRD_PARTY_DIR)/google/api/annotations.proto"
-	curl -sSL https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/http.proto > "$(THIRD_PARTY_DIR)/google/api/http.proto"
-
-	mkdir -p "$(THIRD_PARTY_DIR)/cosmos/ics23/v1" && \
-	curl -sSL https://raw.githubusercontent.com/cosmos/ics23/master/proto/cosmos/ics23/v1/proofs.proto > "$(THIRD_PARTY_DIR)/cosmos/ics23/v1/proofs.proto"
 
 swagger:
-	@echo
-	@echo "Downloading proto dependencies..."
-	@echo
-	@make swagger-download-proto-deps
+	@echo "Downloading go modules..."
+	@go mod tidy
 	@echo
 	@echo "Generating Swagger..."
 	@echo
-	./scripts/generate-swagger.sh
-	@echo
-	@echo "Cleaning temporary files..."
-	@echo
-	rm -rf ./tmp-swagger-gen
-	rm -rf "$(SWAGGER_DIR)"
-	@echo
-	@echo "Generation complete: ./client/docs/static/swagger.yaml"
+	@./scripts/generate-swagger.sh
