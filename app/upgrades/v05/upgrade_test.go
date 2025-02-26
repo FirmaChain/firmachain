@@ -79,5 +79,9 @@ func preUpgradeChecks(s *UpgradeTestSuite) {
 
 }
 
-func postUpgradeChecks(_ *UpgradeTestSuite) {
+func postUpgradeChecks(s *UpgradeTestSuite) {
+	govParams, err := s.App.AppKeepers.GovKeeper.Params.Get(s.Ctx)
+	s.Require().NoError(err)
+	s.Require().NoError(err)
+	s.Assert().Equal("0.520000000000000000", govParams.MinInitialDepositRatio)
 }

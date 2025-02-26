@@ -6,6 +6,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	appparams "github.com/firmachain/firmachain/v05/app/params"
+
+	"cosmossdk.io/math"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -136,6 +139,15 @@ func CreateV0_5_0UpgradeHandler(
 		// New modules run AFTER the migrations, so to set the correct params after the default.
 
 		// ==== Set Params ====
+		newGovParams, err := keepers.GovKeeper.Params.Get(ctx)
+		if err != nil {
+			return nil, err
+		}
+		newGovParams.ExpeditedMinDeposit = sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, math.NewInt(5000000000)))
+		newGovParams.MinInitialDepositRatio = "0.520000000000000000"
+		keepers.GovKeeper.Params.Set(ctx, newGovParams)
+		logger.Info("gov: GovKeeper params set")
+
 		keepers.IBCKeeper.ClientKeeper.SetParams(ctx, newIBCCoreParams)
 		logger.Info("ibc core: ICQKeeper params set")
 
