@@ -8,6 +8,7 @@ import (
 
 	appparams "github.com/firmachain/firmachain/v05/app/params"
 
+	"cosmossdk.io/core/store"
 	"cosmossdk.io/math"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -37,12 +38,17 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 
 	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	govv4 "github.com/cosmos/cosmos-sdk/x/gov/migrations/v4"
 )
 
 func CreateV0_5_0UpgradeHandler(
 	mm *module.Manager,
 	cfg module.Configurator,
 	keepers *keepers.AppKeepers,
+	appCodec *codec.ProtoCodec,
+	govKVStoreService store.KVStoreService,
 ) upgradetypes.UpgradeHandler {
 	return func(c context.Context, _ upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
 		ctx := sdk.UnwrapSDKContext(c)
@@ -102,6 +108,14 @@ func CreateV0_5_0UpgradeHandler(
 		if err != nil {
 			return nil, err
 		}
+
+		// SDK v47: migrate gov proposals to include proposer address
+		proposalsIdToProposerAddress := make(map[uint64]string)
+		proposalsIdToProposerAddress[1] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
+		proposalsIdToProposerAddress[2] = "firma1yl76cswscpcpjcljpavqk9v5pjrtqxpy9nlrd4"
+		proposalsIdToProposerAddress[3] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
+		proposalsIdToProposerAddress[8] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
+		govv4.AddProposerAddressToProposal(ctx, govKVStoreService, appCodec, proposalsIdToProposerAddress)
 
 		// === New params ===
 		// https://github.com/cosmos/ibc-go/blob/v7.1.0/docs/migrations/v7-to-v7_1.md
