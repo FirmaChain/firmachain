@@ -607,10 +607,11 @@ func New(
 	)
 	// ----------- Wasm -----------
 	wasmDir := filepath.Join(homePath, "data")
-	wasmConfig, err := wasm.ReadWasmConfig(appOpts)
+	wasmNodeConfig, err := wasm.ReadNodeConfig(appOpts)
 	if err != nil {
-		panic("error : read wasm config: " + err.Error())
+		panic("error while reading wasm config: " + err.Error())
 	}
+	wasmVmConfig := wasmtypes.VMConfig{}
 	supportedFeatures := []string{"iterator,staking,stargate"}
 	app.AppKeepers.WasmKeeper = wasmkeeper.NewKeeper(
 		app.appCodec,
@@ -627,7 +628,8 @@ func New(
 		app.BaseApp.MsgServiceRouter(),
 		app.GRPCQueryRouter(),
 		wasmDir,
-		wasmConfig,
+		wasmNodeConfig,
+		wasmVmConfig,
 		supportedFeatures,
 		govModAddress,
 		wasmOpts...,
