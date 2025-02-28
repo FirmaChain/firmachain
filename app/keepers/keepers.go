@@ -115,6 +115,9 @@ func NewAppKeepersWithKeys(
 func (appKeepers *AppKeepers) GetKeys() map[string]*storetypes.KVStoreKey {
 	return appKeepers.keys
 }
+func (appKeepers *AppKeepers) GetKey(storeKey string) *storetypes.KVStoreKey {
+	return appKeepers.keys[storeKey]
+}
 func (appKeepers *AppKeepers) GetTkeys() map[string]*storetypes.TransientStoreKey {
 	return appKeepers.tkeys
 }

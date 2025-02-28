@@ -33,7 +33,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	sdkante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
@@ -924,13 +924,24 @@ func New(
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
 
-	anteHandler, err := ante.NewAnteHandler(
-		ante.HandlerOptions{
-			AccountKeeper:   app.AppKeepers.AccountKeeper,
-			BankKeeper:      app.AppKeepers.BankKeeper,
-			SignModeHandler: app.txConfig.SignModeHandler(),
-			FeegrantKeeper:  app.AppKeepers.FeeGrantKeeper,
-			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
+	anteHandler, err := NewAnteHandler(
+		FirmachainHandlerOptions{
+			HandlerOptions: sdkante.HandlerOptions{
+				AccountKeeper:   app.AppKeepers.AccountKeeper,
+				BankKeeper:      app.AppKeepers.BankKeeper,
+				SignModeHandler: app.txConfig.SignModeHandler(),
+				FeegrantKeeper:  app.AppKeepers.FeeGrantKeeper,
+				SigGasConsumer:  sdkante.DefaultSigVerificationGasConsumer,
+			},
+
+			IBCKeeper: app.AppKeepers.IBCKeeper,
+
+			CircuitKeeper: &app.AppKeepers.CircuitKeeper,
+
+			WasmKeeper:     &app.AppKeepers.WasmKeeper,
+			WasmNodeConfig: &wasmNodeConfig,
+
+			TXCounterStoreService: runtime.NewKVStoreService(app.AppKeepers.GetKey(wasmtypes.StoreKey)),
 		},
 	)
 	if err != nil {
