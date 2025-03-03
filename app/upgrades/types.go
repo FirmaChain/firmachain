@@ -1,7 +1,6 @@
 package upgrades
 
 import (
-	"cosmossdk.io/core/store"
 	storetypes "cosmossdk.io/store/types"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -23,7 +22,6 @@ type Upgrade struct {
 		module.Configurator,
 		*keepers.AppKeepers,
 		*codec.ProtoCodec,
-		store.KVStoreService,
 	) upgradetypes.UpgradeHandler
 
 	// Store upgrades, should be used for any new modules introduced, new modules deleted, or store names renamed.

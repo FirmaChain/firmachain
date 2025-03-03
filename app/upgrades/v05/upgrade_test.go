@@ -1,7 +1,6 @@
 package v05_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -56,21 +55,21 @@ func (s *UpgradeTestSuite) TestUpgrade() {
 func preUpgradeChecks(s *UpgradeTestSuite) {
 	stakingParams, err := s.App.AppKeepers.StakingKeeper.GetParams(s.Ctx)
 	_ = stakingParams
-	s.Logger.Debug(fmt.Sprintf("stakingParams %v", stakingParams))
+	//s.Logger.Debug(fmt.Sprintf("stakingParams %v", stakingParams))
 	s.Require().NoError(err)
 
 	bankParams := s.App.AppKeepers.BankKeeper.GetParams(s.Ctx)
 	_ = bankParams
-	s.Logger.Debug(fmt.Sprintf("bankParams %v", bankParams))
+	//s.Logger.Debug(fmt.Sprintf("bankParams %v", bankParams))
 
 	totalSupply, err := s.App.AppKeepers.BankKeeper.TotalSupply(s.Ctx, &banktypes.QueryTotalSupplyRequest{})
 	_ = totalSupply
-	s.Logger.Debug(fmt.Sprintf("totalSupply %v", totalSupply))
+	//s.Logger.Debug(fmt.Sprintf("totalSupply %v", totalSupply))
 	s.Require().NoError(err)
 
 	balances_0, err := s.App.AppKeepers.BankKeeper.AllBalances(s.Ctx, banktypes.NewQueryAllBalancesRequest(s.TestAccs[0].Address, nil, false))
 	_ = balances_0
-	s.Logger.Debug(fmt.Sprintf("balances_0 %v", balances_0))
+	//s.Logger.Debug(fmt.Sprintf("balances_0 %v", balances_0))
 	s.Require().NoError(err)
 
 	vm, err := s.App.AppKeepers.UpgradeKeeper.GetModuleVersionMap(s.Ctx)
@@ -105,6 +104,10 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 	s.Assert().NoError(err)
 	s.Assert().Equal("firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf", p.Proposer)
 
+	p, err = proposals.Get(s.Ctx, 4)
+	s.Assert().NoError(err)
+	s.Assert().Equal("firma1mn4gzvdtcyywk8wx9ey5axls04cxf9nqzek5ar", p.Proposer)
+
 	p, err = proposals.Get(s.Ctx, 8)
 	s.Assert().NoError(err)
 	s.Assert().Equal("firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf", p.Proposer)
@@ -113,13 +116,14 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 // This is used to set up the pre-upgrade state for the gov proposals migtration
 // (adding the proposer field via `govv4.AddProposerAddressToProposal(ctx, govKVStoreService, appCodec, proposalsIdToProposerAddress)`).
 func preUpgradeProposalsSetter(s *UpgradeTestSuite) {
-	dummyProposer, err := sdk.AccAddressFromBech32("firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf")
+	dummyProposer, err := sdk.AccAddressFromBech32("firma1mn4gzvdtcyywk8wx9ey5axls04cxf9nqzek5ar")
 	s.Require().NoError(err)
 
 	// We register the proposals with the same id that will be used in the migration, with a dummy proposer.
 	registerProposal(s, 1, dummyProposer)
 	registerProposal(s, 2, dummyProposer)
 	registerProposal(s, 3, dummyProposer)
+	registerProposal(s, 4, dummyProposer)
 	registerProposal(s, 8, dummyProposer)
 }
 func registerProposal(s *UpgradeTestSuite, id uint64, proposer sdk.AccAddress) {

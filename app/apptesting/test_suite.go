@@ -1,7 +1,6 @@
 package apptesting
 
 import (
-	"fmt"
 	"os"
 	"time"
 
@@ -95,7 +94,8 @@ func (s *TestSuite) Setup() {
 // happened.
 func (s *TestSuite) StoreAccessSanityCheck() {
 	sts, err := s.App.AppKeepers.MintKeeper.StakingTokenSupply(s.Ctx)
-	s.Logger.Debug(fmt.Sprintf("Sanity check: staking token supply: %v", sts))
+	_ = sts
+	//s.Logger.Debug(fmt.Sprintf("Sanity check: staking token supply: %v", sts))
 	s.NoError(err)
 }
 

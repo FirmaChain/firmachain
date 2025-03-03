@@ -3,12 +3,12 @@ package v05
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	appparams "github.com/firmachain/firmachain/v05/app/params"
 
-	"cosmossdk.io/core/store"
 	"cosmossdk.io/math"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -40,7 +40,7 @@ import (
 	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	govv4 "github.com/cosmos/cosmos-sdk/x/gov/migrations/v4"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 )
 
 func CreateV0_5_0UpgradeHandler(
@@ -48,7 +48,6 @@ func CreateV0_5_0UpgradeHandler(
 	cfg module.Configurator,
 	keepers *keepers.AppKeepers,
 	appCodec *codec.ProtoCodec,
-	govKVStoreService store.KVStoreService,
 ) upgradetypes.UpgradeHandler {
 	return func(c context.Context, _ upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
 		ctx := sdk.UnwrapSDKContext(c)
@@ -108,14 +107,6 @@ func CreateV0_5_0UpgradeHandler(
 		if err != nil {
 			return nil, err
 		}
-
-		// SDK v47: migrate gov proposals to include proposer address
-		proposalsIdToProposerAddress := make(map[uint64]string)
-		proposalsIdToProposerAddress[1] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
-		proposalsIdToProposerAddress[2] = "firma1yl76cswscpcpjcljpavqk9v5pjrtqxpy9nlrd4"
-		proposalsIdToProposerAddress[3] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
-		proposalsIdToProposerAddress[8] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
-		govv4.AddProposerAddressToProposal(ctx, govKVStoreService, appCodec, proposalsIdToProposerAddress)
 
 		// === New params ===
 		// https://github.com/cosmos/ibc-go/blob/v7.1.0/docs/migrations/v7-to-v7_1.md
@@ -177,6 +168,69 @@ func CreateV0_5_0UpgradeHandler(
 		}
 		logger.Info("icq: ICQKeeper params set")
 
+		// SDK v47: migrate gov proposals to include proposer address
+		// Do this procedure only for mainnet.
+		if ctx.ChainID() == "colosseum-1" {
+			proposalsIdToProposerAddress := make(map[uint64]string)
+			proposalsIdToProposerAddress[1] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
+			proposalsIdToProposerAddress[2] = "firma1yl76cswscpcpjcljpavqk9v5pjrtqxpy9nlrd4"
+			proposalsIdToProposerAddress[3] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
+			proposalsIdToProposerAddress[8] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
+			err = AddProposerAddressToProposal(ctx, keepers.GovKeeper, appCodec, proposalsIdToProposerAddress)
+			if err != nil {
+				panic(err)
+			}
+			logger.Info("proposals migration: added proposer field for given proposals.")
+		} else if ctx.ChainID() == "kintsugi-firma-devnet" {
+			proposalsIdToProposerAddress := make(map[uint64]string)
+			proposalsIdToProposerAddress[1] = "firma1w02lwp4ptdk2e6gzn82jezkjznzh88a9wusumf"
+			proposalsIdToProposerAddress[2] = "firma1yl76cswscpcpjcljpavqk9v5pjrtqxpy9nlrd4"
+			proposalsIdToProposerAddress[3] = "firma1yspfq9vv35dap9j4x39sx8crhu4qgnc7zy25uw"
+			err = AddProposerAddressToProposal(ctx, keepers.GovKeeper, appCodec, proposalsIdToProposerAddress)
+			if err != nil {
+				panic(err)
+			}
+			logger.Info("proposals migration: added proposer field for given proposals.")
+		}
+
 		return versionMap, err
 	}
+}
+
+func AddProposerAddressToProposal(ctx sdk.Context, govKeeepr govkeeper.Keeper, cdc codec.BinaryCodec, proposals map[uint64]string) error {
+	proposalIDs := make([]uint64, 0, len(proposals))
+
+	for proposalID := range proposals {
+		proposalIDs = append(proposalIDs, proposalID)
+	}
+
+	// sort the proposalIDs
+	sort.Slice(proposalIDs, func(i, j int) bool { return proposalIDs[i] < proposalIDs[j] })
+
+	for _, proposalID := range proposalIDs {
+		if len(proposals[proposalID]) == 0 {
+			return fmt.Errorf("found missing proposer for proposal ID: %d", proposalID)
+		}
+
+		if _, err := sdk.AccAddressFromBech32(proposals[proposalID]); err != nil {
+			return fmt.Errorf("invalid proposer address : %s", proposals[proposalID])
+		}
+
+		proposal, err := govKeeepr.Proposals.Get(ctx, proposalID)
+		if err != nil {
+			panic(err)
+		}
+
+		proposal.Proposer = proposals[proposalID]
+
+		err = govKeeepr.SetProposal(ctx, proposal)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("proposal set.")
+
+	}
+
+	return nil
 }

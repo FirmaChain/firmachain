@@ -11,7 +11,6 @@ import (
 	appparams "github.com/firmachain/firmachain/v05/app/params"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
-	store "cosmossdk.io/core/store"
 	math "cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
 
@@ -242,7 +241,7 @@ type App struct {
 	sm *module.SimulationManager
 }
 
-func (app *App) setupUpgradeHandlers(cfg module.Configurator, govKVStoreService store.KVStoreService) {
+func (app *App) setupUpgradeHandlers(cfg module.Configurator) {
 	for _, upgrade := range Upgrades {
 		app.AppKeepers.UpgradeKeeper.SetUpgradeHandler(
 			upgrade.UpgradeName,
@@ -251,7 +250,6 @@ func (app *App) setupUpgradeHandlers(cfg module.Configurator, govKVStoreService 
 				cfg,
 				&app.AppKeepers,
 				app.appCodec,
-				govKVStoreService,
 			),
 		)
 	}
@@ -457,10 +455,9 @@ func New(
 		),
 	)
 	app.AppKeepers.StakingKeeper = stakingKeeper
-	govKVStoreService := runtime.NewKVStoreService(keys[govtypes.StoreKey])
 	govKeeper := govkeeper.NewKeeper(
 		app.appCodec,
-		govKVStoreService,
+		runtime.NewKVStoreService(keys[govtypes.StoreKey]),
 		app.AppKeepers.AccountKeeper,
 		app.AppKeepers.BankKeeper,
 		app.AppKeepers.StakingKeeper,
@@ -902,7 +899,7 @@ func New(
 	app.sm.RegisterStoreDecoders()
 
 	// ============ Initialization ============
-	app.setupUpgradeHandlers(app.configurator, govKVStoreService)
+	app.setupUpgradeHandlers(app.configurator)
 	app.setupUpgradeStoreLoaders()
 
 	// SDK v47 - since we do not use dep inject, this gives us access to newer gRPC services.

@@ -80,7 +80,7 @@ func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 		genesisBalances = append(genesisBalances, balance)
 	}
 
-	chainId := "firmachain-1"
+	chainId := "colosseum-1"
 	timenow := time.Now()
 	initialHeight := int64(1)
 
