@@ -154,7 +154,7 @@ func CreateV0_5_0UpgradeHandler(
 		logger.Info("gov: GovKeeper params set")
 
 		keepers.IBCKeeper.ClientKeeper.SetParams(ctx, newIBCCoreParams)
-		logger.Info("ibc core: ICQKeeper params set")
+		logger.Info("ibc core: ClientKeeper params set")
 
 		keepers.ICAHostKeeper.SetParams(ctx, newIcaHostParams)
 		logger.Info("icahost: ICAHostKeeper params set")
@@ -227,8 +227,6 @@ func AddProposerAddressToProposal(ctx sdk.Context, govKeeepr govkeeper.Keeper, c
 		if err != nil {
 			panic(err)
 		}
-
-		fmt.Printf("proposal set.")
 
 	}
 
