@@ -609,7 +609,7 @@ func New(
 		panic("error while reading wasm config: " + err.Error())
 	}
 	wasmVmConfig := wasmtypes.VMConfig{}
-	supportedFeatures := []string{"iterator,staking,stargate"}
+	availableCapabilities := wasmkeeper.BuiltInCapabilities()
 	app.AppKeepers.WasmKeeper = wasmkeeper.NewKeeper(
 		app.appCodec,
 		runtime.NewKVStoreService(keys[wasmtypes.StoreKey]),
@@ -627,7 +627,7 @@ func New(
 		wasmDir,
 		wasmNodeConfig,
 		wasmVmConfig,
-		supportedFeatures,
+		availableCapabilities,
 		govModAddress,
 		wasmOpts...,
 	)
