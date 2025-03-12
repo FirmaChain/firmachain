@@ -150,6 +150,8 @@ func CreateV0_5_0UpgradeHandler(
 		}
 		newGovParams.ExpeditedMinDeposit = sdk.NewCoins(sdk.NewCoin(appparams.BaseCoinUnit, math.NewInt(5000000000)))
 		newGovParams.MinInitialDepositRatio = "0.500000000000000000"
+		newGovParams.ProposalCancelRatio = "0.500000000000000000"
+		newGovParams.ProposalCancelDest = "firma1kvlelvv6u7h4jasqlpu956czt4543xqzc37h2v"
 		keepers.GovKeeper.Params.Set(ctx, newGovParams)
 		logger.Info("gov: GovKeeper params set")
 
