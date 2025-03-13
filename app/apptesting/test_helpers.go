@@ -37,7 +37,7 @@ import (
 	appparams "github.com/firmachain/firmachain/v05/app/params"
 )
 
-func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
+func SetupApp(t *testing.T, chainId string, bondDenom string) (*app.App, sdk.Context, []AddressWithKeys) {
 	t.Helper()
 
 	appparams.SetSdkConfigAndSeal()
@@ -59,7 +59,7 @@ func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
 	balance := banktypes.Balance{
 		Address: acc.GetAddress().String(),
-		Coins:   sdk.NewCoins(sdk.NewCoin(appparams.DefaultBondDenom, math.NewInt(100000000000000))),
+		Coins:   sdk.NewCoins(sdk.NewCoin(bondDenom, math.NewInt(100000000000000))),
 	}
 	genesisAccounts = append(genesisAccounts, acc)
 	genesisBalances = append(genesisBalances, balance)
@@ -74,17 +74,16 @@ func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 		acc := authtypes.NewBaseAccount(pub.Address().Bytes(), pub, 0, 0)
 		balance = banktypes.Balance{
 			Address: acc.GetAddress().String(),
-			Coins:   sdk.NewCoins(sdk.NewCoin(appparams.DefaultBondDenom, math.NewInt(100000000000000))),
+			Coins:   sdk.NewCoins(sdk.NewCoin(bondDenom, math.NewInt(100000000000000))),
 		}
 		genesisAccounts = append(genesisAccounts, acc)
 		genesisBalances = append(genesisBalances, balance)
 	}
 
-	chainId := "colosseum-1"
 	timenow := time.Now()
 	initialHeight := int64(1)
 
-	app := SetupWithGenesisValSet(t, chainId, timenow, initialHeight, valSet, genesisAccounts, genesisBalances...)
+	app := SetupWithGenesisValSet(t, chainId, bondDenom, timenow, initialHeight, valSet, genesisAccounts, genesisBalances...)
 
 	ctx := app.BaseApp.NewContextLegacy(false, tmproto.Header{
 		ChainID: chainId,
@@ -103,12 +102,21 @@ func SetupApp(t *testing.T) (*app.App, sdk.Context, []AddressWithKeys) {
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the firmachainApp from first genesis
 // account. A Nop logger is set in firmachainApp.
-func SetupWithGenesisValSet(t *testing.T, chainId string, initialTime time.Time, initialHeight int64, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *app.App {
+func SetupWithGenesisValSet(
+	t *testing.T,
+	chainId string,
+	bondDenom string,
+	initialTime time.Time,
+	initialHeight int64,
+	valSet *tmtypes.ValidatorSet,
+	genAccs []authtypes.GenesisAccount,
+	balances ...banktypes.Balance,
+) *app.App {
 	t.Helper()
 
 	const withGenesis = true
 	firmachainApp, genesisState := setup(t, withGenesis, chainId)
-	genesisState = genesisStateWithValSet(t, firmachainApp, genesisState, valSet, genAccs, balances...)
+	genesisState = genesisStateWithValSet(t, firmachainApp, bondDenom, genesisState, valSet, genAccs, balances...)
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 	require.NoError(t, err)
@@ -192,9 +200,13 @@ func setup(t *testing.T, withGenesis bool, chainId string, opts ...wasmkeeper.Op
 	return app, nil
 }
 
-func genesisStateWithValSet(t *testing.T,
-	app *app.App, genesisState app.GenesisState,
-	valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount,
+func genesisStateWithValSet(
+	t *testing.T,
+	app *app.App,
+	bondDenom string,
+	genesisState app.GenesisState,
+	valSet *tmtypes.ValidatorSet,
+	genAccs []authtypes.GenesisAccount,
 	balances ...banktypes.Balance,
 ) app.GenesisState {
 	codec := app.AppCodec()
@@ -237,7 +249,7 @@ func genesisStateWithValSet(t *testing.T,
 		defaultStParams.MaxValidators,
 		defaultStParams.MaxEntries,
 		defaultStParams.HistoricalEntries,
-		appparams.DefaultBondDenom,
+		bondDenom,
 		defaultStParams.MinCommissionRate, // 5%
 	)
 
@@ -248,7 +260,7 @@ func genesisStateWithValSet(t *testing.T,
 	// add bonded amount to bonded pool module account
 	balances = append(balances, banktypes.Balance{
 		Address: authtypes.NewModuleAddress(stakingtypes.BondedPoolName).String(),
-		Coins:   sdk.Coins{sdk.NewCoin(appparams.DefaultBondDenom, bondAmt.MulRaw(int64(len(valSet.Validators))))},
+		Coins:   sdk.Coins{sdk.NewCoin(bondDenom, bondAmt.MulRaw(int64(len(valSet.Validators))))},
 	})
 
 	totalSupply := sdk.NewCoins()
@@ -264,12 +276,12 @@ func genesisStateWithValSet(t *testing.T,
 
 	// update mint genesis
 	mintGenesis := minttypes.DefaultGenesisState()
-	mintGenesis.Params.MintDenom = appparams.DefaultBondDenom
+	mintGenesis.Params.MintDenom = bondDenom
 	genesisState[minttypes.ModuleName] = codec.MustMarshalJSON(mintGenesis)
 
 	// update crisis genesis
 	crisisGenesis := crisistypes.DefaultGenesisState()
-	crisisGenesis.ConstantFee.Denom = appparams.DefaultBondDenom
+	crisisGenesis.ConstantFee.Denom = bondDenom
 	genesisState[crisistypes.ModuleName] = codec.MustMarshalJSON(crisisGenesis)
 
 	return genesisState

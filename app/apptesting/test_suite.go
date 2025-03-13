@@ -52,7 +52,11 @@ type TxRequirements struct {
 type TestSuite struct {
 	suite.Suite
 
-	App         *app.App
+	App *app.App
+
+	ChainId   string
+	BondDenom string
+
 	Ctx         sdk.Context
 	QueryHelper *baseapp.QueryServiceTestHelper
 	TestAccs    []AddressWithKeys
@@ -71,7 +75,10 @@ func (s *TestSuite) Setup() {
 	t := s.T()
 	s.Logger = log.NewLogger(os.Stderr)
 
-	s.App, s.Ctx, s.TestAccs = SetupApp(t)
+	s.ChainId = "colosseum-1"
+	s.BondDenom = appparams.DefaultBondDenom
+
+	s.App, s.Ctx, s.TestAccs = SetupApp(t, s.ChainId, s.BondDenom)
 	s.StoreAccessSanityCheck()
 
 	s.FinalizeBlock()
@@ -176,7 +183,7 @@ func (s *TestSuite) SetTxSignature(builder client.TxBuilder, privKey *secp256k1.
 }
 
 func (s *TestSuite) MakeBondDenomFeeAmount(amount int64) sdk.Coins {
-	return sdk.NewCoins(sdk.NewCoin(appparams.DefaultBondDenom, math.NewInt(1000)))
+	return sdk.NewCoins(sdk.NewCoin(s.BondDenom, math.NewInt(1000)))
 }
 
 func (s *TestSuite) MakeDummyTxRequirements() TxRequirements {

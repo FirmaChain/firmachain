@@ -15,6 +15,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+
+	appparams "github.com/firmachain/firmachain/v05/app/params"
 )
 
 type UpgradeTestSuite struct {
@@ -29,7 +31,10 @@ func (s *UpgradeTestSuite) Setup() {
 	t := s.T()
 	s.Logger = log.NewLogger(os.Stderr)
 
-	s.App, s.Ctx, s.TestAccs = apptesting.SetupApp(t)
+	s.ChainId = "colosseum-1"
+	s.BondDenom = appparams.DefaultBondDenom
+
+	s.App, s.Ctx, s.TestAccs = apptesting.SetupApp(t, s.ChainId, s.BondDenom)
 	s.StoreAccessSanityCheck()
 
 	// we do not finalize and commit, because pre-upgrade must run first.
@@ -87,10 +92,18 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 	// Verify gov params have been correctly set.
 	govParams, err := s.App.AppKeepers.GovKeeper.Params.Get(s.Ctx)
 	s.Require().NoError(err)
-	s.Require().NoError(err)
-	s.Assert().Equal("0.520000000000000000", govParams.MinInitialDepositRatio)
+	s.Assert().Equal("0.500000000000000000", govParams.MinInitialDepositRatio)
+	s.Assert().Equal(1, len(govParams.ExpeditedMinDeposit))
+	s.Assert().Equal(int64(5000000000), govParams.ExpeditedMinDeposit[0].Amount.Int64())
+	s.Assert().Equal(s.BondDenom, govParams.ExpeditedMinDeposit[0].Denom)
+	s.Assert().Equal("0.500000000000000000", govParams.ProposalCancelRatio)
+	s.Assert().Equal("firma1kvlelvv6u7h4jasqlpu956czt4543xqzc37h2v", govParams.ProposalCancelDest)
 
 	// Verify gov proposer field has been set correctly during the proposals migration.
+	// Since the following depends on the chain-id, assert first that the correct one is set.
+
+	s.Assert().Equal("colosseum-1", s.ChainId)
+
 	proposals := s.App.AppKeepers.GovKeeper.Proposals
 	p, err := proposals.Get(s.Ctx, 1)
 	s.Assert().NoError(err)
