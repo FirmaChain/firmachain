@@ -100,7 +100,7 @@ import (
 	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 
 	upgrades "github.com/firmachain/firmachain/v5/app/upgrades"
-	v04 "github.com/firmachain/firmachain/v5/app/upgrades/v04"
+	v4 "github.com/firmachain/firmachain/v5/app/upgrades/v4"
 	v5 "github.com/firmachain/firmachain/v5/app/upgrades/v5"
 	"github.com/firmachain/firmachain/v5/client/docs"
 
@@ -171,7 +171,7 @@ import (
 )
 
 var (
-	Upgrades = []upgrades.Upgrade{v04.Upgrade, v5.Upgrade}
+	Upgrades = []upgrades.Upgrade{v4.Upgrade, v5.Upgrade}
 )
 
 func getGovProposalHandlers() []govclient.ProposalHandler {
