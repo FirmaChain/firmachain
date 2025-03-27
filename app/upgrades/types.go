@@ -5,7 +5,7 @@ import (
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/firmachain/firmachain/v05/app/keepers"
+	"github.com/firmachain/firmachain/v5/app/keepers"
 )
 
 // Upgrade defines a struct containing necessary fields that a SoftwareUpgradeProposal

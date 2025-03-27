@@ -1,4 +1,4 @@
-package v05
+package v5
 
 import (
 	"context"
@@ -7,13 +7,13 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	appparams "github.com/firmachain/firmachain/v05/app/params"
+	appparams "github.com/firmachain/firmachain/v5/app/params"
 
 	"cosmossdk.io/math"
 	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/firmachain/firmachain/v05/app/keepers"
+	"github.com/firmachain/firmachain/v5/app/keepers"
 
 	icqtypes "github.com/cosmos/ibc-apps/modules/async-icq/v8/types"
 	ibchookstypes "github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/types"

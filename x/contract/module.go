@@ -14,9 +14,9 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/firmachain/firmachain/v05/x/contract/client/cli"
-	"github.com/firmachain/firmachain/v05/x/contract/keeper"
-	"github.com/firmachain/firmachain/v05/x/contract/types"
+	"github.com/firmachain/firmachain/v5/x/contract/client/cli"
+	"github.com/firmachain/firmachain/v5/x/contract/keeper"
+	"github.com/firmachain/firmachain/v5/x/contract/types"
 	grpc "google.golang.org/grpc"
 )
 

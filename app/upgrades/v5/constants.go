@@ -1,4 +1,4 @@
-package v05
+package v5
 
 import (
 	store "cosmossdk.io/store/types"
@@ -11,7 +11,7 @@ import (
 
 	icacontrollertypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/types"
 	ibcfeetypes "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/types"
-	upgrades "github.com/firmachain/firmachain/v05/app/upgrades"
+	upgrades "github.com/firmachain/firmachain/v5/app/upgrades"
 )
 
 // UpgradeName defines the on-chain upgrade name for the upgrade.

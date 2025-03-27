@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 
-	"github.com/firmachain/firmachain/v05/x/contract/types"
+	"github.com/firmachain/firmachain/v5/x/contract/types"
 )
 
 var (

@@ -7,7 +7,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/firmachain/firmachain/v05/x/nft/types"
+	"github.com/firmachain/firmachain/v5/x/nft/types"
 )
 
 func (ms msgServer) Transfer(goCtx context.Context, msg *types.MsgTransfer) (*types.MsgTransferResponse, error) {

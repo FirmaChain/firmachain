@@ -1,7 +1,7 @@
 package app
 
 import (
-	appparams "github.com/firmachain/firmachain/v05/app/params"
+	appparams "github.com/firmachain/firmachain/v5/app/params"
 
 	"cosmossdk.io/x/tx/signing"
 	"github.com/cosmos/cosmos-sdk/codec"

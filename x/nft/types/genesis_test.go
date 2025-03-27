@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/firmachain/firmachain/v05/x/nft/types"
+	"github.com/firmachain/firmachain/v5/x/nft/types"
 	"github.com/stretchr/testify/require"
 )
 

@@ -6,7 +6,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/firmachain/firmachain/v05/x/token/types"
+	"github.com/firmachain/firmachain/v5/x/token/types"
 )
 
 func (ms msgServer) UpdateTokenURI(goCtx context.Context, msg *types.MsgUpdateTokenURI) (*types.MsgUpdateTokenURIResponse, error) {

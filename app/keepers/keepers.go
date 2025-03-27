@@ -25,10 +25,10 @@ import (
 
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
-	contractmodulekeeper "github.com/firmachain/firmachain/v05/x/contract/keeper"
-	nftmodulekeeper "github.com/firmachain/firmachain/v05/x/nft/keeper"
+	contractmodulekeeper "github.com/firmachain/firmachain/v5/x/contract/keeper"
+	nftmodulekeeper "github.com/firmachain/firmachain/v5/x/nft/keeper"
 
-	tokenmodulekeeper "github.com/firmachain/firmachain/v05/x/token/keeper"
+	tokenmodulekeeper "github.com/firmachain/firmachain/v5/x/token/keeper"
 
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/keeper"
 	icahostkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/keeper"

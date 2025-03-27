@@ -1,4 +1,4 @@
-package v05_test
+package v5_test
 
 import (
 	"os"
@@ -7,8 +7,8 @@ import (
 	"cosmossdk.io/log"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/firmachain/firmachain/v05/app/apptesting"
-	v05 "github.com/firmachain/firmachain/v05/app/upgrades/v05"
+	"github.com/firmachain/firmachain/v5/app/apptesting"
+	v5 "github.com/firmachain/firmachain/v5/app/upgrades/v5"
 
 	module "github.com/cosmos/cosmos-sdk/types/module"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -16,7 +16,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
-	appparams "github.com/firmachain/firmachain/v05/app/params"
+	appparams "github.com/firmachain/firmachain/v5/app/params"
 )
 
 type UpgradeTestSuite struct {
@@ -52,7 +52,7 @@ func (s *UpgradeTestSuite) TestUpgrade() {
 	preUpgradeProposalsSetter(s)
 
 	upgradeHeight := int64(5)
-	s.ConfirmUpgradeSucceeded(v05.UpgradeName, upgradeHeight)
+	s.ConfirmUpgradeSucceeded(v5.UpgradeName, upgradeHeight)
 
 	postUpgradeChecks(s)
 }

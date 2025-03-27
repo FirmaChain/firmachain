@@ -25,11 +25,11 @@ import (
 
 	stakinghelper "github.com/cosmos/cosmos-sdk/x/staking/testutil"
 
-	"github.com/firmachain/firmachain/v05/app"
-	appparams "github.com/firmachain/firmachain/v05/app/params"
-	contracttypes "github.com/firmachain/firmachain/v05/x/contract/types"
-	nfttypes "github.com/firmachain/firmachain/v05/x/nft/types"
-	tokentypes "github.com/firmachain/firmachain/v05/x/token/types"
+	"github.com/firmachain/firmachain/v5/app"
+	appparams "github.com/firmachain/firmachain/v5/app/params"
+	contracttypes "github.com/firmachain/firmachain/v5/x/contract/types"
+	nfttypes "github.com/firmachain/firmachain/v5/x/nft/types"
+	tokentypes "github.com/firmachain/firmachain/v5/x/token/types"
 
 	header "cosmossdk.io/core/header"
 )

@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/v05/x/nft/types"
+	"github.com/firmachain/firmachain/v5/x/nft/types"
 )
 
 func (ms msgServer) Mint(goCtx context.Context, msg *types.MsgMint) (*types.MsgMintResponse, error) {

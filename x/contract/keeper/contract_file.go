@@ -4,7 +4,7 @@ import (
 	"cosmossdk.io/store/prefix"
 	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/v05/x/contract/types"
+	"github.com/firmachain/firmachain/v5/x/contract/types"
 )
 
 // SetContractFile set a specific contractFile in the store from its index
