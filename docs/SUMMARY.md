@@ -32,7 +32,6 @@
 
 * [Contract](module-comming-soon/contract.md)
 * [Nft](module-comming-soon/nft.md)
-* [Burn](module-comming-soon/burn.md)
 * [Token](module-comming-soon/token.md)
 
 ## RESOURCES(COMMING SOON)

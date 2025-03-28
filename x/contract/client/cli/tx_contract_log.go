@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/firmachain/firmachain/x/contract/types"
+	"github.com/firmachain/firmachain/v5/x/contract/types"
 )
 
 func CmdAddContractLog() *cobra.Command {
@@ -47,9 +47,6 @@ func CmdAddContractLog() *cobra.Command {
 			}
 
 			msg := types.NewMsgAddContractLog(clientCtx.GetFromAddress().String(), argsContractHash, argsTimeStamp, argsEventName, argsOwnerAddress, argsJsonString)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}

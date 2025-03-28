@@ -1,10 +1,11 @@
 syntax = "proto3";
-package firmachain.firmachain.token;
-
-option go_package = "github.com/firmachain/firmachain/x/token/types";
+package firmachain.token;
 
 
+option go_package = "github.com/firmachain/firmachain/v5/x/token/types";
 
+
+// Token data representation
 message TokenData {
   string tokenID = 1; 
   string name = 2; 

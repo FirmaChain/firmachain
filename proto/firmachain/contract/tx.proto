@@ -1,27 +1,44 @@
 syntax = "proto3";
-package firmachain.firmachain.contract;
+package firmachain.contract;
 
 import "firmachain/contract/contract_file.proto";
 import "firmachain/contract/contract_log.proto";
+import "cosmos/msg/v1/msg.proto";
+import "amino/amino.proto";
 
-option go_package = "github.com/firmachain/firmachain/x/contract/types";
+option go_package = "github.com/firmachain/firmachain/v5/x/contract/types";
 
 // Msg defines the Msg service.
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+  
+  // CreateContractFile
   rpc CreateContractFile(MsgCreateContractFile) returns (MsgCreateContractFileResponse);
+
+  // AddContractLog
   rpc AddContractLog(MsgAddContractLog) returns (MsgAddContractLogResponse);  
 }
 
+// MsgCreateContractFile
 message MsgCreateContractFile {
+  option (amino.name) = "contract/CreateContractFile";
+  option (cosmos.msg.v1.signer) = "creator";
+
   string creator = 1;
   string fileHash = 2;
   uint64 timeStamp = 3;
   repeated string ownerList = 4;
   string metaDataJsonString = 5;
 }
+
+// MsgCreateContractFileResponse
 message MsgCreateContractFileResponse { }
 
+// MsgAddContractLog
 message MsgAddContractLog {
+  option (amino.name) = "contract/AddContractLog";
+  option (cosmos.msg.v1.signer) = "creator";
+
   string creator = 1;
   string contractHash = 2;
   uint64 timeStamp = 3;
@@ -30,6 +47,7 @@ message MsgAddContractLog {
   string jsonString = 6;
 }
 
+// MsgAddContractLogResponse
 message MsgAddContractLogResponse {
   uint64 id = 1;
 }

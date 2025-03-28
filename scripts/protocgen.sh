@@ -20,14 +20,14 @@ buf generate --template ./proto/buf.gen.gogo.yaml
 # move proto files to the right places
 if [ -d "./github.com" ]; then
     echo "Copying generated files..."
-    cp -r ./github.com/firmachain/firmachain/x/* x/
+    cp -r ./github.com/firmachain/firmachain/v5/x/* x/
     rm -rf ./github.com
 else
     echo "No files in ./github.com, skipping..."
 fi
 
- echo "Running go mod tidy..."
-go mod tidy -compat=1.17
+echo "Running go mod tidy..."
+go mod tidy
 
 echo "Done."
 

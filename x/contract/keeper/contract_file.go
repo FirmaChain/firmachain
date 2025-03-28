@@ -1,9 +1,10 @@
 package keeper
 
 import (
-	"github.com/cosmos/cosmos-sdk/store/prefix"
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/x/contract/types"
+	"github.com/firmachain/firmachain/v5/x/contract/types"
 )
 
 // SetContractFile set a specific contractFile in the store from its index
@@ -36,7 +37,7 @@ func (k Keeper) RemoveContractFile(ctx sdk.Context, index string) {
 // GetAllContractFile returns all contractFile
 func (k Keeper) GetAllContractFile(ctx sdk.Context) (list []types.ContractFile) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractFileKey))
-	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+	iterator := storetypes.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 

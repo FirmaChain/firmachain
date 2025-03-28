@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/firmachain/firmachain/x/nft/types"
+
+	"github.com/firmachain/firmachain/v5/x/nft/types"
 )
 
 var (

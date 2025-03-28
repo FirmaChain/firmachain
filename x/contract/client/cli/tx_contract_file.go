@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/firmachain/firmachain/x/contract/types"
+	"github.com/firmachain/firmachain/v5/x/contract/types"
 )
 
 func CmdCreateContractFile() *cobra.Command {
@@ -46,9 +46,6 @@ func CmdCreateContractFile() *cobra.Command {
 			}
 
 			msg := types.NewMsgCreateContractFile(clientCtx.GetFromAddress().String(), fileHash, argsTimeStamp, argsOwnerList, argsMetaDataJsonString)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}

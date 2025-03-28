@@ -2,19 +2,16 @@ package cli
 
 import (
 	"fmt"
-	// "strings"
 
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
-	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/firmachain/firmachain/x/nft/types"
+	"github.com/firmachain/firmachain/v5/x/nft/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
-func GetQueryCmd(queryRoute string) *cobra.Command {
+func GetQueryCmd() *cobra.Command {
 	// Group nft queries under a subcommand
 	cmd := &cobra.Command{
 		Use:                        types.ModuleName,

@@ -1,6 +1,7 @@
 PACKAGES=$(shell go list ./... | grep -v '/simulation')
 VERSION := $(shell echo $(shell git describe --tags --always) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
+BRANCH := $(shell git branch --show-current)
 
 include Makefile.ledger
 
@@ -21,10 +22,19 @@ else
 	BUILD_FLAGS := -ldflags '$(ldflags)' $(build_tags)
 endif
 
+DOCKER := $(shell which docker)
+
 all: install
 
 install: go.sum
 		go install -mod=readonly $(BUILD_FLAGS) ./cmd/firmachaind
+
+docker-img-from-current-branch:
+	docker build \
+		--build-arg GIT_VERSION=$(VERSION) \
+		--build-arg GIT_COMMIT=$(COMMIT) \
+		--build-arg GIT_BRANCH=$(BRANCH) \
+		-t firmachain .
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
@@ -38,26 +48,24 @@ test:
 ###############################################################################
 
 # Variables for the image and version
-protoVer=v0.7
-protoImageName=tendermintdev/sdk-proto-gen-go-1.21-image
-GOLANG_VERSION=1.21.0
-containerProtoGen=firmachain-proto-gen-$(protoVer)-go-${GOLANG_VERSION}
+protoVer=0.15.3
+protoImageName=ghcr.io/cosmos/proto-builder:$(protoVer)
+protoImage=$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(protoImageName)
 
-# Target to build the image if it doesn't exist
-build-proto-image:
-	@if [ -z "$$(docker images -q $(protoImageName))" ]; then \
-		echo "Building Docker image with Go $(GOLANG_VERSION)..."; \
-		docker build -t $(protoImageName) -f Dockerfile.proto-gen .; \
-	else \
-		echo "Image $(protoImageName) already exists."; \
-	fi
+proto-gen:
+	@echo "Generating Protobuf files"
+	@$(protoImage) sh ./scripts/protocgen.sh
 
-# Generate Protobuf files using the image
-proto-gen: build-proto-image
-	@echo "Generating Protobuf files..."
-	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoGen}$$"; then \
-	    docker start -a $(containerProtoGen); \
-	else \
-	    docker run --name $(containerProtoGen) -v $(CURDIR):/firmachain --workdir /firmachain $(protoImageName) \
-	        sh ./scripts/protocgen.sh; \
-	fi
+###############################################################################
+###                                  Docs                                   ###
+###############################################################################
+
+SWAGGER_DIR=./swagger-proto
+
+swagger:
+	@echo "Downloading go modules..."
+	@go mod tidy
+	@echo
+	@echo "Generating Swagger..."
+	@echo
+	@./scripts/generate-swagger.sh

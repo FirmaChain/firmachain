@@ -3,9 +3,9 @@ package keeper
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/store/prefix"
+	"cosmossdk.io/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/x/token/types"
+	"github.com/firmachain/firmachain/v5/x/token/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -28,8 +28,8 @@ func (k Keeper) GetTokenList(goCtx context.Context, req *types.QueryGetTokenList
 	for ; iterator.Valid(); iterator.Next() {
 
 		// bytes to string
-		tokenId := string(iterator.Key()[:])
-		tokenDataArray = append(tokenDataArray, tokenId)
+		tokenID := string(iterator.Key()[:])
+		tokenDataArray = append(tokenDataArray, tokenID)
 	}
 
 	return &types.QueryGetTokenListResponse{TokenID: tokenDataArray}, nil

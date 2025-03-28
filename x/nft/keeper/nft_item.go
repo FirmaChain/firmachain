@@ -4,9 +4,10 @@ import (
 	"encoding/binary"
 	"strconv"
 
-	"github.com/cosmos/cosmos-sdk/store/prefix"
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/x/nft/types"
+	"github.com/firmachain/firmachain/v5/x/nft/types"
 )
 
 func (k Keeper) AppendNftItem(
@@ -133,7 +134,7 @@ func (k Keeper) GetNftItemOwner(ctx sdk.Context, id uint64) string {
 // GetAllNftItem returns all nftItem
 func (k Keeper) GetAllNftItem(ctx sdk.Context) (list []types.NftItem) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.NftItemDataKey))
-	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+	iterator := storetypes.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 

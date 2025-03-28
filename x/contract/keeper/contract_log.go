@@ -3,9 +3,10 @@ package keeper
 import (
 	"encoding/binary"
 
-	"github.com/cosmos/cosmos-sdk/store/prefix"
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/x/contract/types"
+	"github.com/firmachain/firmachain/v5/x/contract/types"
 )
 
 func (k Keeper) AppendContractLog(ctx sdk.Context, contractLog types.ContractLog) uint64 {
@@ -70,7 +71,7 @@ func (k Keeper) GetContractLogOwner(ctx sdk.Context, id uint64) string {
 
 func (k Keeper) GetAllContractLog(ctx sdk.Context) (list []types.ContractLog) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractLogDataKey))
-	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+	iterator := storetypes.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
 

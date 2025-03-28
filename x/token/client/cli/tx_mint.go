@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/firmachain/firmachain/x/token/types"
+	"github.com/firmachain/firmachain/v5/x/token/types"
 )
 
 var _ = strconv.Itoa(0)
@@ -39,9 +39,6 @@ func CmdMint() *cobra.Command {
 				argAmountValue,
 				argToAddress,
 			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}

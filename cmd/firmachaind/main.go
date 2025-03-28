@@ -3,22 +3,18 @@ package main
 import (
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/server"
+	"cosmossdk.io/log"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-	"github.com/firmachain/firmachain/app"
+	"github.com/firmachain/firmachain/v5/app"
 )
 
 func main() {
 
-	rootCmd, _ := NewRootCmd()
+	rootCmd := NewRootCmd()
 
-	if err := svrcmd.Execute(rootCmd, app.DefaultNodeHome); err != nil {
-		switch e := err.(type) {
-		case server.ErrorCode:
-			os.Exit(e.Code)
+	if err := svrcmd.Execute(rootCmd, "FIRMACHAIND", app.DefaultNodeHome); err != nil {
+		log.NewLogger(rootCmd.OutOrStderr()).Error("failure when running app", "err", err)
+		os.Exit(1)
 
-		default:
-			os.Exit(1)
-		}
 	}
 }
