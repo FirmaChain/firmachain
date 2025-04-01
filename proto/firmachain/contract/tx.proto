@@ -6,7 +6,7 @@ import "firmachain/contract/contract_log.proto";
 import "cosmos/msg/v1/msg.proto";
 import "amino/amino.proto";
 
-option go_package = "github.com/firmachain/firmachain/v5/x/contract/types";
+option go_package = "github.com/firmachain/firmachain/x/contract/types";
 
 // Msg defines the Msg service.
 service Msg {

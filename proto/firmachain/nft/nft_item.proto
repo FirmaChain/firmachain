@@ -1,7 +1,7 @@
 syntax = "proto3";
 package firmachain.nft;
 
-option go_package = "github.com/firmachain/firmachain/v5/x/nft/types";
+option go_package = "github.com/firmachain/firmachain/x/nft/types";
 
 // An NFT Item
 message NftItem {

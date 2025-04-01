@@ -6,7 +6,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "firmachain/token/token_data.proto";
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/firmachain/firmachain/v5/x/token/types";
+option go_package = "github.com/firmachain/firmachain/x/token/types";
 
 // Query defines the gRPC querier service.
 service Query {

@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/v5/x/nft/types"
+	"github.com/firmachain/firmachain/x/nft/types"
 )
 
 // InitGenesis initializes the capability module's state from a provided genesis

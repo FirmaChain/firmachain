@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/firmachain/firmachain/v5/x/contract/types"
+	"github.com/firmachain/firmachain/x/contract/types"
 )
 
 func CmdAddContractLog() *cobra.Command {

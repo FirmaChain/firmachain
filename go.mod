@@ -1,4 +1,4 @@
-module github.com/firmachain/firmachain/v5
+module github.com/firmachain/firmachain
 
 go 1.23.4
 

@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/auth/signing"
 
-	"github.com/firmachain/firmachain/v5/app/apptesting"
+	"github.com/firmachain/firmachain/app/apptesting"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 )

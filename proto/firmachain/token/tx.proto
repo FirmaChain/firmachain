@@ -3,7 +3,7 @@ package firmachain.token;
 
 import "firmachain/token/token_data.proto";
 
-option go_package = "github.com/firmachain/firmachain/v5/x/token/types";
+option go_package = "github.com/firmachain/firmachain/x/token/types";
 import "cosmos/msg/v1/msg.proto";
 import "amino/amino.proto";
 
