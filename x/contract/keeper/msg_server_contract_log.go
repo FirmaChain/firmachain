@@ -6,7 +6,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/firmachain/firmachain/v5/x/contract/types"
+	"github.com/firmachain/firmachain/x/contract/types"
 )
 
 func (ms msgServer) AddContractLog(goCtx context.Context, msg *types.MsgAddContractLog) (*types.MsgAddContractLogResponse, error) {

@@ -8,7 +8,7 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/v5/x/nft/types"
+	"github.com/firmachain/firmachain/x/nft/types"
 )
 
 type (

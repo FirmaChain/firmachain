@@ -7,7 +7,7 @@ import (
 	"cosmossdk.io/store/prefix"
 	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/v5/x/nft/types"
+	"github.com/firmachain/firmachain/x/nft/types"
 )
 
 func (k Keeper) AppendNftItem(

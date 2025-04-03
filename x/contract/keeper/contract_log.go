@@ -6,7 +6,7 @@ import (
 	"cosmossdk.io/store/prefix"
 	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/v5/x/contract/types"
+	"github.com/firmachain/firmachain/x/contract/types"
 )
 
 func (k Keeper) AppendContractLog(ctx sdk.Context, contractLog types.ContractLog) uint64 {

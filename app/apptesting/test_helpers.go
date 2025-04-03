@@ -32,9 +32,9 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/firmachain/firmachain/v5/app"
-	apphelpers "github.com/firmachain/firmachain/v5/app/helpers"
-	appparams "github.com/firmachain/firmachain/v5/app/params"
+	"github.com/firmachain/firmachain/app"
+	apphelpers "github.com/firmachain/firmachain/app/helpers"
+	appparams "github.com/firmachain/firmachain/app/params"
 )
 
 func SetupApp(t *testing.T, chainId string, bondDenom string) (*app.App, sdk.Context, []AddressWithKeys) {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 
-	"github.com/firmachain/firmachain/v5/x/nft/types"
+	"github.com/firmachain/firmachain/x/nft/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

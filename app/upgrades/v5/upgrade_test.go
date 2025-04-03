@@ -7,8 +7,8 @@ import (
 	"cosmossdk.io/log"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/firmachain/firmachain/v5/app/apptesting"
-	v5 "github.com/firmachain/firmachain/v5/app/upgrades/v5"
+	"github.com/firmachain/firmachain/app/apptesting"
+	v5 "github.com/firmachain/firmachain/app/upgrades/v5"
 
 	module "github.com/cosmos/cosmos-sdk/types/module"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -16,7 +16,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
-	appparams "github.com/firmachain/firmachain/v5/app/params"
+	appparams "github.com/firmachain/firmachain/app/params"
 )
 
 type UpgradeTestSuite struct {

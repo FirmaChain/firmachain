@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/firmachain/firmachain/v5/app/keepers"
+	"github.com/firmachain/firmachain/app/keepers"
 )
 
 func CreateV0_4_0UpgradeHandler(

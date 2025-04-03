@@ -34,8 +34,8 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	"github.com/firmachain/firmachain/v5/app"
-	appparams "github.com/firmachain/firmachain/v5/app/params"
+	"github.com/firmachain/firmachain/app"
+	appparams "github.com/firmachain/firmachain/app/params"
 
 	"cosmossdk.io/client/v2/autocli"
 	"cosmossdk.io/core/appmodule"

@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	appparams "github.com/firmachain/firmachain/v5/app/params"
+	appparams "github.com/firmachain/firmachain/app/params"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	math "cosmossdk.io/math"
@@ -51,7 +51,7 @@ import (
 	"github.com/cosmos/ibc-go/modules/capability"
 	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
-	"github.com/firmachain/firmachain/v5/app/openapiconsole"
+	"github.com/firmachain/firmachain/app/openapiconsole"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
@@ -99,22 +99,22 @@ import (
 	ibcconnectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
 	ibctm "github.com/cosmos/ibc-go/v8/modules/light-clients/07-tendermint"
 
-	upgrades "github.com/firmachain/firmachain/v5/app/upgrades"
-	v4 "github.com/firmachain/firmachain/v5/app/upgrades/v4"
-	v5 "github.com/firmachain/firmachain/v5/app/upgrades/v5"
-	"github.com/firmachain/firmachain/v5/client/docs"
+	upgrades "github.com/firmachain/firmachain/app/upgrades"
+	v4 "github.com/firmachain/firmachain/app/upgrades/v4"
+	v5 "github.com/firmachain/firmachain/app/upgrades/v5"
+	"github.com/firmachain/firmachain/client/docs"
 
 	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
-	contractmodule "github.com/firmachain/firmachain/v5/x/contract"
-	contractmodulekeeper "github.com/firmachain/firmachain/v5/x/contract/keeper"
-	contractmoduletypes "github.com/firmachain/firmachain/v5/x/contract/types"
-	nftmodule "github.com/firmachain/firmachain/v5/x/nft"
-	nftmodulekeeper "github.com/firmachain/firmachain/v5/x/nft/keeper"
-	nftmoduletypes "github.com/firmachain/firmachain/v5/x/nft/types"
+	contractmodule "github.com/firmachain/firmachain/x/contract"
+	contractmodulekeeper "github.com/firmachain/firmachain/x/contract/keeper"
+	contractmoduletypes "github.com/firmachain/firmachain/x/contract/types"
+	nftmodule "github.com/firmachain/firmachain/x/nft"
+	nftmodulekeeper "github.com/firmachain/firmachain/x/nft/keeper"
+	nftmoduletypes "github.com/firmachain/firmachain/x/nft/types"
 
-	tokenmodule "github.com/firmachain/firmachain/v5/x/token"
-	tokenmodulekeeper "github.com/firmachain/firmachain/v5/x/token/keeper"
-	tokenmoduletypes "github.com/firmachain/firmachain/v5/x/token/types"
+	tokenmodule "github.com/firmachain/firmachain/x/token"
+	tokenmodulekeeper "github.com/firmachain/firmachain/x/token/keeper"
+	tokenmoduletypes "github.com/firmachain/firmachain/x/token/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 
@@ -161,7 +161,7 @@ import (
 	ibcfeekeeper "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/keeper"
 	ibcfeetypes "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
-	"github.com/firmachain/firmachain/v5/app/keepers"
+	"github.com/firmachain/firmachain/app/keepers"
 
 	msgservice "github.com/cosmos/cosmos-sdk/types/msgservice"
 	proto "github.com/cosmos/gogoproto/proto"

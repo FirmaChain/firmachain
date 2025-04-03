@@ -2,7 +2,7 @@ package v4
 
 import (
 	store "cosmossdk.io/store/types"
-	upgrades "github.com/firmachain/firmachain/v5/app/upgrades"
+	upgrades "github.com/firmachain/firmachain/app/upgrades"
 )
 
 // UpgradeName defines the on-chain upgrade name for the upgrade.

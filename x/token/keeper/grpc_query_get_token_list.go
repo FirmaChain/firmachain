@@ -5,7 +5,7 @@ import (
 
 	"cosmossdk.io/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/firmachain/firmachain/v5/x/token/types"
+	"github.com/firmachain/firmachain/x/token/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
