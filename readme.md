@@ -39,6 +39,7 @@ https://docs.firmachain.org/master/node-and-validators-guide/run-a-full-node/ins
 Currently available tags:
 | Version | Tag
 | - | - |
+| v0.5.0 | `v0.5.0` |
 | v0.4.0 | `v0.4.0` |
 | v0.3.5 | `v0.3.5-patch` |
 | v0.3.3 (Deprecated) | `v0.3.3-patch` |
@@ -71,8 +72,8 @@ If you are interested, please contact us through contact@firmachain.org
 ## Network 
 
 - Firmachain Mainnet **Colosseum-1** launched on 2022.01.26
-    - FirmaChain is currently operating on Ethereum as an ERC-20 Token FCT. 
-    - All contracts and tokens will be migrated to our main network once it is complete network stabilization.
+    - FirmaChain is currently operating on Firmachain Mainnet with native coin `FCT`
+    - All old contracts and tokens on the Ethereum network were migrated to our main network.
 - Firmachain Pubilc Testnet **Imperium-4** is also available.
 
 </br>
