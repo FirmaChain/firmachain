@@ -4,22 +4,28 @@ import (
 	"context"
 	"fmt"
 
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/firmachain/firmachain/x/nft/types"
 )
 
-func (k msgServer) Transfer(goCtx context.Context, msg *types.MsgTransfer) (*types.MsgTransferResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
+func (ms msgServer) Transfer(goCtx context.Context, msg *types.MsgTransfer) (*types.MsgTransferResponse, error) {
 
-	if !k.HasNftItem(ctx, msg.NftId) {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.NftId))
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
 	}
 
-	item := k.GetNftItem(ctx, msg.NftId)
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if !ms.keeper.HasNftItem(ctx, msg.NftId) {
+		return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.NftId))
+	}
+
+	item := ms.keeper.GetNftItem(ctx, msg.NftId)
 
 	if msg.Owner != item.Owner {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	oldOwner := item.Owner
@@ -27,8 +33,8 @@ func (k msgServer) Transfer(goCtx context.Context, msg *types.MsgTransfer) (*typ
 
 	item.Owner = newOwnder
 
-	k.SetNftItem(ctx, item)
-	k.RemoveNftItemToAccount(ctx, oldOwner, msg.NftId)
+	ms.keeper.SetNftItem(ctx, item)
+	ms.keeper.RemoveNftItemToAccount(ctx, oldOwner, msg.NftId)
 
 	return &types.MsgTransferResponse{}, nil
 }

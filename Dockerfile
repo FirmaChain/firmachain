@@ -1,37 +1,61 @@
-# how to run
-# docker build -t firmachain .
+# syntax=docker/dockerfile:1
 
-# docker run -it -p 26657:26657 -p 26656:26656 -v ~/.firmachain:/root/.firmachain firmachain firmachaind init
-# docker run -it -p 26657:26657 -p 26656:26656 -v ~/.firmachain:/root/.firmachain firmachain firmachaind start
+ARG GO_VERSION="1.23"
+ARG RUNNER_IMAGE="alpine:3.20"
 
-# to enter docker
-# docker exec -it firmachain bash
+# Use a minimal base image (Alpine Linux)
+FROM golang:${GO_VERSION}-alpine3.20 AS go-builder
 
-# run container as a daemon (td option : -t -> Assign Termail to Container, -d: run on the background)
-# > docker run -td -p 26657:26657 -p 26656:26656 -v ~/.firmachain:/root/.firmachain firmachain firmachaind start
+WORKDIR /app
 
-# Use multi-stage build
-FROM golang:1.16 as builder
+RUN apk add --no-cache ca-certificates build-base git linux-headers binutils-gold
 
-RUN apt-get update && apt-get install -y git
+# Download dependencies and CosmWasm libwasmvm if found.
+ADD go.mod go.sum ./
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/root/go/pkg/mod \
+    go mod download
 
-# Download from GitHub instead of using COPY
-RUN rm firmachain -rf
-RUN git clone https://github.com/firmachain/firmachain /firmachain
-WORKDIR "/firmachain"
+# Cosmwasm - Download correct libwasmvm version
+RUN ARCH=$(uname -m) && WASMVM_VERSION=$(go list -m github.com/CosmWasm/wasmvm/v2 | sed 's/.* //') && \
+    wget https://github.com/CosmWasm/wasmvm/releases/download/$WASMVM_VERSION/libwasmvm_muslc.$ARCH.a \
+    -O /lib/libwasmvm_muslc.$ARCH.a && \
+    # verify checksum
+    wget https://github.com/CosmWasm/wasmvm/releases/download/$WASMVM_VERSION/checksums.txt -O /tmp/checksums.txt && \
+    sha256sum /lib/libwasmvm_muslc.$ARCH.a | grep $(cat /tmp/checksums.txt | grep libwasmvm_muslc.$ARCH | cut -d ' ' -f 1) 
+  
 
-# Always run on latest version
-RUN LEDGER_ENABLED=false make 
+# Copy the repository
+COPY . ./
 
-# Create final container
-FROM ubuntu:latest
+ARG GIT_VERSION 
+ARG GIT_COMMIT
+ARG GIT_BRANCH
 
-# It is ok to COPY files from a build container (when using multi-stage builds)
-COPY --from=builder /go/bin/firmachaind /usr/local/bin/firmachaind
+RUN git checkout ${GIT_BRANCH}
 
-# rest server / grpc / tendermint p2p / tendermint rpc
-EXPOSE 1317 9090 26656 26657
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/root/go/pkg/mod \
+    GOWORK=off go build \
+    -mod=readonly \
+    -tags "netgo,ledger,muslc" \
+    -ldflags \
+    "-X github.com/cosmos/cosmos-sdk/version.Name="firmachain" \
+    -X github.com/cosmos/cosmos-sdk/version.AppName="firmachaind" \
+    -X github.com/cosmos/cosmos-sdk/version.Version=${GIT_VERSION}@${GIT_BRANCH} \
+    -X github.com/cosmos/cosmos-sdk/version.Commit=${GIT_COMMIT} \
+    -w -s -linkmode=external -extldflags '-Wl,-z,muldefs -static'" \
+    -trimpath \
+    -o ./bin/firmachaind \
+    ./cmd/firmachaind
 
-# Run firmachind by default 
-# ex) docker run firmachain
-CMD ["/usr/local/bin/firmachaind"]
+# --------------------------------------------------------
+FROM ${RUNNER_IMAGE}
+
+COPY --from=go-builder /app/bin/firmachaind /usr/bin/firmachaind
+
+# rest server, tendermint p2p, tendermint rpc
+EXPOSE 1317 26656 26657
+
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+CMD ["/usr/bin/firmachaind", "version"]

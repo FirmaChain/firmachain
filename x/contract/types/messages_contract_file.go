@@ -1,6 +1,7 @@
 package types
 
 import (
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -17,31 +18,13 @@ func NewMsgCreateContractFile(creator string, fileHash string, timeStamp uint64,
 	}
 }
 
-func (msg *MsgCreateContractFile) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgCreateContractFile) Type() string {
-	return "CreateContractFile"
-}
-
-func (msg *MsgCreateContractFile) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgCreateContractFile) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
+// SDK 0.50: ValidateBasic is no more required to fullfil the sdg.Msg interface implementation.
+// The msg's validation is recommended to be performed directly in the msg server and not in the cli command's RunE.
+// We still keep it to wrap the basic stateless checks and use it directly in the msg server.
 func (msg *MsgCreateContractFile) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 	return nil
 }
