@@ -17,7 +17,7 @@ RUN git checkout v0.2.3
 RUN make 
 #RUN LEDGER_ENABLED=false make 
 
-RUN wget https://github.com/FirmaChain/firmachain-devnet-imperium/raw/master/genesis.json;
+RUN wget https://github.com/firmachain/firmachain-devnet-imperium/raw/master/genesis.json;
 
 # Create final container
 FROM ubuntu:latest

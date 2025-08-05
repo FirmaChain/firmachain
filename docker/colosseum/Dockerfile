@@ -16,7 +16,7 @@ WORKDIR "/firmachain"
 # RUN git checkout v0.3.2
 RUN LEDGER_ENABLED=false make 
 
-RUN wget https://github.com/FirmaChain/firmachain-testnet-colosseum/raw/main/genesis.json;
+RUN wget https://github.com/firmachain/firmachain-testnet-colosseum/raw/main/genesis.json;
 
 # Create final container
 FROM ubuntu:latest

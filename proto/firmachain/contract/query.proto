@@ -1,5 +1,5 @@
 syntax = "proto3";
-package firmachain.firmachain.contract;
+package firmachain.contract;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
@@ -43,51 +43,63 @@ service Query {
 
 }
 
+// QueryIsContractOwnerRequest
 message QueryIsContractOwnerRequest {
   string fileHash = 1;
   string ownerAddress = 2;
 }
 
+// QueryIsContractOwnerResponse
 message QueryIsContractOwnerResponse {
   bool result = 1;
 }
 
+// QueryGetContractFileRequest
 message QueryGetContractFileRequest {
 	string index = 1;
 }
 
+// QueryGetContractFileResponse
 message QueryGetContractFileResponse {
 	ContractFile ContractFile = 1;
 }
 
+// QueryAllContractFileRequest
 message QueryAllContractFileRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
+// QueryAllContractFileResponse
 message QueryAllContractFileResponse {
 	repeated ContractFile ContractFile = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
+// QueryGetContractLogRequest
 message QueryGetContractLogRequest {
 	uint64 id = 1;
 }
 
+// QueryGetContractListFromHashRequest
 message QueryGetContractListFromHashRequest {
 	string hash = 1;
 }
 
+// QueryGetContractLogResponse
 message QueryGetContractLogResponse {
 	ContractLog ContractLog = 1;
 }
 
+// QueryGetContractListFromHashResponse
 message QueryGetContractListFromHashResponse {
 	repeated uint64 idList = 1;
 }
 
+// QueryAllContractLogRequest
 message QueryAllContractLogRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
+// QueryAllContractLogResponse
 message QueryAllContractLogResponse {
 	repeated ContractLog ContractLog = 1;
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;

@@ -1,6 +1,7 @@
 package types
 
 import (
+	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -15,31 +16,13 @@ func NewMsgTransfer(owner string, nftId uint64, toAddress string) *MsgTransfer {
 	}
 }
 
-func (msg *MsgTransfer) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgTransfer) Type() string {
-	return "Transfer"
-}
-
-func (msg *MsgTransfer) GetSigners() []sdk.AccAddress {
-	owner, err := sdk.AccAddressFromBech32(msg.Owner)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{owner}
-}
-
-func (msg *MsgTransfer) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
+// SDK 0.50: ValidateBasic is no more required to fullfil the sdg.Msg interface implementation.
+// The msg's validation is recommended to be performed directly in the msg server and not in the cli command's RunE.
+// We still keep it to wrap the basic stateless checks and use it directly in the msg server.
 func (msg *MsgTransfer) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Owner)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
 	}
 	return nil
 }

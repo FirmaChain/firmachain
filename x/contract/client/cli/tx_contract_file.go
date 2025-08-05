@@ -46,9 +46,6 @@ func CmdCreateContractFile() *cobra.Command {
 			}
 
 			msg := types.NewMsgCreateContractFile(clientCtx.GetFromAddress().String(), fileHash, argsTimeStamp, argsOwnerList, argsMetaDataJsonString)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
