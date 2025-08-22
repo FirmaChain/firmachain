@@ -102,6 +102,7 @@ import (
 	upgrades "github.com/firmachain/firmachain/app/upgrades"
 	v4 "github.com/firmachain/firmachain/app/upgrades/v4"
 	v5 "github.com/firmachain/firmachain/app/upgrades/v5"
+	v5_1 "github.com/firmachain/firmachain/app/upgrades/v5.1"
 	"github.com/firmachain/firmachain/client/docs"
 
 	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
@@ -171,7 +172,7 @@ import (
 )
 
 var (
-	Upgrades = []upgrades.Upgrade{v4.Upgrade, v5.Upgrade}
+	Upgrades = []upgrades.Upgrade{v4.Upgrade, v5.Upgrade, v5_1.Upgrade}
 )
 
 func getGovProposalHandlers() []govclient.ProposalHandler {
