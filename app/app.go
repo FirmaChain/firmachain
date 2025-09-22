@@ -902,6 +902,15 @@ func New(
 	app.setupUpgradeHandlers(app.configurator)
 	app.setupUpgradeStoreLoaders()
 
+	// register snapshot extensions (e.g. CosmWasm) so state sync restores full state
+	if sm := app.SnapshotManager(); sm != nil {
+		if err := sm.RegisterExtensions(
+			wasmkeeper.NewWasmSnapshotter(app.CommitMultiStore(), &app.AppKeepers.WasmKeeper),
+		); err != nil {
+			panic("failed to register snapshot extension: " + err.Error())
+		}
+	}
+	
 	// SDK v47 - since we do not use dep inject, this gives us access to newer gRPC services.
 	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
 	reflectionSvc, err := runtimeservices.NewReflectionService()
