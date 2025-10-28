@@ -1041,8 +1041,12 @@ func (app *App) updateValidatorMinCommision(ctx sdk.Context) {
 				panic(err)
 			}
 			// call the before-modification hook since we're about to update the commission
-			staking.Hooks().BeforeValidatorModified(ctx, valBs)
-			staking.SetValidator(ctx, v)
+			if err := staking.Hooks().BeforeValidatorModified(ctx, valBs); err != nil {
+				panic(err)
+			}
+			if err := staking.SetValidator(ctx, v); err != nil {
+				panic(err)
+			}
 		}
 	}
 }
@@ -1058,7 +1062,9 @@ func (app *App) InitChainer(ctx sdk.Context, req *abci.RequestInitChain) (*abci.
 	if err := json.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}
-	app.AppKeepers.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
+	if err := app.AppKeepers.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap()); err != nil {
+		return nil, err
+	}
 	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
 }
 
