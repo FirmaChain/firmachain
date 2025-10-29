@@ -2,6 +2,7 @@ package apptesting
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"testing"
 	"time"
@@ -307,4 +308,94 @@ func CreateRandomAccounts(numAccts int) []AddressWithKeys {
 	}
 
 	return testAddrsWithKeys
+}
+
+// Convert bech32 into sdk.Address and returns it. Panic otherwise.
+func MustAcc(s string) sdk.AccAddress {
+	a, err := sdk.AccAddressFromBech32(s)
+	if err != nil {
+		panic(err)
+	}
+	return a
+}
+
+// Convert bech32 into sdk.ValAddress and return it. Panic otherwise.
+func MustVal(s string) sdk.ValAddress {
+	v, err := sdk.ValAddressFromBech32(s)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
+// Ensure a validator exists, and return it. Panic otherwise.
+func MustExistValidator(app *app.App, ctx sdk.Context, valAddr sdk.ValAddress) stakingtypes.Validator {
+	v, err := app.AppKeepers.StakingKeeper.GetValidator(ctx, valAddr)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
+// Create a minimal validator if it does not exist yet.
+func MakeValidator(app *app.App, ctx sdk.Context, valAddr sdk.ValAddress) error {
+	if _, err := app.AppKeepers.StakingKeeper.GetValidator(ctx, valAddr); err == nil {
+		return fmt.Errorf("validator already exists: %s", valAddr.String())
+	}
+	// Create a dummy validator with small power
+	val := stakingtypes.Validator{
+		OperatorAddress: valAddr.String(),
+		Status:          stakingtypes.Bonded,
+		Tokens:          math.NewInt(1),
+		DelegatorShares: math.LegacyOneDec(),
+		Commission:      stakingtypes.NewCommission(math.LegacyZeroDec(), math.LegacyZeroDec(), math.LegacyZeroDec()),
+	}
+	return app.AppKeepers.StakingKeeper.SetValidator(ctx, val)
+}
+
+// Create a minimal validator if it does not exist yet. Panic otherwise.
+func MustMakeValidator(app *app.App, ctx sdk.Context, valAddr sdk.ValAddress) {
+	if err := MakeValidator(app, ctx, valAddr); err != nil {
+		panic(err)
+	}
+}
+
+// Mint and send coin to target account. Panic on error.
+func MustFundAccount(app *app.App, ctx sdk.Context, addr sdk.AccAddress, denom string, amount int64) {
+	amt := math.NewInt(amount)
+	err := app.AppKeepers.BankKeeper.MintCoins(ctx, minttypes.ModuleName, sdk.NewCoins(sdk.NewCoin(denom, amt)))
+	if err != nil {
+		panic(err)
+	}
+	err = app.AppKeepers.BankKeeper.SendCoinsFromModuleToAccount(ctx, minttypes.ModuleName, addr, sdk.NewCoins(sdk.NewCoin(denom, amt)))
+	if err != nil {
+		panic(err)
+	}
+}
+
+// Create a delegation. Panic otherwise.
+func MustCreateDelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddress, valAddr sdk.ValAddress, amount int64) {
+	val := MustExistValidator(app, ctx, valAddr)
+	_, err := app.AppKeepers.StakingKeeper.Delegate(ctx, delegator, math.NewInt(amount), stakingtypes.Unbonded, val, true)
+	if err != nil {
+		panic(err)
+	}
+}
+
+// Create an unbonding delegation. Panic otherwise.
+func MustCreateUnbondingDelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddress, valAddr sdk.ValAddress, amount math.Int) {
+	shares := math.LegacyNewDecFromInt(amount)
+	_, _, err := app.AppKeepers.StakingKeeper.Undelegate(ctx, delegator, valAddr, shares)
+	if err != nil {
+		panic(err)
+	}
+}
+
+// Create an redelegation. Panic otherwise.
+func MustCreateRedelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddress, valAddrSrc sdk.ValAddress, valAddrDst sdk.ValAddress, amount int64) {
+	shares := math.LegacyNewDecFromInt(math.NewInt(amount))
+	_, err := app.AppKeepers.StakingKeeper.BeginRedelegation(ctx, delegator, valAddrSrc, valAddrDst, shares)
+	if err != nil {
+		panic(err)
+	}
 }
