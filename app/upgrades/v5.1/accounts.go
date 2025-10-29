@@ -10,7 +10,7 @@ import (
 )
 
 // Completes all re-delegations and returns the amount of tokens which were re-delegated.
-func completeAllRedelegations(ctx sdk.Context, now time.Time, keepers *keepers.AppKeepers, accAddr sdk.AccAddress) (math.Int, error) {
+func CompleteAllRedelegations(ctx sdk.Context, now time.Time, keepers *keepers.AppKeepers, accAddr sdk.AccAddress) (math.Int, error) {
 	redelegatedAmt := math.ZeroInt()
 
 	redelegations, err := keepers.StakingKeeper.GetRedelegations(ctx, accAddr, 65535)
@@ -38,7 +38,7 @@ func completeAllRedelegations(ctx sdk.Context, now time.Time, keepers *keepers.A
 }
 
 // Returns the amount of tokens which were unbonded (not rewards)
-func unbondAllAndFinish(ctx sdk.Context, now time.Time, keepers *keepers.AppKeepers, accAddr sdk.AccAddress) (math.Int, error) {
+func UnbondAllAndFinish(ctx sdk.Context, now time.Time, keepers *keepers.AppKeepers, accAddr sdk.AccAddress) (math.Int, error) {
 	unbondedAmt := math.ZeroInt()
 
 	// Unbond all delegations from the account

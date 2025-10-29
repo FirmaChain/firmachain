@@ -145,14 +145,14 @@ func CreateV0_5_1UpgradeHandler(
 			}
 
 			// Complete all redelegations
-			redelegatedAmt, err := completeAllRedelegations(ctx, ctx.BlockTime(), keepers, oldAcc)
+			redelegatedAmt, err := CompleteAllRedelegations(ctx, ctx.BlockTime(), keepers, oldAcc)
 			if err != nil {
 				return nil, fmt.Errorf("complete all redelegations failed: %w", err)
 			}
 			logger.Info("redelegated amount", "amount", redelegatedAmt.String())
 
 			// Unbond all and terminate
-			unbondedAmt, err := unbondAllAndFinish(ctx, ctx.BlockTime(), keepers, oldAcc)
+			unbondedAmt, err := UnbondAllAndFinish(ctx, ctx.BlockTime(), keepers, oldAcc)
 			if err != nil {
 				return nil, fmt.Errorf("unbond all and finish failed: %w", err)
 			}
