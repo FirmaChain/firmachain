@@ -42,7 +42,6 @@ var moves = []accountMove{
 		oldAccStr: "firma1p90hu6pqd57xgdauf0l8dwpau73jkk72qz0pcc",
 		newAccStr: "firma1k0m54qycp4v04wazj0f72snp86htau5g6ujfau",
 		newValStr: "firmavaloper1k0m54qycp4v04wazj0f72snp86htau5gy0ejaj",
-		// TODO: toMoveBal: 12345...
 	},
 	{
 		oldAccStr: "firma1x0lqg5vcynse3r6mug8vteu77cqyaqkgsegn3g",
@@ -124,7 +123,7 @@ func CreateV0_5_1UpgradeHandler(
 				return nil, fmt.Errorf("invalid validator address %s: %w", valAddr, err)
 			}
 
-			if _, err := keepers.DistrKeeper.WithdrawValidatorCommission(ctx, valAddr); err != nil { // TODO: if we move only toMoveAmount, these commissions are not moved. How to handle?
+			if _, err := keepers.DistrKeeper.WithdrawValidatorCommission(ctx, valAddr); err != nil {
 				logger.Error("withdraw validator commission failed", "validator", valAddr, "err", err)
 			}
 		}
@@ -161,8 +160,6 @@ func CreateV0_5_1UpgradeHandler(
 			// Move all bank balances from old account to new account
 			transferCoins := keepers.BankKeeper.GetAllBalances(ctx, oldAcc)
 			if !transferCoins.IsZero() {
-				// TODO: why tErr?
-				// TODO: dont transfer transferCoins but toMoveAmount (slightly less than the whole)
 				if tErr := keepers.BankKeeper.SendCoins(ctx, oldAcc, newAcc, transferCoins); tErr != nil {
 					return nil, tErr
 				}
@@ -170,14 +167,13 @@ func CreateV0_5_1UpgradeHandler(
 			}
 
 			// Delegate the transferred bond-denom amount from the new account to the new validator, keep 10 FCT as reserve
-			// TODO: don't delegate
 			bondAmt := transferCoins.AmountOf(bondDenom).Sub(math.NewInt(10000000))
 			if bondAmt.IsPositive() {
-				validator, gErr := keepers.StakingKeeper.GetValidator(ctx, newValAddr) // TODO: why gErr?
+				validator, gErr := keepers.StakingKeeper.GetValidator(ctx, newValAddr)
 				if gErr != nil {
 					return nil, gErr
 				}
-				if _, dErr := keepers.StakingKeeper.Delegate(ctx, newAcc, bondAmt, stakingtypes.Unbonded, validator, true); dErr != nil { // TODO: why dErr?
+				if _, dErr := keepers.StakingKeeper.Delegate(ctx, newAcc, bondAmt, stakingtypes.Unbonded, validator, true); dErr != nil {
 					return nil, dErr
 				}
 				logger.Info("delegated migrated stake", "delegator", mv.newAccStr, "validator", mv.newValStr, "amount", bondAmt.String(), "denom", bondDenom)
