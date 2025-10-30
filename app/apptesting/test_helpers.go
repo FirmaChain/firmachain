@@ -338,26 +338,30 @@ func MustExistValidator(app *app.App, ctx sdk.Context, valAddr sdk.ValAddress) s
 }
 
 // Create a minimal validator if it does not exist yet.
-func MakeValidator(app *app.App, ctx sdk.Context, valAddr sdk.ValAddress) error {
-	if _, err := app.AppKeepers.StakingKeeper.GetValidator(ctx, valAddr); err == nil {
-		return fmt.Errorf("validator already exists: %s", valAddr.String())
+func MakeValidator(app *app.App, ctx sdk.Context, valAddr sdk.ValAddress) (stakingtypes.Validator, error) {
+	val, err := app.AppKeepers.StakingKeeper.GetValidator(ctx, valAddr)
+	if err == nil {
+		return val, fmt.Errorf("validator already exists: %s", valAddr.String())
 	}
 	// Create a dummy validator with small power
-	val := stakingtypes.Validator{
+	val = stakingtypes.Validator{
 		OperatorAddress: valAddr.String(),
 		Status:          stakingtypes.Bonded,
 		Tokens:          math.NewInt(1),
 		DelegatorShares: math.LegacyOneDec(),
 		Commission:      stakingtypes.NewCommission(math.LegacyZeroDec(), math.LegacyZeroDec(), math.LegacyZeroDec()),
 	}
-	return app.AppKeepers.StakingKeeper.SetValidator(ctx, val)
+	err = app.AppKeepers.StakingKeeper.SetValidator(ctx, val)
+	return val, err
 }
 
 // Create a minimal validator if it does not exist yet. Panic otherwise.
-func MustMakeValidator(app *app.App, ctx sdk.Context, valAddr sdk.ValAddress) {
-	if err := MakeValidator(app, ctx, valAddr); err != nil {
+func MustMakeValidator(app *app.App, ctx sdk.Context, valAddr sdk.ValAddress) stakingtypes.Validator {
+	val, err := MakeValidator(app, ctx, valAddr)
+	if err != nil {
 		panic(err)
 	}
+	return val
 }
 
 // Mint and send coin to target account. Panic on error.
