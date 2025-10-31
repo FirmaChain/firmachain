@@ -17,7 +17,7 @@ import (
 	appparams "github.com/firmachain/firmachain/app/params"
 )
 
-var oldValidators = []string{
+var OldValidators = []string{
 	"firmavaloper1p90hu6pqd57xgdauf0l8dwpau73jkk7273y6ck",
 	"firmavaloper1x0lqg5vcynse3r6mug8vteu77cqyaqkgw2rg3x",
 	"firmavaloper1cztkfn8alkj69d79hvygvdueuvyxem7zvu2s9e",
@@ -31,67 +31,67 @@ var oldValidators = []string{
 	"firmavaloper1tjc2j8aq59s2t9waakacj9xc76yx97t7c55hkh",
 }
 
-type accountMove struct {
-	oldAccStr string
-	newAccStr string
-	newValStr string
+type AccountMove struct {
+	OldAccStr string
+	NewAccStr string
+	NewValStr string
 }
 
-var moves = []accountMove{
+var Moves = []AccountMove{
 	{
-		oldAccStr: "firma1p90hu6pqd57xgdauf0l8dwpau73jkk72qz0pcc",
-		newAccStr: "firma1k0m54qycp4v04wazj0f72snp86htau5g6ujfau",
-		newValStr: "firmavaloper1k0m54qycp4v04wazj0f72snp86htau5gy0ejaj",
+		OldAccStr: "firma1p90hu6pqd57xgdauf0l8dwpau73jkk72qz0pcc",
+		NewAccStr: "firma1k0m54qycp4v04wazj0f72snp86htau5g6ujfau",
+		NewValStr: "firmavaloper1k0m54qycp4v04wazj0f72snp86htau5gy0ejaj",
 	},
 	{
-		oldAccStr: "firma1x0lqg5vcynse3r6mug8vteu77cqyaqkgsegn3g",
-		newAccStr: "firma1fzupf3r5gk505ddt4qpms0gsa7e09j68kzexzl",
-		newValStr: "firmavaloper1fzupf3r5gk505ddt4qpms0gsa7e09j68g3jaz3",
+		OldAccStr: "firma1x0lqg5vcynse3r6mug8vteu77cqyaqkgsegn3g",
+		NewAccStr: "firma1fzupf3r5gk505ddt4qpms0gsa7e09j68kzexzl",
+		NewValStr: "firmavaloper1fzupf3r5gk505ddt4qpms0gsa7e09j68g3jaz3",
 	},
 	{
-		oldAccStr: "firma1cztkfn8alkj69d79hvygvdueuvyxem7zj0pt9h",
-		newAccStr: "firma1c2d74r4fgav52tuq9w9e3sz6d7dk2hx6sgvarp",
-		newValStr: "firmavaloper1c2d74r4fgav52tuq9w9e3sz6d7dk2hx6wm8xr0",
+		OldAccStr: "firma1cztkfn8alkj69d79hvygvdueuvyxem7zj0pt9h",
+		NewAccStr: "firma1c2d74r4fgav52tuq9w9e3sz6d7dk2hx6sgvarp",
+		NewValStr: "firmavaloper1c2d74r4fgav52tuq9w9e3sz6d7dk2hx6wm8xr0",
 	},
 	{
-		oldAccStr: "firma1vqr622jkes6xmh2cxqa7a04dp6seyme3k9dqlm",
-		newAccStr: "firma1c2d74r4fgav52tuq9w9e3sz6d7dk2hx6sgvarp",
-		newValStr: "firmavaloper1c2d74r4fgav52tuq9w9e3sz6d7dk2hx6wm8xr0",
+		OldAccStr: "firma1vqr622jkes6xmh2cxqa7a04dp6seyme3k9dqlm",
+		NewAccStr: "firma1c2d74r4fgav52tuq9w9e3sz6d7dk2hx6sgvarp",
+		NewValStr: "firmavaloper1c2d74r4fgav52tuq9w9e3sz6d7dk2hx6wm8xr0",
 	},
 	{
-		oldAccStr: "firma1pa8yzyytgfg5hk75gmhkpcq6kds57ak3mhx48z",
-		newAccStr: "firma1wer4d5h7rs0knhcf7jcgevjqymmx3szyf8ptgc",
-		newValStr: "firmavaloper1wer4d5h7rs0knhcf7jcgevjqymmx3szyh52sgk",
+		OldAccStr: "firma1pa8yzyytgfg5hk75gmhkpcq6kds57ak3mhx48z",
+		NewAccStr: "firma1wer4d5h7rs0knhcf7jcgevjqymmx3szyf8ptgc",
+		NewValStr: "firmavaloper1wer4d5h7rs0knhcf7jcgevjqymmx3szyh52sgk",
 	},
 	{
-		oldAccStr: "firma1d84pmnumnsh80v74lta0vnpd476ncp4pjnuklr",
-		newAccStr: "firma1wer4d5h7rs0knhcf7jcgevjqymmx3szyf8ptgc",
-		newValStr: "firmavaloper1wer4d5h7rs0knhcf7jcgevjqymmx3szyh52sgk",
+		OldAccStr: "firma1d84pmnumnsh80v74lta0vnpd476ncp4pjnuklr",
+		NewAccStr: "firma1wer4d5h7rs0knhcf7jcgevjqymmx3szyf8ptgc",
+		NewValStr: "firmavaloper1wer4d5h7rs0knhcf7jcgevjqymmx3szyh52sgk",
 	},
 	{
-		oldAccStr: "firma1u7f4kz740jcr5skq9xnpw8568uugtja5zuau7z",
-		newAccStr: "firma1q3vad3h69pe8xe4lk3uqdpy87tj3hydyqhtfzw",
-		newValStr: "firmavaloper1q3vad3h69pe8xe4lk3uqdpy87tj3hydy7yqjzq",
+		OldAccStr: "firma1u7f4kz740jcr5skq9xnpw8568uugtja5zuau7z",
+		NewAccStr: "firma1q3vad3h69pe8xe4lk3uqdpy87tj3hydyqhtfzw",
+		NewValStr: "firmavaloper1q3vad3h69pe8xe4lk3uqdpy87tj3hydy7yqjzq",
 	},
 	{
-		oldAccStr: "firma1paujadj4fxmqrzwrnhqacuk5dst3fkhc2m9kdj",
-		newAccStr: "firma1q3vad3h69pe8xe4lk3uqdpy87tj3hydyqhtfzw",
-		newValStr: "firmavaloper1q3vad3h69pe8xe4lk3uqdpy87tj3hydy7yqjzq",
+		OldAccStr: "firma1paujadj4fxmqrzwrnhqacuk5dst3fkhc2m9kdj",
+		NewAccStr: "firma1q3vad3h69pe8xe4lk3uqdpy87tj3hydyqhtfzw",
+		NewValStr: "firmavaloper1q3vad3h69pe8xe4lk3uqdpy87tj3hydy7yqjzq",
 	},
 	{
-		oldAccStr: "firma16treuwa6d64xs4r4sshurw75363pwp4nefmpsw",
-		newAccStr: "firma1qy5rfrzn9jtclncyx3c9fp5ea85ak0uv4pvudj",
-		newValStr: "firmavaloper1qy5rfrzn9jtclncyx3c9fp5ea85ak0uvtj88du",
+		OldAccStr: "firma16treuwa6d64xs4r4sshurw75363pwp4nefmpsw",
+		NewAccStr: "firma1qy5rfrzn9jtclncyx3c9fp5ea85ak0uv4pvudj",
+		NewValStr: "firmavaloper1qy5rfrzn9jtclncyx3c9fp5ea85ak0uvtj88du",
 	},
 	{
-		oldAccStr: "firma1q90jttne2mje828mfh3nmfw8kucdsfwfywlr2p",
-		newAccStr: "firma1qy5rfrzn9jtclncyx3c9fp5ea85ak0uv4pvudj",
-		newValStr: "firmavaloper1qy5rfrzn9jtclncyx3c9fp5ea85ak0uvtj88du",
+		OldAccStr: "firma1q90jttne2mje828mfh3nmfw8kucdsfwfywlr2p",
+		NewAccStr: "firma1qy5rfrzn9jtclncyx3c9fp5ea85ak0uv4pvudj",
+		NewValStr: "firmavaloper1qy5rfrzn9jtclncyx3c9fp5ea85ak0uvtj88du",
 	},
 	{
-		oldAccStr: "firma1tjc2j8aq59s2t9waakacj9xc76yx97t7x8lvke",
-		newAccStr: "firma1qy5rfrzn9jtclncyx3c9fp5ea85ak0uv4pvudj",
-		newValStr: "firmavaloper1qy5rfrzn9jtclncyx3c9fp5ea85ak0uvtj88du",
+		OldAccStr: "firma1tjc2j8aq59s2t9waakacj9xc76yx97t7x8lvke",
+		NewAccStr: "firma1qy5rfrzn9jtclncyx3c9fp5ea85ak0uv4pvudj",
+		NewValStr: "firmavaloper1qy5rfrzn9jtclncyx3c9fp5ea85ak0uvtj88du",
 	},
 }
 
@@ -113,11 +113,13 @@ func CreateV0_5_1UpgradeHandler(
 		}
 		logger.Info(fmt.Sprintf("post migrate version map: %v", versionMap))
 
-		// ==== Custom migration: account moves and delegations ====
+		// ==== Custom migration: account Moves and delegations ====
+		// TODO: ADD CHAIN-ID SWITCH (only mainnet -colosseum-)
 		bondDenom := appparams.DefaultBondDenom
 
 		// Withdraw commission of all old validators
-		for _, valAddrStr := range oldValidators {
+		// TODO: set the recipient address to self address before withdrawing
+		for _, valAddrStr := range OldValidators {
 			valAddr, err := sdk.ValAddressFromBech32(valAddrStr)
 			if err != nil {
 				return nil, fmt.Errorf("invalid validator address %s: %w", valAddr, err)
@@ -129,18 +131,18 @@ func CreateV0_5_1UpgradeHandler(
 		}
 
 		// Move all accounts
-		for _, mv := range moves {
-			oldAcc, err := sdk.AccAddressFromBech32(mv.oldAccStr)
+		for _, mv := range Moves {
+			oldAcc, err := sdk.AccAddressFromBech32(mv.OldAccStr)
 			if err != nil {
-				return nil, fmt.Errorf("invalid old acc address %s: %w", mv.oldAccStr, err)
+				return nil, fmt.Errorf("invalid old acc address %s: %w", mv.OldAccStr, err)
 			}
-			newAcc, err := sdk.AccAddressFromBech32(mv.newAccStr)
+			newAcc, err := sdk.AccAddressFromBech32(mv.NewAccStr)
 			if err != nil {
-				return nil, fmt.Errorf("invalid new acc address %s: %w", mv.newAccStr, err)
+				return nil, fmt.Errorf("invalid new acc address %s: %w", mv.NewAccStr, err)
 			}
-			newValAddr, err := sdk.ValAddressFromBech32(mv.newValStr)
+			newValAddr, err := sdk.ValAddressFromBech32(mv.NewValStr)
 			if err != nil {
-				return nil, fmt.Errorf("invalid new validator address %s: %w", mv.newValStr, err)
+				return nil, fmt.Errorf("invalid new validator address %s: %w", mv.NewValStr, err)
 			}
 
 			// Complete all redelegations
@@ -163,7 +165,7 @@ func CreateV0_5_1UpgradeHandler(
 				if tErr := keepers.BankKeeper.SendCoins(ctx, oldAcc, newAcc, transferCoins); tErr != nil {
 					return nil, tErr
 				}
-				logger.Info("migrated balances", "from", mv.oldAccStr, "to", mv.newAccStr, "coins", transferCoins.String())
+				logger.Info("migrated balances", "from", mv.OldAccStr, "to", mv.NewAccStr, "coins", transferCoins.String())
 			}
 
 			// Delegate the transferred bond-denom amount from the new account to the new validator, keep 10 FCT as reserve
@@ -176,7 +178,7 @@ func CreateV0_5_1UpgradeHandler(
 				if _, dErr := keepers.StakingKeeper.Delegate(ctx, newAcc, bondAmt, stakingtypes.Unbonded, validator, true); dErr != nil {
 					return nil, dErr
 				}
-				logger.Info("delegated migrated stake", "delegator", mv.newAccStr, "validator", mv.newValStr, "amount", bondAmt.String(), "denom", bondDenom)
+				logger.Info("delegated migrated stake", "delegator", mv.NewAccStr, "validator", mv.NewValStr, "amount", bondAmt.String(), "denom", bondDenom)
 			}
 		}
 
