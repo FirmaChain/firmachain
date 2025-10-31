@@ -95,6 +95,8 @@ var Moves = []AccountMove{
 	},
 }
 
+var NotDelegatedAmount = int64(10_000_000)
+
 func CreateV0_5_1UpgradeHandler(
 	mm *module.Manager,
 	cfg module.Configurator,
@@ -114,71 +116,73 @@ func CreateV0_5_1UpgradeHandler(
 		logger.Info(fmt.Sprintf("post migrate version map: %v", versionMap))
 
 		// ==== Custom migration: account Moves and delegations ====
-		// TODO: ADD CHAIN-ID SWITCH (only mainnet -colosseum-)
-		bondDenom := appparams.DefaultBondDenom
+		if ctx.ChainID() == "colosseum-1" {
+			bondDenom := appparams.DefaultBondDenom
 
-		// Withdraw commission of all old validators
-		// TODO: set the recipient address to self address before withdrawing
-		for _, valAddrStr := range OldValidators {
-			valAddr, err := sdk.ValAddressFromBech32(valAddrStr)
-			if err != nil {
-				return nil, fmt.Errorf("invalid validator address %s: %w", valAddr, err)
-			}
-
-			if _, err := keepers.DistrKeeper.WithdrawValidatorCommission(ctx, valAddr); err != nil {
-				logger.Error("withdraw validator commission failed", "validator", valAddr, "err", err)
-			}
-		}
-
-		// Move all accounts
-		for _, mv := range Moves {
-			oldAcc, err := sdk.AccAddressFromBech32(mv.OldAccStr)
-			if err != nil {
-				return nil, fmt.Errorf("invalid old acc address %s: %w", mv.OldAccStr, err)
-			}
-			newAcc, err := sdk.AccAddressFromBech32(mv.NewAccStr)
-			if err != nil {
-				return nil, fmt.Errorf("invalid new acc address %s: %w", mv.NewAccStr, err)
-			}
-			newValAddr, err := sdk.ValAddressFromBech32(mv.NewValStr)
-			if err != nil {
-				return nil, fmt.Errorf("invalid new validator address %s: %w", mv.NewValStr, err)
-			}
-
-			// Complete all redelegations
-			redelegatedAmt, err := CompleteAllRedelegations(ctx, ctx.BlockTime(), keepers, oldAcc)
-			if err != nil {
-				return nil, fmt.Errorf("complete all redelegations failed: %w", err)
-			}
-			logger.Info("redelegated amount", "amount", redelegatedAmt.String())
-
-			// Unbond all and terminate
-			unbondedAmt, err := UnbondAllAndFinish(ctx, ctx.BlockTime(), keepers, oldAcc)
-			if err != nil {
-				return nil, fmt.Errorf("unbond all and finish failed: %w", err)
-			}
-			logger.Info("unbonded amount", "amount", unbondedAmt.String())
-
-			// Move all bank balances from old account to new account
-			transferCoins := keepers.BankKeeper.GetAllBalances(ctx, oldAcc)
-			if !transferCoins.IsZero() {
-				if tErr := keepers.BankKeeper.SendCoins(ctx, oldAcc, newAcc, transferCoins); tErr != nil {
-					return nil, tErr
+			// Withdraw commission of all old validators
+			// TODO: set the recipient address to self address before withdrawing
+			for _, valAddrStr := range OldValidators {
+				valAddr, err := sdk.ValAddressFromBech32(valAddrStr)
+				if err != nil {
+					return nil, fmt.Errorf("invalid validator address %s: %w", valAddr, err)
 				}
-				logger.Info("migrated balances", "from", mv.OldAccStr, "to", mv.NewAccStr, "coins", transferCoins.String())
+
+				if _, err := keepers.DistrKeeper.WithdrawValidatorCommission(ctx, valAddr); err != nil {
+					logger.Error("withdraw validator commission failed", "validator", valAddr, "err", err)
+				}
 			}
 
-			// Delegate the transferred bond-denom amount from the new account to the new validator, keep 10 FCT as reserve
-			bondAmt := transferCoins.AmountOf(bondDenom).Sub(math.NewInt(10000000))
-			if bondAmt.IsPositive() {
-				validator, gErr := keepers.StakingKeeper.GetValidator(ctx, newValAddr)
-				if gErr != nil {
-					return nil, gErr
+			// Move all accounts
+			for _, mv := range Moves {
+				oldAcc, err := sdk.AccAddressFromBech32(mv.OldAccStr)
+				if err != nil {
+					return nil, fmt.Errorf("invalid old acc address %s: %w", mv.OldAccStr, err)
 				}
-				if _, dErr := keepers.StakingKeeper.Delegate(ctx, newAcc, bondAmt, stakingtypes.Unbonded, validator, true); dErr != nil {
-					return nil, dErr
+				newAcc, err := sdk.AccAddressFromBech32(mv.NewAccStr)
+				if err != nil {
+					return nil, fmt.Errorf("invalid new acc address %s: %w", mv.NewAccStr, err)
 				}
-				logger.Info("delegated migrated stake", "delegator", mv.NewAccStr, "validator", mv.NewValStr, "amount", bondAmt.String(), "denom", bondDenom)
+				newValAddr, err := sdk.ValAddressFromBech32(mv.NewValStr)
+				if err != nil {
+					return nil, fmt.Errorf("invalid new validator address %s: %w", mv.NewValStr, err)
+				}
+
+				// Complete all redelegations
+				redelegatedAmt, err := CompleteAllRedelegations(ctx, ctx.BlockTime(), keepers, oldAcc)
+				if err != nil {
+					return nil, fmt.Errorf("complete all redelegations failed: %w", err)
+				}
+				logger.Info("redelegated amount", "amount", redelegatedAmt.String())
+
+				// Unbond all and terminate
+				unbondedAmt, err := UnbondAllAndFinish(ctx, ctx.BlockTime(), keepers, oldAcc)
+				if err != nil {
+					return nil, fmt.Errorf("unbond all and finish failed: %w", err)
+				}
+				logger.Info("unbonded amount", "amount", unbondedAmt.String())
+
+				// Move all bank balances from old account to new account
+				transferCoins := keepers.BankKeeper.GetAllBalances(ctx, oldAcc)
+				if !transferCoins.IsZero() {
+					if tErr := keepers.BankKeeper.SendCoins(ctx, oldAcc, newAcc, transferCoins); tErr != nil {
+						return nil, tErr
+					}
+					logger.Info("migrated balances", "from", mv.OldAccStr, "to", mv.NewAccStr, "coins", transferCoins.String())
+				}
+
+				// Delegate the transferred bond-denom amount from the new account to the new validator, keep 10 FCT as reserve
+				bondAmt := transferCoins.AmountOf(bondDenom).Sub(math.NewInt(NotDelegatedAmount))
+				if bondAmt.IsPositive() {
+					validator, gErr := keepers.StakingKeeper.GetValidator(ctx, newValAddr)
+					if gErr != nil {
+						return nil, gErr
+					}
+					if _, dErr := keepers.StakingKeeper.Delegate(ctx, newAcc, bondAmt, stakingtypes.Unbonded, validator, true); dErr != nil {
+						return nil, dErr
+					}
+					//fmt.Printf("delegated migrated stake:\n from %s\n delegator %s\n validator %s\n amount %s %s\n", mv.OldAccStr, mv.NewAccStr, mv.NewValStr, bondAmt.String(), bondDenom)
+					logger.Info("delegated migrated stake", "delegator", mv.NewAccStr, "validator", mv.NewValStr, "amount", bondAmt.String(), "denom", bondDenom)
+				}
 			}
 		}
 
