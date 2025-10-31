@@ -393,19 +393,29 @@ func MustCreateDelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddres
 	}
 }
 
+// Create an unbonding delegation.
+func CreateUnbondingDelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddress, valAddr sdk.ValAddress, amount int64) (time.Time, math.Int, error) {
+	shares := math.LegacyNewDec(amount)
+	return app.AppKeepers.StakingKeeper.Undelegate(ctx, delegator, valAddr, shares)
+}
+
+// Create a redelegation.
+func CreateRedelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddress, valAddrSrc sdk.ValAddress, valAddrDst sdk.ValAddress, amount int64) (completionTime time.Time, err error) {
+	shares := math.LegacyNewDecFromInt(math.NewInt(amount))
+	return app.AppKeepers.StakingKeeper.BeginRedelegation(ctx, delegator, valAddrSrc, valAddrDst, shares)
+}
+
 // Create an unbonding delegation. Panic otherwise.
-func MustCreateUnbondingDelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddress, valAddr sdk.ValAddress, amount math.Int) {
-	shares := math.LegacyNewDecFromInt(amount)
-	_, _, err := app.AppKeepers.StakingKeeper.Undelegate(ctx, delegator, valAddr, shares)
+func MustCreateUnbondingDelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddress, valAddr sdk.ValAddress, amount int64) {
+	_, _, err := CreateUnbondingDelegation(app, ctx, delegator, valAddr, amount)
 	if err != nil {
 		panic(err)
 	}
 }
 
-// Create an redelegation. Panic otherwise.
+// Create a redelegation. Panic otherwise.
 func MustCreateRedelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddress, valAddrSrc sdk.ValAddress, valAddrDst sdk.ValAddress, amount int64) {
-	shares := math.LegacyNewDecFromInt(math.NewInt(amount))
-	_, err := app.AppKeepers.StakingKeeper.BeginRedelegation(ctx, delegator, valAddrSrc, valAddrDst, shares)
+	_, err := CreateRedelegation(app, ctx, delegator, valAddrSrc, valAddrDst, amount)
 	if err != nil {
 		panic(err)
 	}
