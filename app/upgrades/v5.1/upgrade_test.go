@@ -19,6 +19,12 @@ import (
 	v5_1 "github.com/firmachain/firmachain/app/upgrades/v5.1"
 )
 
+// Validator addresses (Bech32): two old validators to migrate, and two external validators
+var val1Bech32Address = v5_1.OldValidators[0]
+var val2Bech32Address = v5_1.OldValidators[1]
+var extVal1Bech32Address = "firmavaloper1qzjafkzlfn04th8wrfg8mgrwr0rl0y6gjsx02y"
+var extVal0Bech32Address = "firmavaloper1r6e67wyxms0qqgsvf2p906cexf23dl5dtekjxr"
+
 type UpgradeTestSuite struct {
 	apptesting.TestSuite
 }
@@ -47,7 +53,6 @@ func (s *UpgradeTestSuite) SetupTest() {
 	s.App.PreBlocker(s.Ctx, nil)
 
 	s.setupValidatorState()
-	s.App.Commit()
 
 	// we do not finalize and commit, because pre-upgrade must run first.
 }
@@ -82,14 +87,15 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 	k := &s.App.AppKeepers
 
 	// Old validators and their operator (self) accounts
-	val1Addr := apptesting.MustVal("firmavaloper1p90hu6pqd57xgdauf0l8dwpau73jkk7273y6ck")
-	val2Addr := apptesting.MustVal("firmavaloper1x0lqg5vcynse3r6mug8vteu77cqyaqkgw2rg3x")
-	self1 := apptesting.MustAcc("firma1p90hu6pqd57xgdauf0l8dwpau73jkk72qz0pcc")
-	self2 := apptesting.MustAcc("firma1x0lqg5vcynse3r6mug8vteu77cqyaqkgsegn3g")
+	val1Addr := apptesting.MustVal(val1Bech32Address)
+	val2Addr := apptesting.MustVal(val2Bech32Address)
+
+	self1Addr := sdk.AccAddress(val1Addr)
+	self2Addr := sdk.AccAddress(val1Addr)
 
 	// External validators
-	extVal0 := apptesting.MustVal("firmavaloper1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq0qqqq")
-	extVal1 := apptesting.MustVal("firmavaloper1wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww0wwww")
+	extVal0 := apptesting.MustVal(extVal0Bech32Address)
+	extVal1 := apptesting.MustVal(extVal1Bech32Address)
 
 	// New accounts/validators per moves in the upgrade handler
 	newAcc1 := apptesting.MustAcc("firma1k0m54qycp4v04wazj0f72snp86htau5g6ujfau")
@@ -149,14 +155,14 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 	}
 
 	// For validator 1
-	assertOldSelfState(self1, val1Addr, newAcc1)
+	assertOldSelfState(self1Addr, val1Addr, newAcc1)
 	assertOtherDelegatorsPreserved(s.TestAccs[0].Address, val1Addr) // acc1
 	assertOtherDelegatorsPreserved(s.TestAccs[1].Address, val1Addr) // acc2
 	assertCommissionWithdrawn(val1Addr)
 	assertNewDelegation(newAcc1, newVal1)
 
 	// For validator 2
-	assertOldSelfState(self2, val2Addr, newAcc2)
+	assertOldSelfState(self2Addr, val2Addr, newAcc2)
 	assertOtherDelegatorsPreserved(s.TestAccs[0].Address, val2Addr)
 	assertOtherDelegatorsPreserved(s.TestAccs[1].Address, val2Addr)
 	assertCommissionWithdrawn(val2Addr)
@@ -175,125 +181,106 @@ func (s *UpgradeTestSuite) setupValidatorState() {
 	ctx := s.Ctx
 	bondDenom := s.BondDenom
 
-	// Validator addresses (Bech32): two old validators to migrate, and two external validators
-	val1Bech32Address := "firmavaloper1p90hu6pqd57xgdauf0l8dwpau73jkk7273y6ck"
-	val2Bech32Address := "firmavaloper1x0lqg5vcynse3r6mug8vteu77cqyaqkgw2rg3x"
-	extVal0Bech32Address := "firmavaloper1r6e67wyxms0qqgsvf2p906cexf23dl5dtekjxr"
-	extVal1Bech32Address := "firmavaloper1qzjafkzlfn04th8wrfg8mgrwr0rl0y6gjsx02y"
+	// Create all the old validators.
+	// Fund the validators standard accounts so that they can self-delegate.
+	// Require also that external validators are not present inside the old validators array.
+	for i := 0; i < len(v5_1.OldValidators); i++ {
+		valAddrBech32 := v5_1.OldValidators[i]
+		s.Require().True(extVal0Bech32Address != valAddrBech32)
+		s.Require().True(extVal1Bech32Address != valAddrBech32)
+		valAddr, err := sdk.ValAddressFromBech32(valAddrBech32)
+		s.Require().NoError(err)
+		selfAcc := sdk.AccAddress(valAddr)
+		apptesting.MustFundAccount(app, ctx, selfAcc, bondDenom, 2_000_000_000)
+		apptesting.MustMakeValidator(app, ctx, valAddr)
+	}
 
-	// Bech32 -> Validator addresses
-	val1Addr, err := sdk.ValAddressFromBech32(val1Bech32Address)
-	s.Require().NoError(err)
-	val2Addr, err := sdk.ValAddressFromBech32(val2Bech32Address)
-	s.Require().NoError(err)
-	extVal0Addr, err := sdk.ValAddressFromBech32(extVal0Bech32Address)
-	s.Require().NoError(err)
-	extVal1Addr, err := sdk.ValAddressFromBech32(extVal1Bech32Address)
-	s.Require().NoError(err)
+	// Create all the new validators.
+	// Fund the validators standard accounts so that they can self-delegate.
+	// Require also that external validators are not present inside the new validators array.
+	for i := 0; i < len(v5_1.Moves); i++ {
+		valAddrBech32 := v5_1.Moves[i].NewValStr
+		s.Require().True(extVal0Bech32Address != valAddrBech32)
+		s.Require().True(extVal1Bech32Address != valAddrBech32)
+		valAddr, err := sdk.ValAddressFromBech32(valAddrBech32)
+		s.Require().NoError(err)
+		selfAcc := sdk.AccAddress(valAddr)
+		s.Require().True(selfAcc.String() == v5_1.Moves[i].NewAccStr)
+		apptesting.MustFundAccount(app, ctx, selfAcc, bondDenom, 2_000_000_000)
+		_, err = apptesting.MakeValidator(app, ctx, valAddr)
+		if err != nil && err.Error() != fmt.Errorf("validator already exists: %s", valAddr.String()).Error() {
+			panic(err)
+		}
+	}
 
-	// Operator addresses
-	selfAcc := sdk.AccAddress(val1Addr)
-	selfAcc2 := sdk.AccAddress(val2Addr)
-	_ = selfAcc2 // TODO: use it
+	// Create the external validators
+	extVal0Addr := apptesting.MustVal(extVal0Bech32Address)
+	extVal1Addr := apptesting.MustVal(extVal1Bech32Address)
+	apptesting.MustMakeValidator(app, ctx, extVal0Addr)
+	apptesting.MustMakeValidator(app, ctx, extVal1Addr)
 
-	// Account addresses
+	// Self account addresses
+	val1Addr := apptesting.MustVal(val1Bech32Address)
+	val2Addr := apptesting.MustVal(val2Bech32Address)
+
+	// Delegators account addresses
 	acc1 := s.TestAccs[0].Address
 	acc2 := s.TestAccs[1].Address
 	s.Require().NotZero(app.AppKeepers.BankKeeper.GetBalance(ctx, acc1, bondDenom).Amount.Int64()) // TODO: use a given min amount
 	s.Require().NotZero(app.AppKeepers.BankKeeper.GetBalance(ctx, acc2, bondDenom).Amount.Int64()) // TODO: use a given min amount
 
-	// Fund accounts: val1 and val2 operator accounts so they can self-delegate and redelegate
-	apptesting.MustFundAccount(app, ctx, sdk.AccAddress(val1Addr), bondDenom, 2_000_000_000)
-	apptesting.MustFundAccount(app, ctx, sdk.AccAddress(val2Addr), bondDenom, 2_000_000_000)
+	// ==== Validators Setup ====
+	val1 := apptesting.MustExistValidator(app, ctx, val1Addr)
+	val2 := apptesting.MustExistValidator(app, ctx, val2Addr)
+	validatorsToSet := []stakingtypes.Validator{val1, val2}
 
-	// ==== Create Validators ====
-	// Create validators: val1, val2, and two others with minimal power so that delegations/redelegations are valid
-	val1 := apptesting.MustMakeValidator(app, ctx, val1Addr)
-	val2 := apptesting.MustMakeValidator(app, ctx, val2Addr)
-	extVal0 := apptesting.MustMakeValidator(app, ctx, extVal0Addr)
-	extVal1 := apptesting.MustMakeValidator(app, ctx, extVal1Addr)
-	_ = extVal0 // TODO: use it
-	_ = extVal1 // TODO: use it
-	// Set up commissions for val1 and val2
-	val1.Commission.CommissionRates = stakingtypes.NewCommissionRates(
-		math.LegacyMustNewDecFromStr("0.12"),
-		math.LegacyMustNewDecFromStr("0.15"),
-		math.LegacyMustNewDecFromStr("0.01"),
-	)
-	err = app.AppKeepers.StakingKeeper.SetValidator(ctx, val1)
-	if err != nil {
-		panic(err)
+	for i := 0; i < len(validatorsToSet); i++ {
+		val := validatorsToSet[i]
+		valAddrString := val.OperatorAddress
+		valAddr, err := sdk.ValAddressFromBech32(valAddrString)
+		s.Require().NoError(err)
+		selfAcc := sdk.AccAddress(valAddr)
+
+		val.Commission.CommissionRates = stakingtypes.NewCommissionRates(
+			math.LegacyMustNewDecFromStr("0.12"),
+			math.LegacyMustNewDecFromStr("0.15"),
+			math.LegacyMustNewDecFromStr("0.01"),
+		)
+		err = app.AppKeepers.StakingKeeper.SetValidator(ctx, val)
+		s.Require().NoError(err)
+
+		// ---- Delegations ----
+		// Setup delegations for val1: self, acc1, acc2
+		apptesting.MustCreateDelegation(app, ctx, selfAcc, valAddr, 1_000_000_000)
+		apptesting.MustCreateDelegation(app, ctx, acc1, valAddr, 300_000_000)
+		apptesting.MustCreateDelegation(app, ctx, acc2, valAddr, 400_000_000)
+
+		// ---- Redelegations ----
+		// from self to ext: this(selfAcc) -> extVal0, extVal1
+		apptesting.MustCreateRedelegation(app, ctx, selfAcc, valAddr, extVal0Addr, 50_000_000)
+		apptesting.MustCreateRedelegation(app, ctx, selfAcc, valAddr, extVal1Addr, 50_000_000)
+		// from acc1 to ext: acc1 -> extVal0, extVal1
+		apptesting.MustCreateRedelegation(app, ctx, acc1, valAddr, extVal0Addr, 20_000_000)
+		apptesting.MustCreateRedelegation(app, ctx, acc1, valAddr, extVal1Addr, 20_000_000)
+		// from acc2 to this: extVal0 -> val1
+		// ensure acc2 has delegation at extVal0 to allow redelegation
+		apptesting.MustCreateDelegation(app, ctx, acc2, extVal0Addr, 30_000_000)
+		apptesting.MustCreateRedelegation(app, ctx, acc2, extVal0Addr, valAddr, 30_000_000)
+
+		// ---- Unbonding delegations ----
+		// Set up unbonding delegations from val1
+		// From self: [u1,u2,u3,u4,u5,u6,u7]
+		for i := 1; i <= 7; i++ {
+			apptesting.MustCreateUnbondingDelegation(app, ctx, selfAcc, valAddr, math.NewInt(10_000_000))
+		}
+		// From acc1: [1,2,3,4,5,6,7]
+		for i := 1; i <= 7; i++ {
+			apptesting.MustCreateUnbondingDelegation(app, ctx, acc1, valAddr, math.NewInt(10_000_000))
+		}
+		// From acc2: [1,2]
+		for i := 1; i <= 2; i++ {
+			apptesting.MustCreateUnbondingDelegation(app, ctx, acc2, valAddr, math.NewInt(20_000_000))
+		}
+
 	}
-	val2.Commission.CommissionRates = stakingtypes.NewCommissionRates(
-		math.LegacyMustNewDecFromStr("0.12"),
-		math.LegacyMustNewDecFromStr("0.15"),
-		math.LegacyMustNewDecFromStr("0.01"),
-	)
-	err = app.AppKeepers.StakingKeeper.SetValidator(ctx, val2)
-	if err != nil {
-		panic(err)
-	}
-
-	// ==== Validator 1 setup ====
-
-	// ---- Delegations ----
-	// Setup delegations for val1: self, acc1, acc2
-	apptesting.MustCreateDelegation(app, ctx, selfAcc, val1Addr, 1_000_000_000)
-	apptesting.MustCreateDelegation(app, ctx, acc1, val1Addr, 100_000_000)
-	apptesting.MustCreateDelegation(app, ctx, acc2, val1Addr, 200_000_000)
-
-	// ---- Redelegations ----
-	// from self to ext: this(selfAcc) -> extVal0, extVal1
-	apptesting.MustCreateRedelegation(app, ctx, selfAcc, val1Addr, extVal0Addr, 50_000_000)
-	apptesting.MustCreateRedelegation(app, ctx, selfAcc, val1Addr, extVal1Addr, 50_000_000)
-	// from acc1 to ext: acc1 -> extVal0, extVal1
-	apptesting.MustCreateRedelegation(app, ctx, acc1, val1Addr, extVal0Addr, 20_000_000)
-	apptesting.MustCreateRedelegation(app, ctx, acc1, val1Addr, extVal1Addr, 20_000_000)
-	// from acc2 to this: extVal0 -> val1
-	// ensure acc2 has delegation at extVal0 to allow redelegation
-	apptesting.MustCreateDelegation(app, ctx, acc2, extVal0Addr, 30_000_000)
-	apptesting.MustCreateRedelegation(app, ctx, acc2, extVal0Addr, val1Addr, 30_000_000)
-
-	// ---- Unbonding delegations ----
-	// Set up unbonding delegations from val1
-	// From self: [u1,u2,u3,u4,u5,u6,u7]
-	for i := 1; i <= 7; i++ {
-		apptesting.MustCreateUnbondingDelegation(app, ctx, selfAcc, val1Addr, math.NewInt(10_000_000))
-	}
-	// From acc1: [1,2,3,4,5,6,7]
-	for i := 1; i <= 7; i++ {
-		apptesting.MustCreateUnbondingDelegation(app, ctx, acc1, val1Addr, math.NewInt(10_000_000))
-	}
-	// From acc2: [1,2]
-	for i := 1; i <= 2; i++ {
-		apptesting.MustCreateUnbondingDelegation(app, ctx, acc2, val1Addr, math.NewInt(20_000_000))
-	}
-
-	// ==== Validator 2 setup ====
-	// Mirror the same pre-state of val1
-
-	// ---- Delegations ----
-	apptesting.MustCreateDelegation(app, ctx, sdk.AccAddress(val2Addr), val2Addr, 1_000_000_000)
-	apptesting.MustCreateDelegation(app, ctx, acc1, val2Addr, 100_000_000)
-	apptesting.MustCreateDelegation(app, ctx, acc2, val2Addr, 200_000_000)
-
-	// ---- Redelegations ----
-	apptesting.MustCreateRedelegation(app, ctx, sdk.AccAddress(val2Addr), val2Addr, extVal0Addr, 50_000_000)
-	apptesting.MustCreateRedelegation(app, ctx, sdk.AccAddress(val2Addr), val2Addr, extVal1Addr, 50_000_000)
-	apptesting.MustCreateRedelegation(app, ctx, acc1, val2Addr, extVal0Addr, 20_000_000)
-	apptesting.MustCreateRedelegation(app, ctx, acc1, val2Addr, extVal1Addr, 20_000_000)
-	// acc2: extVal0 -> val2
-	apptesting.MustCreateDelegation(app, ctx, acc2, extVal0Addr, 30_000_000)
-	apptesting.MustCreateRedelegation(app, ctx, acc2, extVal0Addr, val2Addr, 30_000_000)
-
-	// ---- Unbonding delegations ----
-	// Unbondings for val2
-	for i := 1; i <= 7; i++ {
-		apptesting.MustCreateUnbondingDelegation(app, ctx, sdk.AccAddress(val2Addr), val2Addr, math.NewInt(10_000_000))
-		apptesting.MustCreateUnbondingDelegation(app, ctx, acc1, val2Addr, math.NewInt(10_000_000))
-	}
-	for i := 1; i <= 2; i++ {
-		apptesting.MustCreateUnbondingDelegation(app, ctx, acc2, val2Addr, math.NewInt(20_000_000))
-	}
-
 }
