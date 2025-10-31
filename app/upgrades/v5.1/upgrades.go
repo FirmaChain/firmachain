@@ -120,11 +120,27 @@ func CreateV0_5_1UpgradeHandler(
 			bondDenom := appparams.DefaultBondDenom
 
 			// Withdraw commission of all old validators
-			// TODO: set the recipient address to self address before withdrawing
 			for _, valAddrStr := range OldValidators {
 				valAddr, err := sdk.ValAddressFromBech32(valAddrStr)
 				if err != nil {
 					return nil, fmt.Errorf("invalid validator address %s: %w", valAddr, err)
+				}
+
+				withdrawAddr, err := keepers.DistrKeeper.GetDelegatorWithdrawAddr(ctx, sdk.AccAddress(valAddr))
+				if err != nil {
+					err = keepers.DistrKeeper.SetWithdrawAddr(ctx, sdk.AccAddress(valAddr), sdk.AccAddress(valAddr))
+					if err != nil {
+						return nil, err
+					}
+				} else {
+					err = keepers.DistrKeeper.DeleteDelegatorWithdrawAddr(ctx, sdk.AccAddress(valAddr), withdrawAddr)
+					if err != nil {
+						return nil, err
+					}
+					err = keepers.DistrKeeper.SetWithdrawAddr(ctx, sdk.AccAddress(valAddr), sdk.AccAddress(valAddr))
+					if err != nil {
+						return nil, err
+					}
 				}
 
 				if _, err := keepers.DistrKeeper.WithdrawValidatorCommission(ctx, valAddr); err != nil {
