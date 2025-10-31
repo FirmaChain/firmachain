@@ -352,6 +352,13 @@ func MakeValidator(app *app.App, ctx sdk.Context, valAddr sdk.ValAddress) (staki
 		Commission:      stakingtypes.NewCommission(math.LegacyZeroDec(), math.LegacyZeroDec(), math.LegacyZeroDec()),
 	}
 	err = app.AppKeepers.StakingKeeper.SetValidator(ctx, val)
+	if err != nil {
+		return stakingtypes.Validator{}, err
+	}
+	err = app.AppKeepers.DistrKeeper.Hooks().AfterValidatorCreated(ctx, valAddr)
+	if err != nil {
+		return stakingtypes.Validator{}, err
+	}
 	return val, err
 }
 
