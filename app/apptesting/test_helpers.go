@@ -387,9 +387,18 @@ func MustFundAccount(app *app.App, ctx sdk.Context, addr sdk.AccAddress, denom s
 // Create a delegation. Panic otherwise.
 func MustCreateDelegation(app *app.App, ctx sdk.Context, delegator sdk.AccAddress, valAddr sdk.ValAddress, amount int64) {
 	val := MustExistValidator(app, ctx, valAddr)
-	_, err := app.AppKeepers.StakingKeeper.Delegate(ctx, delegator, math.NewInt(amount), stakingtypes.Unbonded, val, true)
+	bondDenom, err := app.AppKeepers.StakingKeeper.BondDenom(ctx)
 	if err != nil {
 		panic(err)
+	}
+	balPreDel := app.AppKeepers.BankKeeper.GetBalance(ctx, delegator, bondDenom).Amount.Int64()
+	_, err = app.AppKeepers.StakingKeeper.Delegate(ctx, delegator, math.NewInt(amount), stakingtypes.Unbonded, val, true)
+	if err != nil {
+		panic(err)
+	}
+	balPostDel := app.AppKeepers.BankKeeper.GetBalance(ctx, delegator, bondDenom).Amount.Int64()
+	if balPostDel != (balPreDel - amount) {
+		panic(fmt.Errorf("delegator balance un-affected by delegation to validator: del:%s - val:%s", delegator.String(), valAddr.String()))
 	}
 }
 
