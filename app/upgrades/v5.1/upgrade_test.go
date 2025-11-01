@@ -257,7 +257,6 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 
 		assertOldValState(oldValAddr)
 		assertOtherDelegatorsPreserved([]sdk.AccAddress{s.TestAccs[0].Address, s.TestAccs[1].Address}, oldValAddr)
-		// TODO: set commissions
 		assertCommissionWithdrawn(oldValAddr)
 		assertNewValState(newValAddr)
 	}
