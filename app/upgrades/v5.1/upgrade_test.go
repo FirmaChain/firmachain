@@ -20,8 +20,6 @@ import (
 )
 
 // Validator addresses (Bech32): two old validators to migrate, and two external validators
-var val1Bech32Address = v5_1.OldValidators[0]
-var val2Bech32Address = v5_1.OldValidators[1]
 var extVal1Bech32Address = "firmavaloper1qzjafkzlfn04th8wrfg8mgrwr0rl0y6gjsx02y"
 var extVal0Bech32Address = "firmavaloper1r6e67wyxms0qqgsvf2p906cexf23dl5dtekjxr"
 
@@ -41,8 +39,16 @@ func allInternalValidatorsAddresses() []string {
 	return addresses
 }
 
+type BalStakeComm struct {
+	Balances    sdk.Coins
+	StakeAmount int64
+	Commissions sdk.Coins
+}
 type UpgradeTestSuite struct {
 	apptesting.TestSuite
+
+	// Map to map the validators standard account to their balances, stake, and commission, pre-upgrade
+	vAccPreUpgrade map[string]BalStakeComm
 }
 
 func (s *UpgradeTestSuite) Setup() {
@@ -68,7 +74,11 @@ func (s *UpgradeTestSuite) SetupTest() {
 	s.Ctx = s.Ctx.WithHeaderInfo(coreheader.Info{Height: 1, Time: s.Ctx.BlockTime().Add(time.Second)}).WithBlockHeight(1)
 	s.App.PreBlocker(s.Ctx, nil)
 
+	s.verifyValidatorsMovesInfoWellDefined()
+
 	s.setupValidatorState()
+
+	s.vAccPreUpgrade = make(map[string]BalStakeComm)
 
 	// we do not finalize and commit, because pre-upgrade must run first.
 }
@@ -80,13 +90,67 @@ func TestKeeperTestSuite(t *testing.T) {
 func (s *UpgradeTestSuite) TestUpgrade() {
 	preUpgradeChecks(s)
 
-	// TODO: Get validators self-acc balances
+	s.setupPreUpgradeBalancesMap()
 
 	upgradeHeight := int64(5)
 	s.ConfirmUpgradeSucceeded(v5_1.UpgradeName, upgradeHeight)
 
-	// TODO: check balances moved ok
 	postUpgradeChecks(s)
+}
+
+// Check that v5_1.Moves contains all and only the accounts to move
+// associated with v5_1.OldValidators
+func (s *UpgradeTestSuite) verifyValidatorsMovesInfoWellDefined() {
+	valsToBeMoved := []string{}
+	findValInArray := func(strArr []string, s string) (bool, int) {
+		for i, v := range strArr {
+			if v == s {
+				return true, i
+			}
+		}
+		return false, -1
+	}
+
+	// Save the validator addresses that will be moved inside valsToBeMoved
+	// Check also that newVal and newAcc point to the same validator
+	for _, mv := range v5_1.Moves {
+		oldVal := sdk.ValAddress(apptesting.MustAcc(mv.OldAccStr))
+		found, _ := findValInArray(valsToBeMoved, oldVal.String())
+		if !found {
+			valsToBeMoved = append(valsToBeMoved, oldVal.String())
+		}
+
+		newVal := sdk.ValAddress(apptesting.MustAcc(mv.NewAccStr))
+		s.Require().True(mv.NewValStr == newVal.String())
+	}
+
+	// Check that each oldVal inside OldValidators is contained into v5_1.Moves
+	for _, valAddrStr := range v5_1.OldValidators {
+		found, pos := findValInArray(valsToBeMoved, valAddrStr)
+		s.Require().True(found, fmt.Sprintf("old validator %s from v5_1.OldValidators not contained into v5_1.Moves", valAddrStr))
+		valsToBeMoved = append(valsToBeMoved[:pos], valsToBeMoved[pos+1:]...)
+	}
+
+	// Check that no other validator account is inside v5_1.Moves
+	s.Require().Empty(valsToBeMoved, "v5_1.Moves contains entries with old validators not present inside v5_1.OldValidators")
+}
+
+func (s *UpgradeTestSuite) setupPreUpgradeBalancesMap() {
+	for _, valAddrString := range allValidatorsAddresses() {
+		preupMap := s.vAccPreUpgrade
+		valAddr, err := sdk.ValAddressFromBech32(valAddrString)
+		s.Require().NoError(err)
+		bsc := BalStakeComm{}
+		bsc.Balances = s.App.AppKeepers.BankKeeper.GetAllBalances(s.Ctx, sdk.AccAddress(valAddr))
+		val := apptesting.MustExistValidator(s.App, s.Ctx, valAddr)
+		bsc.StakeAmount = val.GetBondedTokens().Int64()
+		accumCommission, err := s.App.AppKeepers.DistrKeeper.GetValidatorAccumulatedCommission(s.Ctx, valAddr)
+		s.Require().NoError(err)
+		commission, _ := accumCommission.Commission.TruncateDecimal()
+		bsc.Commissions = commission
+		preupMap[valAddrString] = bsc
+		s.vAccPreUpgrade = preupMap
+	}
 }
 
 func (s *UpgradeTestSuite) verifyAllValidatorsExist() {
@@ -123,25 +187,13 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 
 	s.verifyAllValidatorsExist()
 
-	// Old validators and their accounts
-	val1Addr := apptesting.MustVal(val1Bech32Address)
-	val2Addr := apptesting.MustVal(val2Bech32Address)
-	self1Addr := sdk.AccAddress(val1Addr)
-	self2Addr := sdk.AccAddress(val1Addr)
-
-	// New accounts/validators per moves in the upgrade handler
-	newAcc1 := apptesting.MustAcc("firma1k0m54qycp4v04wazj0f72snp86htau5g6ujfau")
-	newVal1 := apptesting.MustVal("firmavaloper1k0m54qycp4v04wazj0f72snp86htau5gy0ejaj")
-	newAcc2 := apptesting.MustAcc("firma1fzupf3r5gk505ddt4qpms0gsa7e09j68kzexzl")
-	newVal2 := apptesting.MustVal("firmavaloper1fzupf3r5gk505ddt4qpms0gsa7e09j68g3jaz3")
-
 	// Helper to assert old self state cleaned and funds moved
 	// Assert that, for the account (self), there are no:
 	// - self delegation
 	// - unbonding delegations
 	// - redelegations
 	// - balances
-	assertOldSelfState := func(oldVal sdk.ValAddress) {
+	assertOldValState := func(oldVal sdk.ValAddress) {
 		self := sdk.AccAddress(oldVal)
 		if _, err := k.StakingKeeper.GetDelegation(ctx, self, oldVal); err == nil {
 			s.T().Fatal("expected no self delegation to old validator after upgrade")
@@ -156,13 +208,11 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 		s.Require().True(bal.IsZero())
 	}
 
-	// TODO: check old bal moved to new bal
-	assertNewSelfState := func(newVal sdk.ValAddress) {
+	assertNewValState := func(newVal sdk.ValAddress) {
 		self := sdk.AccAddress(newVal)
-		bal := k.BankKeeper.GetAllBalances(ctx, self)
-		liquidAmount := bal.AmountOf(s.BondDenom).Int64()
+		liquidAmount := k.BankKeeper.GetBalance(ctx, self, s.BondDenom).Amount.Int64()
 		// Liquid amount must not be greater than v5_1.NotDelegatedAmount
-		// TODO: check why this fails: s.Require().LessOrEqual(liquidAmount, v5_1.NotDelegatedAmount, fmt.Sprintf("new validator: %s", newVal.String()))
+		s.Require().LessOrEqual(liquidAmount, v5_1.NotDelegatedAmount, fmt.Sprintf("new validator: %s", newVal.String()))
 		del, err := k.StakingKeeper.GetDelegation(ctx, self, newVal)
 		// If liquid amount is less than v5_1.NotDelegatedAmount, there should not be a new self-delegation in the new validator.
 		if liquidAmount < v5_1.NotDelegatedAmount {
@@ -174,15 +224,17 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 	}
 
 	// Helper to assert acc1/acc2 states preserved
-	assertOtherDelegatorsPreserved := func(acc sdk.AccAddress, oldVal sdk.ValAddress) {
-		// Delegation to old validator is still present
-		del, err := k.StakingKeeper.GetDelegation(ctx, acc, oldVal)
-		s.Require().NoError(err)
-		s.Require().NotNil(del)
-		// Unbonding entries still present for acc1 (7) or acc2 (2). We assert >0 generically here.
-		ubd, err := k.StakingKeeper.GetAllUnbondingDelegations(ctx, acc)
-		s.Require().NoError(err)
-		s.Require().True(len(ubd) > 0)
+	assertOtherDelegatorsPreserved := func(delegators []sdk.AccAddress, oldVal sdk.ValAddress) {
+		for _, d := range delegators {
+			// Delegation to old validator is still present
+			del, err := k.StakingKeeper.GetDelegation(ctx, d, oldVal)
+			s.Require().NoError(err)
+			s.Require().NotNil(del)
+			// Unbonding entries still present for acc1 (7) or acc2 (2). We assert >0 generically here.
+			ubd, err := k.StakingKeeper.GetAllUnbondingDelegations(ctx, d)
+			s.Require().NoError(err)
+			s.Require().True(len(ubd) > 0)
+		}
 	}
 
 	// Assert commissions withdrawn: outstanding commissions should be zero for old validators
@@ -193,34 +245,21 @@ func postUpgradeChecks(s *UpgradeTestSuite) {
 		s.Require().True(rewards.IsZero())
 	}
 
-	// For validator 1
-	type checkMovedAddress struct {
-		oldValAddr  sdk.ValAddress
-		oldSelfAddr sdk.AccAddress
-		newValAddr  sdk.ValAddress
-		newSelfAddr sdk.AccAddress
-	}
-	var validatorMovesToCheck = []checkMovedAddress{
-		{
-			oldValAddr:  val1Addr,
-			oldSelfAddr: self1Addr,
-			newValAddr:  newVal1,
-			newSelfAddr: newAcc1,
-		},
-		{
-			oldValAddr:  val2Addr,
-			oldSelfAddr: self2Addr,
-			newValAddr:  newVal2,
-			newSelfAddr: newAcc2,
-		},
-	}
-	for i := 0; i < len(validatorMovesToCheck); i++ {
-		c := validatorMovesToCheck[i]
-		assertOldSelfState(c.oldValAddr)
-		assertOtherDelegatorsPreserved(s.TestAccs[0].Address, c.oldValAddr) // acc1
-		assertOtherDelegatorsPreserved(s.TestAccs[1].Address, c.oldValAddr) // acc2
-		assertCommissionWithdrawn(c.oldValAddr)
-		assertNewSelfState(c.newValAddr)
+	for i := 0; i < len(v5_1.Moves); i++ {
+		oldAccStr := v5_1.Moves[i].OldAccStr
+		newValStr := v5_1.Moves[i].NewValStr
+		oldAccAddr, err := sdk.AccAddressFromBech32(oldAccStr)
+		s.Require().NoError(err)
+		oldValAddr := sdk.ValAddress(oldAccAddr)
+		s.Require().NoError(err)
+		newValAddr, err := sdk.ValAddressFromBech32(newValStr)
+		s.Require().NoError(err)
+
+		assertOldValState(oldValAddr)
+		assertOtherDelegatorsPreserved([]sdk.AccAddress{s.TestAccs[0].Address, s.TestAccs[1].Address}, oldValAddr)
+		// TODO: set commissions
+		assertCommissionWithdrawn(oldValAddr)
+		assertNewValState(newValAddr)
 	}
 }
 
@@ -275,8 +314,9 @@ func (s *UpgradeTestSuite) setupValidatorState() {
 	// Delegators account addresses
 	acc1 := s.TestAccs[0].Address
 	acc2 := s.TestAccs[1].Address
-	s.Require().NotZero(app.AppKeepers.BankKeeper.GetBalance(ctx, acc1, bondDenom).Amount.Int64()) // TODO: use a given min amount
-	s.Require().NotZero(app.AppKeepers.BankKeeper.GetBalance(ctx, acc2, bondDenom).Amount.Int64()) // TODO: use a given min amount
+	// these accounts should be funded by the suite setup process
+	s.Require().NotZero(app.AppKeepers.BankKeeper.GetBalance(ctx, acc1, bondDenom).Amount.Int64())
+	s.Require().NotZero(app.AppKeepers.BankKeeper.GetBalance(ctx, acc2, bondDenom).Amount.Int64())
 
 	// ==== Validators Setup ====
 	maxEntries, err := s.App.AppKeepers.StakingKeeper.MaxEntries(ctx)
