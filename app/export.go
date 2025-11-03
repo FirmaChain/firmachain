@@ -179,20 +179,24 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 	/* Handle staking state. */
 
 	// iterate through redelegations, reset creation height
-	app.AppKeepers.StakingKeeper.IterateRedelegations(ctx, func(_ int64, red stakingtypes.Redelegation) (stop bool) {
+	_ = app.AppKeepers.StakingKeeper.IterateRedelegations(ctx, func(_ int64, red stakingtypes.Redelegation) (stop bool) {
 		for i := range red.Entries {
 			red.Entries[i].CreationHeight = 0
 		}
-		app.AppKeepers.StakingKeeper.SetRedelegation(ctx, red)
+		if err := app.AppKeepers.StakingKeeper.SetRedelegation(ctx, red); err != nil {
+			panic(err)
+		}
 		return false
 	})
 
 	// iterate through unbonding delegations, reset creation height
-	app.AppKeepers.StakingKeeper.IterateUnbondingDelegations(ctx, func(_ int64, ubd stakingtypes.UnbondingDelegation) (stop bool) {
+	_ = app.AppKeepers.StakingKeeper.IterateUnbondingDelegations(ctx, func(_ int64, ubd stakingtypes.UnbondingDelegation) (stop bool) {
 		for i := range ubd.Entries {
 			ubd.Entries[i].CreationHeight = 0
 		}
-		app.AppKeepers.StakingKeeper.SetUnbondingDelegation(ctx, ubd)
+		if err := app.AppKeepers.StakingKeeper.SetUnbondingDelegation(ctx, ubd); err != nil {
+			panic(err)
+		}
 		return false
 	})
 
@@ -232,11 +236,13 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 	/* Handle slashing state. */
 
 	// reset start height on signing infos
-	app.AppKeepers.SlashingKeeper.IterateValidatorSigningInfos(
+	_ = app.AppKeepers.SlashingKeeper.IterateValidatorSigningInfos(
 		ctx,
 		func(addr sdk.ConsAddress, info slashingtypes.ValidatorSigningInfo) (stop bool) {
 			info.StartHeight = 0
-			app.AppKeepers.SlashingKeeper.SetValidatorSigningInfo(ctx, addr, info)
+			if err := app.AppKeepers.SlashingKeeper.SetValidatorSigningInfo(ctx, addr, info); err != nil {
+				panic(err)
+			}
 			return false
 		},
 	)
