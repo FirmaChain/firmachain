@@ -30,8 +30,6 @@ import (
 	contracttypes "github.com/firmachain/firmachain/x/contract/types"
 	nfttypes "github.com/firmachain/firmachain/x/nft/types"
 	tokentypes "github.com/firmachain/firmachain/x/token/types"
-
-	header "cosmossdk.io/core/header"
 )
 
 type AddressWithKeys struct {
@@ -159,7 +157,7 @@ func (s *TestSuite) ConfirmUpgradeSucceeded(upgradeName string, upgradeHeight in
 
 	s.Ctx = s.Ctx.WithBlockHeight(upgradeHeight)
 
-	s.Ctx = s.Ctx.WithHeaderInfo(header.Info{Height: upgradeHeight, Time: s.Ctx.BlockTime().Add(time.Second)}).WithBlockHeight(upgradeHeight)
+	s.Ctx = s.Ctx.WithHeaderInfo(coreheader.Info{Height: upgradeHeight, Time: s.Ctx.BlockTime().Add(time.Second)}).WithBlockHeight(upgradeHeight)
 
 	res, err := s.App.PreBlocker(s.Ctx, nil)
 	_ = res
@@ -209,7 +207,9 @@ func (s *TestSuite) MakeAndSingTx(
 	msgs := make([]sdk.Msg, 0, 1)
 	msgs = append(msgs, msg)
 	builder := cfg.NewTxBuilder()
-	builder.SetMsgs(msgs...)
+	if err := builder.SetMsgs(msgs...); err != nil {
+		s.NoError(err)
+	}
 	builder.SetMemo(memo)
 	builder.SetGasLimit(gasLimit)
 	builder.SetFeeAmount(feeAmount)
