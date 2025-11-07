@@ -39,6 +39,7 @@ https://docs.firmachain.org/master/node-and-validators-guide/run-a-full-node/ins
 Currently available tags:
 | Version | Tag
 | - | - |
+| v0.5.1 | `v0.5.1` |
 | v0.5.0 | `v0.5.0-patch` |
 | v0.5.0 | `v0.5.0` |
 | v0.4.0 | `v0.4.0` |

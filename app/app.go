@@ -102,6 +102,7 @@ import (
 	upgrades "github.com/firmachain/firmachain/app/upgrades"
 	v4 "github.com/firmachain/firmachain/app/upgrades/v4"
 	v5 "github.com/firmachain/firmachain/app/upgrades/v5"
+	v5_1 "github.com/firmachain/firmachain/app/upgrades/v5.1"
 	"github.com/firmachain/firmachain/client/docs"
 
 	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
@@ -171,7 +172,7 @@ import (
 )
 
 var (
-	Upgrades = []upgrades.Upgrade{v4.Upgrade, v5.Upgrade}
+	Upgrades = []upgrades.Upgrade{v4.Upgrade, v5.Upgrade, v5_1.Upgrade}
 )
 
 func getGovProposalHandlers() []govclient.ProposalHandler {
@@ -1049,8 +1050,12 @@ func (app *App) updateValidatorMinCommision(ctx sdk.Context) {
 				panic(err)
 			}
 			// call the before-modification hook since we're about to update the commission
-			staking.Hooks().BeforeValidatorModified(ctx, valBs)
-			staking.SetValidator(ctx, v)
+			if err := staking.Hooks().BeforeValidatorModified(ctx, valBs); err != nil {
+				panic(err)
+			}
+			if err := staking.SetValidator(ctx, v); err != nil {
+				panic(err)
+			}
 		}
 	}
 }
@@ -1066,7 +1071,9 @@ func (app *App) InitChainer(ctx sdk.Context, req *abci.RequestInitChain) (*abci.
 	if err := json.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}
-	app.AppKeepers.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
+	if err := app.AppKeepers.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap()); err != nil {
+		return nil, err
+	}
 	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
 }
 
