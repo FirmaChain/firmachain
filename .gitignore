@@ -20,3 +20,6 @@ vue/
 #testutil/
 release/
 coverage.txt
+
+# Private Go module cache used by local release builds
+.modcache/

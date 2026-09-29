@@ -103,6 +103,7 @@ import (
 	v4 "github.com/firmachain/firmachain/app/upgrades/v4"
 	v5 "github.com/firmachain/firmachain/app/upgrades/v5"
 	v5_1 "github.com/firmachain/firmachain/app/upgrades/v5.1"
+	v5_2 "github.com/firmachain/firmachain/app/upgrades/v5.2"
 	"github.com/firmachain/firmachain/client/docs"
 
 	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
@@ -172,7 +173,7 @@ import (
 )
 
 var (
-	Upgrades = []upgrades.Upgrade{v4.Upgrade, v5.Upgrade, v5_1.Upgrade}
+	Upgrades = []upgrades.Upgrade{v4.Upgrade, v5.Upgrade, v5_1.Upgrade, v5_2.Upgrade}
 )
 
 func getGovProposalHandlers() []govclient.ProposalHandler {
@@ -911,7 +912,7 @@ func New(
 			panic("failed to register snapshot extension: " + err.Error())
 		}
 	}
-	
+
 	// SDK v47 - since we do not use dep inject, this gives us access to newer gRPC services.
 	autocliv1.RegisterQueryServer(app.GRPCQueryRouter(), runtimeservices.NewAutoCLIQueryService(app.mm.Modules))
 	reflectionSvc, err := runtimeservices.NewReflectionService()
