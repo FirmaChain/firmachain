@@ -29,7 +29,12 @@ func ensureValidator(t *testing.T, s *apptesting.TestSuite, valAddr sdk.ValAddre
 		DelegatorShares: math.LegacyOneDec(),
 		Commission:      stakingtypes.NewCommission(math.LegacyZeroDec(), math.LegacyZeroDec(), math.LegacyZeroDec()),
 	}
-	_ = s.App.AppKeepers.StakingKeeper.SetValidator(s.Ctx, v)
+	if err := s.App.AppKeepers.StakingKeeper.SetValidator(s.Ctx, v); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.App.AppKeepers.DistrKeeper.Hooks().AfterValidatorCreated(s.Ctx, valAddr); err != nil {
+		t.Fatal(err)
+	}
 	return v
 }
 
@@ -37,12 +42,17 @@ func fund(t *testing.T, s *apptesting.TestSuite, addr sdk.AccAddress, amt int64)
 	t.Helper()
 	denom := appparams.DefaultBondDenom
 	coins := sdk.NewCoins(sdk.NewCoin(denom, math.NewInt(amt)))
-	_ = s.App.AppKeepers.BankKeeper.MintCoins(s.Ctx, minttypes.ModuleName, coins)
-	_ = s.App.AppKeepers.BankKeeper.SendCoinsFromModuleToAccount(s.Ctx, minttypes.ModuleName, addr, coins)
+	if err := s.App.AppKeepers.BankKeeper.MintCoins(s.Ctx, minttypes.ModuleName, coins); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.App.AppKeepers.BankKeeper.SendCoinsFromModuleToAccount(s.Ctx, minttypes.ModuleName, addr, coins); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestCompleteAllRedelegations(t *testing.T) {
 	var s apptesting.TestSuite
+	s.SetT(t)
 	s.Setup()
 
 	denom := appparams.DefaultBondDenom
@@ -102,6 +112,7 @@ func TestCompleteAllRedelegations(t *testing.T) {
 
 func TestUnbondAllAndFinish(t *testing.T) {
 	var s apptesting.TestSuite
+	s.SetT(t)
 	s.Setup()
 
 	delegator := s.TestAccs[0].Address
