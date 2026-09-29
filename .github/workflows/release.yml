@@ -33,6 +33,7 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "image=$REGISTRY/${REPOSITORY_NAME,,}" >> "$GITHUB_OUTPUT"
 
       - name: Setup Docker Buildx
@@ -52,6 +53,9 @@ jobs:
           context: .
           file: Dockerfile
           platforms: linux/amd64
+          build-args: |
+            VERSION=${{ steps.tag.outputs.tag }}
+            COMMIT=${{ steps.tag.outputs.commit }}
           push: true
           tags: ${{ steps.tag.outputs.image }}:${{ steps.tag.outputs.tag }}
           cache-from: type=gha
