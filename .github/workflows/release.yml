@@ -1,0 +1,86 @@
+name: Publish image and release assets
+
+on:
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  REPOSITORY_NAME: ${{ github.repository }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-push-image:
+    if: github.event.release.prerelease == true
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Extract Image Tag
+        id: tag
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "image=$REGISTRY/${REPOSITORY_NAME,,}" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Build and Push
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.tag.outputs.image }}:${{ steps.tag.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=min,ignore-error=true
+
+      - name: Extract Binary and Generate Checksum
+        shell: bash
+        env:
+          IMAGE_REF: ${{ steps.tag.outputs.image }}@${{ steps.build.outputs.digest }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          docker pull --platform linux/amd64 "$IMAGE_REF"
+          container_id=$(docker create --platform linux/amd64 "$IMAGE_REF")
+          trap 'docker rm "$container_id" >/dev/null' EXIT
+          binary="firmachaind-${RELEASE_TAG}-linux-amd64"
+          docker cp "$container_id:/usr/local/bin/firmachaind" "dist/$binary"
+          chmod 0755 "dist/$binary"
+          cd dist
+          sha256sum "$binary" > "SHA256SUMS-${RELEASE_TAG}.txt"
+          sha256sum --check "SHA256SUMS-${RELEASE_TAG}.txt"
+
+      - name: Upload Release Assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          gh release upload "$RELEASE_TAG" \
+            "dist/firmachaind-${RELEASE_TAG}-linux-amd64" \
+            "dist/SHA256SUMS-${RELEASE_TAG}.txt"
