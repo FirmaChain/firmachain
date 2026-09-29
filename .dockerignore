@@ -1,0 +1,9 @@
+.github
+.git
+.DS_Store
+
+bin
+build
+data
+k8s
+*.log

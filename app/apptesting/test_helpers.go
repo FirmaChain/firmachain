@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
@@ -38,10 +39,13 @@ import (
 	appparams "github.com/firmachain/firmachain/app/params"
 )
 
+// SDK configuration is global and cannot be changed after it is sealed.
+var sdkConfigOnce sync.Once
+
 func SetupApp(t *testing.T, chainId string, bondDenom string) (*app.App, sdk.Context, []AddressWithKeys) {
 	t.Helper()
 
-	appparams.SetSdkConfigAndSeal()
+	sdkConfigOnce.Do(appparams.SetSdkConfigAndSeal)
 
 	privVal := apphelpers.NewPV()
 	pubKey, err := privVal.GetPubKey()
@@ -188,7 +192,7 @@ func setup(t *testing.T, withGenesis bool, chainId string, opts ...wasmkeeper.Op
 		db,
 		nil,
 		true,
-		EmptyAppOptions{},
+		appOptions,
 		opts,
 		bam.SetChainID(chainId),
 	)
